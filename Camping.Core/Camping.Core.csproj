@@ -47,10 +47,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Helpers\" />
-	  <Folder Include="Interfaces\" />
 	  <Folder Include="Models\" />
 	  <Folder Include="Services\" />
+	  <Folder Include="Interfaces\" />
+	  <Folder Include="Helpers\" />
 	</ItemGroup>
 
 </Project>
