@@ -1,0 +1,43 @@
+name: MAUI Unit Tests
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - release
+      - feat/*
+      - hotfix
+
+  pull_request:
+    branches:
+      - main
+      - develop
+      - release
+      - feat/*
+      - hotfix
+
+jobs:
+  build_and_test:
+    runs-on: windows-latest
+
+    steps:
+      - name: Haal repository op
+        uses: actions/checkout@v4
+
+      - name: Installeer .NET SDK
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Installeer MAUI workloads
+        run: dotnet workload install maui
+
+      - name: Restore oplossing
+        run: dotnet restore Camping.App.sln
+
+      - name: Bouw oplossing
+        run: dotnet build Camping.App.sln --configuration Release --no-restore
+
+      - name: Voer tests uit
+        run: dotnet test TestCore/TestCore.csproj --configuration Release --no-build --no-restore --verbosity normal
