@@ -8,12 +8,11 @@ on:
       - release
       - feat/*
       - hotfix
-
   pull_request:
     branches:
       - main
-      - develop
       - release
+      - develop
       - feat/*
       - hotfix
 
@@ -25,19 +24,19 @@ jobs:
       - name: Haal repository op
         uses: actions/checkout@v4
 
-      - name: Installeer .NET SDK
+      - name: Installeer .NET SDK 8
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '8.0.x'
 
-      - name: Installeer MAUI workloads
+      - name: Installeer MAUI workload (vereist voor build)
         run: dotnet workload install maui
 
-      - name: Restore oplossing
-        run: dotnet restore Camping.App.sln
+      - name: Herstel afhankelijkheden
+        run: dotnet restore
 
-      - name: Bouw oplossing
-        run: dotnet build Camping.App.sln --configuration Release --no-restore
+      - name: Bouw de MAUI-app
+        run: dotnet build --configuration Release
 
-      - name: Voer tests uit
-        run: dotnet test TestCore/TestCore.csproj --configuration Release --no-build --no-restore --verbosity normal
+      - name: Voer unit tests uit
+        run: dotnet test --configuration Release --no-build --verbosity normal
