@@ -29,14 +29,21 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
-      - name: Installeer MAUI workload (vereist voor build)
+      - name: Installeer MAUI workload
         run: dotnet workload install maui
 
       - name: Herstel afhankelijkheden
         run: dotnet restore
 
-      - name: Bouw de MAUI-app
+      - name: Bouw de app
         run: dotnet build --configuration Release
 
       - name: Voer unit tests uit
         run: dotnet test --configuration Release --no-build --verbosity normal
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-output
+          path: |
+            **/bin/Release/net8.0-*/ 
