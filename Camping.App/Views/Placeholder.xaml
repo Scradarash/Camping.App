@@ -4,9 +4,5 @@
              x:Class="Camping.App.Views.Placeholder"
              Title="Placeholder">
     <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
     </VerticalStackLayout>
 </ContentPage>
