@@ -8,7 +8,4 @@
     <Grid Scale="0.9999">
         <Image Source="camping_plattegrond.png" Aspect="AspectFit" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand"/>
     </Grid>
-
-
-
 </ContentPage>
