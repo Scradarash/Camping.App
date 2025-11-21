@@ -1,9 +1,28 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:Class="Camping.App.Views.PlattegrondView">
 
     <Grid>
         <Image Source="camping_plattegrond.png" Aspect="AspectFit"/>
+
+        <Button
+            x:Name="Staanplaats1"
+            Clicked="Staanplaats1_Clicked"
+            Text="Staanplaats 1"
+            BackgroundColor="DarkGreen"
+            BorderColor="Black"
+            BorderWidth="4"
+            SemanticProperties.Hint="Staanplaats1"
+            HeightRequest="200"
+            WidthRequest="200">     
+            <Button.GestureRecognizers>
+                <PointerGestureRecognizer
+                    PointerEntered="OnCancelButtonPointerEntered"
+                    PointerExited="OnCancelButtonPointerExited"/>       
+            </Button.GestureRecognizers>
+        </Button>
     </Grid>
 </ContentPage>
+    
