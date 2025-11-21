@@ -4,12 +4,6 @@
              x:Class="Camping.App.Views.PlattegrondView">
 
     <Grid>
-        <Image Source="dotnet_bot.png"
-               Aspect="AspectFill" />
-
-        <VerticalStackLayout
-            VerticalOptions="Center"
-            HorizontalOptions="Center">
-        </VerticalStackLayout>
+        <Image Source="camping_plattegrond.png" Aspect="AspectFit"/>
     </Grid>
 </ContentPage>
