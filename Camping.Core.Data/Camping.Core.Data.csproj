@@ -6,4 +6,8 @@
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
 
+	<ItemGroup>
+	  <ProjectReference Include="..\Camping.Core\Camping.Core.csproj" />
+	</ItemGroup>
+
 </Project>
