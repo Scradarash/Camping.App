@@ -31,6 +31,7 @@ public partial class PlattegrondView : ContentPage
             var btn = new Button
             {
                 Text = area.Name,
+                TextColor = Colors.Black,
                 BackgroundColor = Color.FromArgb("#416722"),
                 BorderColor = Colors.Black,
                 BorderWidth = 3,
