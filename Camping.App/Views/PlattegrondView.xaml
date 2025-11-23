@@ -1,68 +1,15 @@
-<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-             x:Class="Camping.App.Views.PlattegrondView">
+<ContentPage 
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="Camping.App.Views.PlattegrondView">
 
-    <AbsoluteLayout>
-            <Image Source="camping_plattegrond.png" 
-                   Aspect="AspectFit"
-                   AbsoluteLayout.LayoutFlags="All"
-                   AbsoluteLayout.LayoutBounds="0,0,1,1"/>
-        <Button
-            x:Name="Staanplaats1"
-            Clicked="Staanplaats1_Clicked"
-            Text="Staanplaats 1"
-            BackgroundColor="DarkGreen"
-            BorderColor="Black"
-            BorderWidth="4"
-            SemanticProperties.Hint="Staanplaats1"
-            HeightRequest="250"
-            WidthRequest="450"
-            AbsoluteLayout.LayoutFlags="PositionProportional"
-            AbsoluteLayout.LayoutBounds="0.16, 0.15, AutoSize, AutoSize">
-            <Button.GestureRecognizers>
-                <PointerGestureRecognizer
-                        PointerEntered="OnCancelButtonPointerEntered"
-                        PointerExited="OnCancelButtonPointerExited"/>
-            </Button.GestureRecognizers>
-        </Button>
-        <Button
-            x:Name="Staanplaats2"
-            Clicked="Staanplaats2_Clicked"
-            Text="Staanplaats 2"
-            BackgroundColor="DarkGreen"
-            BorderColor="Black"
-            BorderWidth="4"
-            SemanticProperties.Hint="Staanplaats2"
-            HeightRequest="200"
-            WidthRequest="380"
-            AbsoluteLayout.LayoutFlags="PositionProportional"
-            AbsoluteLayout.LayoutBounds="0.19, 0.55, AutoSize, AutoSize">
-            <Button.GestureRecognizers>
-                <PointerGestureRecognizer
-                    PointerEntered="OnCancelButtonPointerEnteredST2"
-                    PointerExited="OnCancelButtonPointerExitedST2"/>
-            </Button.GestureRecognizers>
-        </Button>
-        <Button
-            x:Name="Staanplaats3"
-            Clicked="Staanplaats3_Clicked"
-            Text="Staanplaats 3"
-            BackgroundColor="DarkGreen"
-            BorderColor="Black"
-            BorderWidth="4"
-            SemanticProperties.Hint="Staanplaats3"
-            HeightRequest="200"
-            WidthRequest="380"
-            AbsoluteLayout.LayoutFlags="PositionProportional"
-            AbsoluteLayout.LayoutBounds="0.19, 0.65, AutoSize, AutoSize">
-            <Button.GestureRecognizers>
-                <PointerGestureRecognizer
-                    PointerEntered="OnCancelButtonPointerEnteredST3"
-                    PointerExited="OnCancelButtonPointerExitedST3"/>
-            </Button.GestureRecognizers>
-        </Button>
-    </AbsoluteLayout>
+    <Grid x:Name="OverlayGrid" HorizontalOptions="Center" VerticalOptions="Center">
+
+        <Image x:Name="CampingPlattegrond"
+               Source="camping_plattegrond.png"
+               Aspect="AspectFit"/>
+
+        <AbsoluteLayout x:Name="ButtonOverlayLayout"/>
+
+    </Grid>
 </ContentPage>
-    

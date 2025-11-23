@@ -1,66 +1,58 @@
-using Camping.App.ViewModels;
+using Microsoft.Maui.Layouts;
 
-namespace Camping.App.Views
+namespace Camping.App.Views;
+
+public partial class PlattegrondView : ContentPage
 {
-    public partial class PlattegrondView : ContentPage
+    public PlattegrondView()
     {
-        int clicks1 = 1;
-        int clicks2 = 1;
-        int clicks3 = 1;
+        InitializeComponent();
+        CampingPlattegrond.SizeChanged += (s, e) => AddButtons();
+    }
 
-        public PlattegrondView(PlattegrondViewModel viewModel)
-        {
-            InitializeComponent();
-            BindingContext = viewModel;
-        }
+    private void AddButtons()
+    {
+        ButtonOverlayLayout.Children.Clear();
 
-        private void Staanplaats1_Clicked(object sender, EventArgs e)
-        {
-            clicks1++;
-            Staanplaats1.Text = $"Staanplaats {clicks1}";
-            SemanticScreenReader.Announce(Staanplaats1.Text);
-        }
+        double imgWidth = CampingPlattegrond.Width;
+        double imgHeight = CampingPlattegrond.Height;
 
-        private void Staanplaats2_Clicked(object sender, EventArgs e)
+        var areas = new[]
         {
-            clicks2++;
-            Staanplaats2.Text = $"Staanplaats {clicks2}";
-            SemanticScreenReader.Announce(Staanplaats2.Text);
-        }
+            new { Name="Groepsveld", X=0.08, Y=0.13, Width=0.232, Height=0.213 },
+            new { Name="Trekkersveld", X=0.11, Y=0.4457, Width=0.195, Height=0.181 },
+            new { Name="Winterveld", X=0.11, Y=0.669, Width=0.195, Height=0.181 },
+            new { Name="Staatseveld", X=0.5677, Y=0.576, Width=0.195, Height=0.1952 },
+            new { Name="Oranjeveld", X=0.37, Y=0.59, Width=0.145, Height=0.254 }
+        };
 
-        private void Staanplaats3_Clicked(object sender, EventArgs e)
+        foreach (var area in areas)
         {
-            clicks3++;
-            Staanplaats3.Text = $"Staanplaats {clicks3}";
-            SemanticScreenReader.Announce(Staanplaats3.Text);
-        }
-        private void OnCancelButtonPointerEntered(object sender, PointerEventArgs e)
-        {
-             Staanplaats1.BackgroundColor = Colors.Green;
-        }
+            var btn = new Button
+            {
+                Text = area.Name,
+                BackgroundColor = Color.FromArgb("#416722"),
+                BorderColor = Colors.Black,
+                BorderWidth = 3,
+                CornerRadius = 15
+            };
 
-        private void OnCancelButtonPointerExited(object sender, PointerEventArgs e)
-        {
-            Staanplaats1.BackgroundColor = Colors.DarkGreen; // Revert to original color
-        }
+            btn.Clicked += (s, e) => DisplayAlert($"{area.Name}", $"Het {area.Name.ToLower()} is een prachtige staanplaats voor al uw campeergenot", "OK");
 
-        private void OnCancelButtonPointerEnteredST2(object sender, PointerEventArgs e)
-        {
-            Staanplaats2.BackgroundColor = Colors.Green;
-        }
+            var pointer = new PointerGestureRecognizer();
+            pointer.PointerEntered += (s, e) => btn.BackgroundColor = Color.FromArgb("#369c0b");
+            pointer.PointerExited += (s, e) => btn.BackgroundColor = Color.FromArgb("#416722");
+            btn.GestureRecognizers.Add(pointer);
 
-        private void OnCancelButtonPointerExitedST2(object sender, PointerEventArgs e)
-        {
-            Staanplaats2.BackgroundColor = Colors.DarkGreen; // Revert to original color
-        }
-        private void OnCancelButtonPointerEnteredST3(object sender, PointerEventArgs e)
-        {
-            Staanplaats3.BackgroundColor = Colors.Green;
-        }
+            double x = area.X * imgWidth;
+            double y = area.Y * imgHeight;
+            double w = area.Width * imgWidth;
+            double h = area.Height * imgHeight;
 
-        private void OnCancelButtonPointerExitedST3(object sender, PointerEventArgs e)
-        {
-            Staanplaats3.BackgroundColor = Colors.DarkGreen; // Revert to original color
+            AbsoluteLayout.SetLayoutFlags(btn, AbsoluteLayoutFlags.None);
+            AbsoluteLayout.SetLayoutBounds(btn, new Rect(x, y, w, h));
+
+            ButtonOverlayLayout.Children.Add(btn);
         }
     }
 }
