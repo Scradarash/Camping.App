@@ -1,12 +1,17 @@
 using Microsoft.Maui.Layouts;
+using Camping.App.ViewModels;
 
 namespace Camping.App.Views;
 
 public partial class PlattegrondView : ContentPage
 {
-    public PlattegrondView()
+    private readonly PlattegrondViewModel _viewModel;
+    public PlattegrondView(PlattegrondViewModel viewModel)
     {
         InitializeComponent();
+        _viewModel = viewModel;
+        BindingContext = _viewModel;
+
         CampingPlattegrond.SizeChanged += (s, e) => AddButtons();
     }
 
@@ -17,21 +22,14 @@ public partial class PlattegrondView : ContentPage
         double imgWidth = CampingPlattegrond.Width;
         double imgHeight = CampingPlattegrond.Height;
 
-        var areas = new[]
-        {
-            new { Name="Groepsveld", X=0.08, Y=0.13, Width=0.232, Height=0.213 },
-            new { Name="Trekkersveld", X=0.11, Y=0.4457, Width=0.195, Height=0.181 },
-            new { Name="Winterveld", X=0.11, Y=0.669, Width=0.195, Height=0.181 },
-            new { Name="Staatseveld", X=0.5677, Y=0.576, Width=0.195, Height=0.1952 },
-            new { Name="Oranjeveld", X=0.37, Y=0.59, Width=0.145, Height=0.254 }
-        };
-
-        foreach (var area in areas)
+        foreach (var area in _viewModel.Areas)
         {
             var btn = new Button
             {
                 Text = area.Name,
                 TextColor = Colors.Black,
+                FontAttributes = FontAttributes.Bold,
+                FontSize = 22,
                 BackgroundColor = Color.FromArgb("#416722"),
                 BorderColor = Colors.Black,
                 BorderWidth = 3,
@@ -45,8 +43,8 @@ public partial class PlattegrondView : ContentPage
             pointer.PointerExited += (s, e) => btn.BackgroundColor = Color.FromArgb("#416722");
             btn.GestureRecognizers.Add(pointer);
 
-            double x = area.X * imgWidth;
-            double y = area.Y * imgHeight;
+            double x = area.XPosition * imgWidth;
+            double y = area.YPosition * imgHeight;
             double w = area.Width * imgWidth;
             double h = area.Height * imgHeight;
 
@@ -55,5 +53,34 @@ public partial class PlattegrondView : ContentPage
 
             ButtonOverlayLayout.Children.Add(btn);
         }
+
+        var exitBtn = new Button
+        {
+            Text = "Afsluiten",
+            TextColor = Colors.Black,
+            FontAttributes = FontAttributes.Bold,
+            FontSize = 22,
+            BackgroundColor = Color.FromArgb("#701212"),
+            BorderColor = Colors.Black,
+            BorderWidth = 3,
+            CornerRadius = 10
+        };
+
+        exitBtn.Clicked += (s, e) => System.Environment.Exit(0);
+
+        var exitPointer = new PointerGestureRecognizer();
+        exitPointer.PointerEntered += (s, e) => exitBtn.BackgroundColor = Color.FromArgb("#b30c0c");
+        exitPointer.PointerExited += (s, e) => exitBtn.BackgroundColor = Color.FromArgb("#701212");
+        exitBtn.GestureRecognizers.Add(exitPointer);
+
+        double exitX = 0.8632 * imgWidth;
+        double exitY = 0.89 * imgHeight;
+        double exitW = 0.08 * imgWidth;
+        double exitH = 0.06 * imgHeight;
+
+        AbsoluteLayout.SetLayoutFlags(exitBtn, AbsoluteLayoutFlags.None);
+        AbsoluteLayout.SetLayoutBounds(exitBtn, new Rect(exitX, exitY, exitW, exitH));
+
+        ButtonOverlayLayout.Children.Add(exitBtn);
     }
 }

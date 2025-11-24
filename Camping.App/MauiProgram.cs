@@ -2,6 +2,8 @@
 using Camping.App.ViewModels;
 using Camping.App.Views;
 using Microsoft.Maui.LifecycleEvents;
+using Camping.Core.Interfaces.Repositories;
+using Camping.Core.Data.Repositories;
 
 namespace Camping.App
 {
@@ -18,6 +20,9 @@ namespace Camping.App
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
 
+            builder.Services.AddSingleton<PlattegrondViewModel>();
+            builder.Services.AddSingleton<PlattegrondView>();
+            builder.Services.AddSingleton<IStaanplaatsRepository, InMemoryStaanplaatsRepository>();
             builder.Services.AddSingleton<PlattegrondViewModel>();
             builder.Services.AddSingleton<PlattegrondView>();
 
