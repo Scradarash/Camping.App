@@ -57,7 +57,7 @@ public partial class PlattegrondView : ContentPage
         var exitBtn = new Button
         {
             Text = "Afsluiten",
-            TextColor = Colors.Black,
+            TextColor = Colors.White,
             FontAttributes = FontAttributes.Bold,
             FontSize = 22,
             BackgroundColor = Color.FromArgb("#701212"),
