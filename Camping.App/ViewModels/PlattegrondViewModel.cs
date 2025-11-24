@@ -1,10 +1,29 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using Camping.Core.Models;
+using Camping.Core.Interfaces.Repositories;
+using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace Camping.App.ViewModels
+namespace Camping.App.ViewModels;
+
+public partial class PlattegrondViewModel : ObservableObject
 {
-    public partial class PlattegrondViewModel : ObservableObject
+    public ObservableCollection<ClickArea> Areas { get; } = new();
+
+    private readonly IStaanplaatsRepository _repository;
+
+    public PlattegrondViewModel(IStaanplaatsRepository repository)
     {
-        [ObservableProperty]
-        private string title = "Camping Plattegrond";
+        _repository = repository;
+        LoadAreas();
+    }
+
+    private void LoadAreas()
+    {
+        var staanplaatsen = _repository.GetAllStaanplaatsen();
+
+        foreach (var plaats in staanplaatsen)
+        {
+            Areas.Add(plaats);
+        }
     }
 }
