@@ -1,16 +1,20 @@
-<ContentPage 
-    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:viewmodels="clr-namespace:Camping.App.ViewModels"
-    x:Class="Camping.App.Views.PlattegrondView">
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Camping.App.Views.PlattegrondView">
 
-    <Grid x:Name="OverlayGrid" HorizontalOptions="Center" VerticalOptions="Center">
+    <Grid>
 
         <Image x:Name="CampingPlattegrond"
                Source="camping_plattegrond.png"
-               Aspect="AspectFit"/>
+               Aspect="AspectFit"
+               InputTransparent="True" />
 
-        <AbsoluteLayout x:Name="ButtonOverlayLayout"/>
+        <AbsoluteLayout x:Name="ButtonOverlayLayout"
+                        VerticalOptions="Fill"
+                        HorizontalOptions="Fill"
+                        InputTransparent="False" />
 
     </Grid>
+
 </ContentPage>
