@@ -7,14 +7,14 @@ on:
       - develop
       - release
       - feature/*
-      - hotfix
+      - hotfix/*
   pull_request:
     branches:
       - main
       - release
       - develop
       - feature/*
-      - hotfix
+      - hotfix/*
 
 jobs:
   build_and_test:
@@ -24,12 +24,12 @@ jobs:
       - name: Haal repository op
         uses: actions/checkout@v4
 
-      - name: Installeer .NET SDK 8
+      - name: Installeer .NET SDK 9
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '8.0.x'
+          dotnet-version: '9.0.x'
 
-      - name: Installeer MAUI workload
+      - name: Installeer MAUI workload voor .NET9
         run: dotnet workload install maui
 
       - name: Herstel afhankelijkheden
@@ -46,4 +46,4 @@ jobs:
         with:
           name: build-output
           path: |
-            **/bin/Release/net8.0-*/ 
+            **/bin/Release/net9.0-*/ 
