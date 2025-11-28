@@ -52,6 +52,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<MauiXaml Update="Views\Calendar\CalendarPopup.xaml">
+		  <Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
 		<MauiXaml Update="Views\PlattegrondView.xaml">
 			<Generator>MSBuild:Compile</Generator>
 		</MauiXaml>

@@ -1,4 +1,5 @@
 using Camping.App.ViewModels;
+using Camping.Core.Models;
 using Microsoft.Maui.Layouts;
 
 namespace Camping.App.Views;
@@ -13,12 +14,6 @@ public partial class PlattegrondView : ContentPage
         _vm = vm;
         BindingContext = _vm;
 
-        _vm.StaanplaatsGeselecteerd += plaats =>
-        {
-            DisplayAlert(plaats.Name, $"{plaats.Name} is geselecteerd", "OK");
-        };
-
-        CampingPlattegrond.Loaded += (s, e) => DrawButtons();
         CampingPlattegrond.SizeChanged += (s, e) => DrawButtons();
     }
 
@@ -37,32 +32,29 @@ public partial class PlattegrondView : ContentPage
             var btn = new Button
             {
                 Text = area.Name,
-                TextColor = Colors.Black,
-                FontSize = 22,
                 BackgroundColor = Color.FromArgb("#416722"),
-                BorderColor = Colors.Black,
-                BorderWidth = 3,
-                CornerRadius = 15,
-                ZIndex = 100
+                TextColor = Colors.Black,
+                FontSize = 18,
+                CornerRadius = 10
             };
 
             btn.Command = _vm.SelectCommand;
             btn.CommandParameter = area;
-
-            var pointer = new PointerGestureRecognizer();
-            pointer.PointerEntered += (s, e) => btn.BackgroundColor = Color.FromArgb("#369c0b");
-            pointer.PointerExited += (s, e) => btn.BackgroundColor = Color.FromArgb("#416722");
-            btn.GestureRecognizers.Add(pointer);
 
             double x = area.XPosition * imgW;
             double y = area.YPosition * imgH;
             double w = area.Width * imgW;
             double h = area.Height * imgH;
 
-            AbsoluteLayout.SetLayoutFlags(btn, AbsoluteLayoutFlags.None);
             AbsoluteLayout.SetLayoutBounds(btn, new Rect(x, y, w, h));
+            AbsoluteLayout.SetLayoutFlags(btn, AbsoluteLayoutFlags.None);
 
             ButtonOverlayLayout.Children.Add(btn);
         }
+    }
+
+    private void OpenKalenderClicked(object sender, EventArgs e)
+    {
+        KalenderPopup.Show();
     }
 }

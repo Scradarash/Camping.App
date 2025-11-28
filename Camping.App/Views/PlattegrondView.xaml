@@ -1,19 +1,40 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="Camping.App.Views.PlattegrondView">
+<ContentPage 
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:calendar="clr-namespace:Camping.App.Views.Calendar"
+    x:Class="Camping.App.Views.PlattegrondView">
 
-    <Grid>
+    <Grid RowDefinitions="Auto,*">
 
-        <Image x:Name="CampingPlattegrond"
-               Source="camping_plattegrond.png"
-               Aspect="AspectFit"
-               InputTransparent="True" />
+        <Grid BackgroundColor="#DDDDDD" Padding="5" HeightRequest="60" Row="0">
+            <Button 
+                Text="Kalender"
+                WidthRequest="120"
+                HeightRequest="40"
+                Clicked="OpenKalenderClicked"/>
+        </Grid>
 
-        <AbsoluteLayout x:Name="ButtonOverlayLayout"
-                        VerticalOptions="Fill"
-                        HorizontalOptions="Fill"
-                        InputTransparent="False" />
+        <Grid Row="1">
+
+            <Grid>
+                <Image 
+                    x:Name="CampingPlattegrond"
+                    Source="camping_plattegrond.png"
+                    Aspect="AspectFit" />
+
+                <AbsoluteLayout 
+                    x:Name="ButtonOverlayLayout"
+                    InputTransparent="False" />
+            </Grid>
+
+        </Grid>
+
+        <calendar:CalendarPopup 
+            x:Name="KalenderPopup"
+            Grid.RowSpan="2"
+            IsVisible="False"
+            InputTransparent="True" />
 
     </Grid>
 
