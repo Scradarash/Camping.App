@@ -24,6 +24,7 @@ public partial class PlattegrondViewModel : ObservableObject
         foreach (var plaats in staanplaatsen)
         {
             Areas.Add(plaats);
+            //Hallo
         }
     }
 }
