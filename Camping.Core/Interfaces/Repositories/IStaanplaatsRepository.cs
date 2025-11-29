@@ -10,5 +10,5 @@ namespace Camping.Core.Interfaces.Repositories;
 
 public interface IStaanplaatsRepository
 {
-    IEnumerable<ClickArea> GetAllStaanplaatsen();
+    IEnumerable<Staanplaats> GetAll();
 }
