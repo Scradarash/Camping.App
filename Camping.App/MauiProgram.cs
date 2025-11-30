@@ -6,6 +6,7 @@ using Camping.Core.Interfaces.Services;
 using Camping.Core.Services;
 using Microsoft.Extensions.Logging;
 using Microsoft.Maui.LifecycleEvents;
+using Syncfusion.Maui.Core.Hosting;
 
 namespace Camping.App
 {
@@ -16,6 +17,7 @@ namespace Camping.App
             var builder = MauiApp.CreateBuilder();
             builder
                 .UseMauiApp<App>()
+                .ConfigureSyncfusionCore()
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");

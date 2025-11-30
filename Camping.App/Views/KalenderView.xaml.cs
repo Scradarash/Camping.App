@@ -1,54 +1,48 @@
+using Syncfusion.Maui.Calendar;
+
 namespace Camping.App.Views;
 
 public partial class KalenderView : ContentPage
 {
+    // Variabel om de gekozen datums bij te houden
+    private DateTime? _startDatum;
+    private DateTime? _eindDatum;
+
     public KalenderView()
     {
         InitializeComponent();
-        AankomstPicker.Date = DateTime.Now;
-        VertrekPicker.Date = DateTime.Now.AddDays(1);
     }
 
-    private void OnAankomstDateSelected(object sender, DateChangedEventArgs e)
+    // Event gooien als de selectie verandert
+    private void OnSelectionChanged(object sender, CalendarSelectionChangedEventArgs e)
     {
-        VertrekPicker.MinimumDate = e.NewDate.AddDays(1);
+        // De CalendarDateRange is een bereik met een start- en einddatum, ipv losse datums selecteren
+        var range = e.NewValue as CalendarDateRange;
 
-        // Vertrekdatum > Aankomstdatum instellen
-        if (VertrekPicker.Date <= e.NewDate)
+        if (range != null)
         {
-            VertrekPicker.Date = e.NewDate.AddDays(1);
+            _startDatum = range.StartDate;
+            _eindDatum = range.EndDate;
         }
-
-        // Open direct de VertrekPicker kalender nadat de aankomstdatum is geselecteerd
-        // (Lange lambda expression ff doorlopen in comments, want het is niet bepaald common sense)
-        MainThread.BeginInvokeOnMainThread(async () =>
-        {
-            // Kleine vertraging om te zorgen dat de UI klaar is met de vorige actie 
-            // *Deze kan misschien wel weg met wat aanpassingen, maar hij was moeilijk aan het doen
-            await Task.Delay(10);
-
-            // De VetrekPicker is een variabel waarin de MAUI Datepicker wordt aangeroepen.
-            // Het probleem is dus, dat op Android en misschien ook op IOS, dit zo'n scroll ding geeft waaruit je datums kan selecteren.
-            // Wij gebruiken uitsluitend Windows, en op Windows is dit zo'n mooi kalendertje (nice!).
-            // Maar omdat de DatePicker van MAUI gemaakt is voor alle platforms, 
-            // herkent hij Windows specifieke opdrachten niet, hij vertaald de DatePicker naar whatever platform er wordt gebruikt
-            // Maar met wat reflectie kunnen we toch die Windows specifieke eigenschappen gebruiken. 
-
-            var platformView = VertrekPicker.Handler?.PlatformView;
-
-            // *Dit breekt de boel niet op andere platforms. De view bestaat daar wel, maar de 'GetProperty' hieronder vangt het veilig op.
-            if (platformView != null)
-            {
-                // We zoeken naar de eigenschap "IsCalendarOpen" en zetten die op 'true'
-                // Dit werkt op Windows, maar niet op Android/IOS (daar werkt deze eigenschap niet, property blijft dan leeg/null en er gebeurt niks)
-                var property = platformView.GetType().GetProperty("IsCalendarOpen");
-                property?.SetValue(platformView, true);
-            }
-        });
     }
 
     private async void CloseButton_Clicked(object sender, EventArgs e)
     {
+        // Check of start en einddatum zijn gekozen
+        if (_startDatum != null && _eindDatum != null)
+        {
+            // Popup tonen om de boel te testen (voor nu)
+            await DisplayAlert("Datum geselecteerd!",
+                $"Aankomst: {_startDatum:dd-MM-yyyy}\nVertrek: {_eindDatum:dd-MM-yyyy}",
+                "OK");
+        }
+        else
+        {
+            // Wanneer 1 datum is geselecteerd, maar niet beiden, ff waarschuwing tonen
+            await DisplayAlert("Rustaaaagh", "Selecteer alstublieft een aankomst en vertrekdatum.", "OK");
+            return; 
+        }
+
         await Navigation.PopModalAsync();
     }
 }
