@@ -21,8 +21,8 @@ public partial class PlattegrondViewModel : ObservableObject
     private void LoadAreas()
     {
         Staanplaatsen.Clear();
-        var plants = _service.GetAll();
-        foreach (var p in plants)
+        var plaatsen = _service.GetAll();
+        foreach (var p in plaatsen)
         {
             Staanplaatsen.Add(p);
         }
@@ -40,7 +40,7 @@ public partial class PlattegrondViewModel : ObservableObject
     [RelayCommand]
     private async Task OpenKalender()
     {
-        await Application.Current.MainPage.DisplayAlert("Kalender", "Hier opent de kalender logic", "OK");
+        await Application.Current.MainPage.Navigation.PushModalAsync(new Views.KalenderView());
     }
 
     [RelayCommand]
