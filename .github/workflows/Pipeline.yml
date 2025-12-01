@@ -1,4 +1,4 @@
-name: MAUI Unit Tests
+name: MAUI Unit Tests (.NET 8)
 
 on:
   push:
@@ -24,12 +24,12 @@ jobs:
       - name: Haal repository op
         uses: actions/checkout@v4
 
-      - name: Installeer .NET SDK 9
+      - name: Installeer .NET SDK 8
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '9.0.x'
+          dotnet-version: '8.0.x'
 
-      - name: Installeer MAUI workload voor .NET9
+      - name: Installeer MAUI workload voor .NET8
         run: dotnet workload install maui
 
       - name: Herstel afhankelijkheden
@@ -46,4 +46,4 @@ jobs:
         with:
           name: build-output
           path: |
-            **/bin/Release/net9.0-*/ 
+            **/bin/Release/net8.0-*/
