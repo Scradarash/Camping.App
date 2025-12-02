@@ -3,6 +3,7 @@ using Camping.Core.Models;
 using Camping.Core.Interfaces.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Camping.App.Views;
 
 namespace Camping.App.ViewModels;
 
@@ -34,29 +35,45 @@ public partial class PlattegrondViewModel : ObservableObject
     [RelayCommand]
     private async Task SelectStaanplaats(Staanplaats staanplaats)
     {
-        // CHecken of datum ingevoerd is, zoniet tonen alert met info bij klikken staanplaats
-        if (!_reservatieDataService.IsValidPeriod())
+        try
         {
-            await Application.Current.MainPage.DisplayAlert("Geen datum", "Selecteer eerst een datum via het kalender icoon.", "OK");
-            return;
+            // Checken of datum ingevoerd is, zoniet tonen alert met info bij klikken staanplaats
+            if (!_reservatieDataService.IsValidPeriod())
+            {
+                await Application.Current.MainPage.DisplayAlert(
+                    "Geen datum",
+                    "Selecteer eerst een datum via het kalender icoon.",
+                    "OK");
+                return;
+            }
+
+            // Popup voor bevestiging
+            bool wantsToReserve = await Application.Current.MainPage.DisplayAlert(
+                staanplaats.Name,
+                $"Wilt u {staanplaats.Name} reserveren voor de periode:\n" +
+                $"{_reservatieDataService.StartDate:dd-MM-yyyy} - {_reservatieDataService.EndDate:dd-MM-yyyy}?",
+                "Reserveer",
+                "Annuleer");
+
+            if (wantsToReserve)
+            {
+                // Tijdelijk opslaan
+                _reservatieDataService.SelectedStaanplaats = staanplaats;
+
+                // Navigatie naar volgende view
+                await Shell.Current.GoToAsync(nameof(ReserveringsoverzichtView));
+            }
         }
-
-        // Popup toont met reserveren bij klikken staanplaats. Popup toont reserveringsperiode, mogelijheid om te reserveren of annulleren
-        // (Heel lang en kan waarschijnlijk anders)
-        bool wantsToReserve = await Application.Current.MainPage.DisplayAlert(staanplaats.Name,$"Wilt u {staanplaats.Name} reserveren voor de periode:\n" +
-        $"{_reservatieDataService.StartDate:dd-MM-yyyy} - {_reservatieDataService.EndDate:dd-MM-yyyy}?", "Reserveer", "Annuleer");
-
-        if (wantsToReserve)
+        catch (Exception ex)
         {
-            //Als op reservering wordt geklikt,  wordt de geselecteerde data staanplaats tijdelijk opgeslagen voor de reserveringsproces
-            _reservatieDataService.SelectedStaanplaats = staanplaats;
-
-            
-            // Navigatie naar volgende view
-            await Shell.Current.GoToAsync("ReserveringsoverzichtView");
+            // Tijdelijk: toon de echte fout
+            await Application.Current.MainPage.DisplayAlert(
+                "Er ging iets mis",
+                ex.ToString(),   // of ex.Message voor korter
+                "OK");
         }
-
     }
+
 
     [RelayCommand]
     private async Task OpenKalender()

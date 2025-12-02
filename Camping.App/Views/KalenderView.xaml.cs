@@ -25,23 +25,24 @@ public partial class KalenderView : ContentPage
     }
     private async void CloseButton_Clicked(object sender, EventArgs e)
     {
-        if (BindingContext is not KalenderViewModel vm)
-            return;
+            if (BindingContext is not KalenderViewModel vm)
+                return;
 
-        if (vm.TrySaveDates())
-        {
-            await DisplayAlert("Datum geselecteerd!", $"Aankomst: ", "OK");
+            if (vm.TrySaveDates())
+            {
+                await DisplayAlert(
+                    "Datum geselecteerd!",
+                    $"Aankomst: {vm.StartDatum:dd-MM-yyyy}\nVertrek: {vm.EndDatum:dd-MM-yyyy}",
+                    "OK");
 
-            await Navigation.PopModalAsync();
-        }
-        else
-        {
-            await DisplayAlert(
-                "Rustaaaagh",
-                "Selecteer alstublieft een aankomst en vertrekdatum.",
-                "OK");
-        }
+                await Navigation.PopModalAsync();
+            }
+            else
+            {
+                await DisplayAlert(
+                    "Rustaaaagh",
+                    "Selecteer alstublieft een aankomst en vertrekdatum.",
+                    "OK");
+            }
     }
-
-
 }

@@ -1,10 +1,13 @@
-﻿namespace Camping.App
+﻿using Camping.App.Views;
+
+namespace Camping.App;
+
+public partial class AppShell : Shell
 {
-    public partial class AppShell : Shell
+    public AppShell()
     {
-        public AppShell()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
+
+        Routing.RegisterRoute(nameof(ReserveringsoverzichtView), typeof(ReserveringsoverzichtView));
     }
 }
