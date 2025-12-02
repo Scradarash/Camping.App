@@ -1,0 +1,59 @@
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:Camping.App.ViewModels"
+             x:Class="Camping.App.Views.ReserveringsoverzichtView"
+             Title="Nieuwe Reservering">
+
+    <Grid RowDefinitions="Auto, Auto, *, Auto" Padding="20" BackgroundColor="White">
+
+        <!-- Header Info -->
+        <VerticalStackLayout Grid.Row="0" Spacing="5" Margin="0,0,0,20">
+            <Label Text="Overzicht Reservering" FontSize="24" FontAttributes="Bold" TextColor="Black"/>
+            <Label Text="{Binding FieldName, StringFormat='Veld: {0}'}" FontSize="18" TextColor="#416722"/>
+            <Label Text="{Binding PeriodDescription}" FontSize="16" TextColor="Gray"/>
+        </VerticalStackLayout>
+
+        <!-- Step Title -->
+        <Label Grid.Row="1" Text="Kies uw accommodatie:" FontSize="18" FontAttributes="Bold" TextColor="Black" Margin="0,0,0,10"/>
+
+        <!-- Accommodation Selection -->
+        <CollectionView Grid.Row="2" ItemsSource="{Binding Accommodations}" SelectionMode="Single" SelectedItem="{Binding SelectedAccommodation}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Border Stroke="Gray" StrokeThickness="1" Margin="0,5" Padding="10" BackgroundColor="#F5F5F5">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup Name="CommonStates">
+                                <VisualState Name="Selected">
+                                    <VisualState.Setters>
+                                        <Setter Property="BackgroundColor" Value="#cce5ff" />
+                                        <Setter Property="Stroke" Value="#0a5dc9" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState Name="Normal" />
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+
+                        <Grid ColumnDefinitions="*, Auto">
+                            <Label Text="{Binding Name}" VerticalOptions="Center" TextColor="Black" FontSize="16"/>
+                            <!-- Visual cue for selection -->
+                            <Label Text="✔" Grid.Column="1" TextColor="#0a5dc9" FontAttributes="Bold" IsVisible="False">
+                                <Label.Triggers>
+                                    <DataTrigger TargetType="Label" Binding="{Binding Source={RelativeSource AncestorType={x:Type Grid}}, Path=Parent.Parent.IsSelected}" Value="True">
+                                        <Setter Property="IsVisible" Value="True"/>
+                                    </DataTrigger>
+                                </Label.Triggers>
+                            </Label>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <!-- Navigation Buttons -->
+        <Grid Grid.Row="3" ColumnDefinitions="*,*" ColumnSpacing="20" Margin="0,20,0,0">
+            <Button Grid.Column="0" Text="Terug" Command="{Binding GoBackCommand}" BackgroundColor="Gray"/>
+            <Button Grid.Column="1" Text="Volgende" Command="{Binding ConfirmAccommodationCommand}" BackgroundColor="#0a5dc9"/>
+        </Grid>
+
+    </Grid>
+</ContentPage>

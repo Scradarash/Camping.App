@@ -23,10 +23,24 @@ namespace Camping.App
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
+
+            //Repositories
             builder.Services.AddSingleton<IStaanplaatsRepository, InMemoryStaanplaatsRepository>();
+            builder.Services.AddSingleton<IAccommodatieRepository, AccommodatieRepository>();
+
+            //Services
             builder.Services.AddSingleton<IStaanplaatsService, StaanplaatsService>();
+            builder.Services.AddSingleton<IReservatieDataService, ReservatieDataService>();
+
+            //ViewModels
             builder.Services.AddTransient<PlattegrondViewModel>();
+            builder.Services.AddTransient<ReserveringsoverzichtViewModel>();
+            builder.Services.AddTransient<KalenderViewModel>();
+
+            //Views
             builder.Services.AddTransient<PlattegrondView>();
+            builder.Services.AddTransient<ReserveringsoverzichtView>();
+            builder.Services.AddTransient<KalenderView>();
 
 
 #if WINDOWS

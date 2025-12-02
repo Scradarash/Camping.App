@@ -15,7 +15,7 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         
-        <!-- Titel van de kalender view -->
+        <!-- Titel -->
         <Label Text="Kies uw verblijf" 
                FontAttributes="Bold" 
                FontSize="20"
