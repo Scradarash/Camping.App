@@ -6,11 +6,11 @@ namespace Camping.Core.Data.Repositories;
 
 public class StaanplaatsRepository : IStaanplaatsRepository
 {
-    // 1. De lijst is nu een private, read-only veld van de klasse.
-    // Dit garandeert dat de data slechts één keer wordt geïnstantieerd.
+    // private, read only
+    // zorgt voor data slechts één keer initialiseerd wordt
     private readonly List<Staanplaats> staanplaatsen;
 
-    // 2. Initialiseer de lijst in de constructor.
+    //initialiseren lijst staanplaatsen
     public StaanplaatsRepository()
     {
         staanplaatsen = new List<Staanplaats>
