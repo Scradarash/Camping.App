@@ -12,9 +12,8 @@ namespace Camping.Core.Data.Repositories
             {
                 new Staanplaats
                 {
-                    Id = 1,
+                    id = 1,
                     Name = "Groepsveld",
-                    IsBeschikbaar = true,
                     XPosition = 0.08,
                     YPosition = 0.13,
                     Width = 0.232,
@@ -22,9 +21,8 @@ namespace Camping.Core.Data.Repositories
                 },
                 new Staanplaats
                 {
-                    Id = 2,
+                    id = 2,
                     Name = "Trekkersveld",
-                    IsBeschikbaar = true,
                     XPosition = 0.11,
                     YPosition = 0.4457,
                     Width = 0.195,
@@ -32,9 +30,8 @@ namespace Camping.Core.Data.Repositories
                 },
                 new Staanplaats
                 {
-                    Id = 3,
+                    id = 3,
                     Name = "Chaletveld",
-                    IsBeschikbaar = false,
                     XPosition = 0.11,
                     YPosition = 0.669,
                     Width = 0.195,
@@ -42,9 +39,8 @@ namespace Camping.Core.Data.Repositories
                 },
                 new Staanplaats
                 {
-                    Id = 4,
+                    id = 4,
                     Name = "Staatseveld",
-                    IsBeschikbaar = true,
                     XPosition = 0.5677,
                     YPosition = 0.576,
                     Width = 0.195,
@@ -52,9 +48,8 @@ namespace Camping.Core.Data.Repositories
                 },
                 new Staanplaats
                 {
-                    Id = 5,
+                    id = 5,
                     Name = "Oranjeveld",
-                    IsBeschikbaar = true,
                     XPosition = 0.37,
                     YPosition = 0.59,
                     Width = 0.145,

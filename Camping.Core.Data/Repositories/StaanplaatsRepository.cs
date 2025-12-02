@@ -4,14 +4,14 @@ using System.Collections.Generic;
 
 namespace Camping.Core.Data.Repositories;
 
-public class InMemoryStaanplaatsRepository : IStaanplaatsRepository
+public class StaanplaatsRepository : IStaanplaatsRepository
 {
     // 1. De lijst is nu een private, read-only veld van de klasse.
     // Dit garandeert dat de data slechts één keer wordt geïnstantieerd.
     private readonly List<Staanplaats> staanplaatsen;
 
     // 2. Initialiseer de lijst in de constructor.
-    public InMemoryStaanplaatsRepository()
+    public StaanplaatsRepository()
     {
         staanplaatsen = new List<Staanplaats>
         {
