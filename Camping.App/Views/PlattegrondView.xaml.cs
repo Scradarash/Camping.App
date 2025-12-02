@@ -10,8 +10,8 @@ public partial class PlattegrondView : ContentPage
     public PlattegrondView(PlattegrondViewModel viewModel)
     {
         InitializeComponent();
-        _viewModel = viewModel;
-        BindingContext = _viewModel;
+        _vm = vm;
+        BindingContext = _vm;
 
         // Wacht tot het plaatje van grootte verandert (bij opstarten of draaien)
         // Dit doen we zodat we de knoppen altijd op de juiste plek kunnen zetten
@@ -27,8 +27,8 @@ public partial class PlattegrondView : ContentPage
 
         ButtonOverlayLayout.Children.Clear();
 
-        double imgWidth = CampingPlattegrond.Width;
-        double imgHeight = CampingPlattegrond.Height;
+        double imgW = CampingPlattegrond.Width;
+        double imgH = CampingPlattegrond.Height;
 
         // Als de breedte of de hoogte 0 is (app start net op), doen we niks
         if (imgWidth <= 0 || imgHeight <= 0) return;

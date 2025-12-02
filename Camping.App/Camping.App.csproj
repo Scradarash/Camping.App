@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>net8.0-android;net8.0-ios;net8.0-maccatalyst</TargetFrameworks>
-		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net8.0-windows10.0.19041.0</TargetFrameworks>
+		<TargetFrameworks>net9.0-android;net9.0-ios;net9.0-maccatalyst</TargetFrameworks>
+		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net9.0-windows10.0.19041.0</TargetFrameworks>
 
 		<OutputType>Exe</OutputType>
 		<RootNamespace>Camping.App</RootNamespace>
@@ -11,13 +11,9 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 
-		<!-- Display name -->
 		<ApplicationTitle>Camping.App</ApplicationTitle>
-
-		<!-- App Identifier -->
 		<ApplicationId>com.companyname.camping.app</ApplicationId>
 
-		<!-- Versions -->
 		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
 		<ApplicationVersion>1</ApplicationVersion>
 
@@ -46,14 +42,14 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\Camping.Core.Data\Camping.Core.Data.csproj" />
-	  <ProjectReference Include="..\Camping.Core\Camping.Core.csproj" />
+		<ProjectReference Include="..\Camping.Core.Data\Camping.Core.Data.csproj" />
+		<ProjectReference Include="..\Camping.Core\Camping.Core.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Compile Update="Views\PlattegrondView.xaml.cs">
-	    <DependentUpon>PlattegrondView.xaml</DependentUpon>
-	  </Compile>
+		<Compile Update="Views\PlattegrondView.xaml.cs">
+			<DependentUpon>PlattegrondView.xaml</DependentUpon>
+		</Compile>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -69,13 +65,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Update="Views\Placeholder.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </None>
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Resources\Images\" />
+		<None Update="Views\Placeholder.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</None>
 	</ItemGroup>
 
 </Project>

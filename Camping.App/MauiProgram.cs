@@ -15,6 +15,7 @@ namespace Camping.App
         public static MauiApp CreateMauiApp()
         {
             var builder = MauiApp.CreateBuilder();
+
             builder
                 .UseMauiApp<App>()
                 .ConfigureSyncfusionCore()
@@ -70,7 +71,6 @@ namespace Camping.App
 #if DEBUG
             builder.Logging.AddDebug();
 #endif
-
             return builder.Build();
         }
     }

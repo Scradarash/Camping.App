@@ -65,7 +65,8 @@
         <!-- Plattegrond -->
         <Image x:Name="CampingPlattegrond"
                Source="camping_plattegrond.png"
-               Aspect="AspectFit"/>
+               Aspect="AspectFit"
+               InputTransparent="True" />
 
         <!-- De Container voor ALLE knoppen, hier staat dus de kalenderknop, afsluitknop en staandplaatsknoppen -->
         <!-- In de toekomst komen hier ook knoppen voor faciliteiten enzo -->
