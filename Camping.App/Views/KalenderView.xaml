@@ -1,0 +1,45 @@
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:calendar="clr-namespace:Syncfusion.Maui.Calendar;assembly=Syncfusion.Maui.Calendar"
+             x:Class="Camping.App.Views.KalenderView"
+             BackgroundColor="#80000000">
+
+    <Grid HorizontalOptions="Center" VerticalOptions="Center" 
+          BackgroundColor="White" 
+          WidthRequest="350" HeightRequest="450" 
+          Padding="20">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <!-- Titel -->
+        <Label Text="Kies uw verblijf" 
+               FontAttributes="Bold" 
+               FontSize="20"
+               TextColor="Black"
+               HorizontalOptions="Center"
+               Margin="0,0,0,10"
+               Grid.Row="0"/>
+
+        <!-- De kalender zelf, in een mooie range, geen datums voor de huidige toegestaan. -->
+        <calendar:SfCalendar x:Name="CampingCalendar"
+                             Grid.Row="1"
+                             SelectionMode="Range"
+                             EnablePastDates="False"
+                             SelectionChanged="OnSelectionChanged" />
+
+        <!-- Afsluitknop -->
+        <Button Text="Opslaan &amp; Sluiten" 
+                Clicked="CloseButton_Clicked"
+                Style="{StaticResource ExitButtonStyle}" 
+                Grid.Row="2"
+                Margin="0,15,0,0"
+                FontSize="16"                
+                HeightRequest="45"
+                WidthRequest="180"
+                HorizontalOptions="Center" />
+    </Grid>
+</ContentPage>

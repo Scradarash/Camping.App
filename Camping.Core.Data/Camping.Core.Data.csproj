@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>net8.0</TargetFramework>
@@ -7,7 +7,11 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Camping.Core\Camping.Core.csproj" />
+	  <PackageReference Include="Syncfusion.Maui.Calendar" Version="27.2.5" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Camping.Core\Camping.Core.csproj" />
 	</ItemGroup>
 
 </Project>

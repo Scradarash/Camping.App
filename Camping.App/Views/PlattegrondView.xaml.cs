@@ -5,64 +5,90 @@ namespace Camping.App.Views;
 
 public partial class PlattegrondView : ContentPage
 {
-    private readonly PlattegrondViewModel _vm;
+    private readonly PlattegrondViewModel _viewModel;
 
-    public PlattegrondView(PlattegrondViewModel vm)
+    public PlattegrondView(PlattegrondViewModel viewModel)
     {
         InitializeComponent();
-        _vm = vm;
-        BindingContext = _vm;
+        _viewModel = viewModel;
+        BindingContext = _viewModel;
 
-        _vm.StaanplaatsGeselecteerd += plaats =>
-        {
-            DisplayAlert(plaats.Name, $"{plaats.Name} is geselecteerd", "OK");
-        };
-
-        CampingPlattegrond.Loaded += (s, e) => DrawButtons();
-        CampingPlattegrond.SizeChanged += (s, e) => DrawButtons();
+        // Wacht tot het plaatje van grootte verandert (bij opstarten of draaien)
+        // Dit doen we zodat we de knoppen altijd op de juiste plek kunnen zetten
+        CampingPlattegrond.SizeChanged += (s, e) => UpdateButtons();
     }
 
-    private void DrawButtons()
+    private void UpdateButtons()
     {
-        if (CampingPlattegrond.Width <= 0 || CampingPlattegrond.Height <= 0)
-            return;
+        // De overlay layout op de zelfde grootte zetten als de plattegrond afbeelding
+        // Hierdoor komen de knoppen altijd op de juiste plek te staan
+        ButtonOverlayLayout.WidthRequest = CampingPlattegrond.Width;
+        ButtonOverlayLayout.HeightRequest = CampingPlattegrond.Height;
 
         ButtonOverlayLayout.Children.Clear();
 
-        double imgW = CampingPlattegrond.Width;
-        double imgH = CampingPlattegrond.Height;
+        double imgWidth = CampingPlattegrond.Width;
+        double imgHeight = CampingPlattegrond.Height;
 
-        foreach (var area in _vm.Staanplaatsen)
+        // Als de breedte of de hoogte 0 is (app start net op), doen we niks
+        if (imgWidth <= 0 || imgHeight <= 0) return;
+
+        // De Staanplaatsen uit het ViewModel genereren
+        foreach (var staanplaats in _viewModel.Staanplaatsen)
         {
             var btn = new Button
             {
-                Text = area.Name,
-                TextColor = Colors.Black,
-                FontSize = 22,
-                BackgroundColor = Color.FromArgb("#416722"),
-                BorderColor = Colors.Black,
-                BorderWidth = 3,
-                CornerRadius = 15,
-                ZIndex = 100
+                Text = staanplaats.Name,
+                Style = (Style)Resources["MapButtonStyle"],
+
+                Command = _viewModel.SelectStaanplaatsCommand,
+                CommandParameter = staanplaats
             };
 
-            btn.Command = _vm.SelectCommand;
-            btn.CommandParameter = area;
-
-            var pointer = new PointerGestureRecognizer();
-            pointer.PointerEntered += (s, e) => btn.BackgroundColor = Color.FromArgb("#369c0b");
-            pointer.PointerExited += (s, e) => btn.BackgroundColor = Color.FromArgb("#416722");
-            btn.GestureRecognizers.Add(pointer);
-
-            double x = area.XPosition * imgW;
-            double y = area.YPosition * imgH;
-            double w = area.Width * imgW;
-            double h = area.Height * imgH;
+            double x = staanplaats.XPosition * imgWidth;
+            double y = staanplaats.YPosition * imgHeight;
+            double w = staanplaats.Width * imgWidth;
+            double h = staanplaats.Height * imgHeight;
 
             AbsoluteLayout.SetLayoutFlags(btn, AbsoluteLayoutFlags.None);
             AbsoluteLayout.SetLayoutBounds(btn, new Rect(x, y, w, h));
 
             ButtonOverlayLayout.Children.Add(btn);
         }
+
+        // Kalender Knop
+        var kalenderBtn = new Button
+        {
+            Text = "Kalender",
+            Style = (Style)Resources["KalenderButtonStyle"],
+            Command = _viewModel.OpenKalenderCommand
+        };
+
+        double kalenderX = 0.4 * imgWidth;
+        double kalenderY = 0.05 * imgHeight;
+        double kalenderW = 0.08 * imgWidth;
+        double kalenderH = 0.06 * imgHeight;
+
+        AbsoluteLayout.SetLayoutFlags(kalenderBtn, AbsoluteLayoutFlags.None);
+        AbsoluteLayout.SetLayoutBounds(kalenderBtn, new Rect(kalenderX, kalenderY, kalenderW, kalenderH));
+        ButtonOverlayLayout.Children.Add(kalenderBtn);
+
+        // Afsluiten Knop
+        var exitBtn = new Button
+        {
+            Text = "Afsluiten",
+            // Stijl ophalen uit de App.xaml resources, daar staat namelijk alle styling voor knoppen die niet per view verschillen.
+            Style = (Style)Application.Current.Resources["ExitButtonStyle"],
+            Command = _viewModel.ExitAppCommand
+        };
+
+        double exitX = 0.8632 * imgWidth;
+        double exitY = 0.89 * imgHeight;
+        double exitW = 0.08 * imgWidth;
+        double exitH = 0.06 * imgHeight;
+
+        AbsoluteLayout.SetLayoutFlags(exitBtn, AbsoluteLayoutFlags.None);
+        AbsoluteLayout.SetLayoutBounds(exitBtn, new Rect(exitX, exitY, exitW, exitH));
+        ButtonOverlayLayout.Children.Add(exitBtn);
     }
 }

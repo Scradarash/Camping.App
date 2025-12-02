@@ -1,9 +1,12 @@
-﻿using Microsoft.Extensions.Logging;
-using Camping.App.ViewModels;
+﻿using Camping.App.ViewModels;
 using Camping.App.Views;
-using Microsoft.Maui.LifecycleEvents;
-using Camping.Core.Interfaces.Repositories;
 using Camping.Core.Data.Repositories;
+using Camping.Core.Interfaces.Repositories;
+using Camping.Core.Interfaces.Services;
+using Camping.Core.Services;
+using Microsoft.Extensions.Logging;
+using Microsoft.Maui.LifecycleEvents;
+using Syncfusion.Maui.Core.Hosting;
 
 namespace Camping.App
 {
@@ -15,33 +18,50 @@ namespace Camping.App
 
             builder
                 .UseMauiApp<App>()
+                .ConfigureSyncfusionCore()
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
 
+            //Repositories
             builder.Services.AddSingleton<IStaanplaatsRepository, InMemoryStaanplaatsRepository>();
-            builder.Services.AddSingleton<PlattegrondViewModel>();
-            builder.Services.AddSingleton<PlattegrondView>();
+            builder.Services.AddSingleton<IAccommodatieRepository, AccommodatieRepository>();
+
+            //Services
+            builder.Services.AddSingleton<IStaanplaatsService, StaanplaatsService>();
+            builder.Services.AddSingleton<IReservatieDataService, ReservatieDataService>();
+
+            //ViewModels
+            builder.Services.AddTransient<PlattegrondViewModel>();
+            builder.Services.AddTransient<ReserveringsoverzichtViewModel>();
+            builder.Services.AddTransient<KalenderViewModel>();
+
+            //Views
+            builder.Services.AddTransient<PlattegrondView>();
+            builder.Services.AddTransient<ReserveringsoverzichtView>();
+            builder.Services.AddTransient<KalenderView>();
+
 
 #if WINDOWS
             builder.ConfigureLifecycleEvents(events =>
             {
-                events.AddWindows(windows =>
+                // Make sure to add "using Microsoft.Maui.LifecycleEvents;" in the top of the file 
+                events.AddWindows(windowsLifecycleBuilder =>
                 {
-                    windows.OnWindowCreated(window =>
+                    windowsLifecycleBuilder.OnWindowCreated(window =>
                     {
                         window.ExtendsContentIntoTitleBar = false;
-
                         var handle = WinRT.Interop.WindowNative.GetWindowHandle(window);
                         var id = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(handle);
                         var appWindow = Microsoft.UI.Windowing.AppWindow.GetFromWindowId(id);
-
-                        if (appWindow.Presenter is Microsoft.UI.Windowing.OverlappedPresenter p)
+                        switch (appWindow.Presenter)
                         {
-                            p.SetBorderAndTitleBar(false, false);
-                            p.Maximize();
+                            case Microsoft.UI.Windowing.OverlappedPresenter overlappedPresenter:
+                                overlappedPresenter.SetBorderAndTitleBar(false, false);
+                                overlappedPresenter.Maximize();
+                                break;
                         }
                     });
                 });

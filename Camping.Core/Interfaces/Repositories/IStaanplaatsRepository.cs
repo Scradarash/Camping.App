@@ -1,10 +1,8 @@
-﻿using System.Collections.Generic;
-using Camping.Core.Models;
+﻿using Camping.Core.Models;
 
-namespace Camping.Core.Interfaces.Repositories
+namespace Camping.Core.Interfaces.Repositories;
+
+public interface IStaanplaatsRepository
 {
-    public interface IStaanplaatsRepository
-    {
-        IEnumerable<Staanplaats> GetAll();
-    }
+    IEnumerable<Staanplaats> GetAll();
 }

@@ -9,6 +9,37 @@
                 <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
                 <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
             </ResourceDictionary.MergedDictionaries>
+
+            <!-- Ben erachter gekomen dat je stijlen ook door het hele project kan gebruiken. -->
+            <!-- Dat gebeurt nu hier, deze zijn niet private binnen de view waar de stijl in wordt gezet. -->
+            <!-- Dit is relaxt omdat de KalenderView geen gebruik kon maken van de stijl van de afsluit knop. -->
+            <!-- Nu is er geen dubbele code, de afsluit knop en de kalender sluit knop verwijzen beide naar de styling hieronder. -->
+            <Style x:Key="ExitButtonStyle" TargetType="Button">
+                <Setter Property="TextColor" Value="White"/>
+                <Setter Property="FontAttributes" Value="Bold"/>
+                <Setter Property="FontSize" Value="22"/>
+                <Setter Property="BorderColor" Value="Black"/>
+                <Setter Property="BorderWidth" Value="3"/>
+                <Setter Property="CornerRadius" Value="10"/>
+                <Setter Property="BackgroundColor" Value="#701212"/>
+                <Setter Property="VisualStateManager.VisualStateGroups">
+                    <VisualStateGroupList>
+                        <VisualStateGroup x:Name="CommonStates">
+                            <VisualState x:Name="Normal">
+                                <VisualState.Setters>
+                                    <Setter Property="BackgroundColor" Value="#701212" />
+                                </VisualState.Setters>
+                            </VisualState>
+                            <VisualState x:Name="PointerOver">
+                                <VisualState.Setters>
+                                    <Setter Property="BackgroundColor" Value="#b30c0c" />
+                                </VisualState.Setters>
+                            </VisualState>
+                        </VisualStateGroup>
+                    </VisualStateGroupList>
+                </Setter>
+            </Style>
+
         </ResourceDictionary>
     </Application.Resources>
 </Application>
