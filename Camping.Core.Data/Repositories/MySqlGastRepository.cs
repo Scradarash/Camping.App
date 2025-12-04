@@ -13,7 +13,8 @@ namespace Camping.Core.Data.Repositories
     public class MySqlGastRepository : IGastRepository
     {
         private readonly DbConnection _db;
-
+        
+        // Instantieert connectie met database, elke methode in repository kan MySql connecties maken
         public MySqlGastRepository(DbConnection db)
         {
             _db = db;
@@ -23,7 +24,7 @@ namespace Camping.Core.Data.Repositories
         {
             var result = new List<Gast>();
 
-            // Connectie openen met de DB 
+            // Connectie openen en automatisch sluiten van de DB via 'await using'
             await using var connection = _db.CreateConnection();
             await connection.OpenAsync();
 
@@ -31,7 +32,8 @@ namespace Camping.Core.Data.Repositories
             var command = connection.CreateCommand();
             command.CommandText = @"SELECT id, naam, geboortedatum, email, telefoon FROM gasten;";
 
-            // Alle gast gegevens uit de DB lezen en in een lijst opslaan (result)
+            // Alle gast gegevens uit de DB per rij lezen en in een lijst opslaan (result)
+            // In 'while' loop, DB entiteiten mappen naar models in 'Gast'
             await using var reader = await command.ExecuteReaderAsync();
             
             while (await reader.ReadAsync())
