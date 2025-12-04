@@ -62,6 +62,9 @@
 		<MauiXaml Update="Views\ReserveringsoverzichtView.xaml">
 		  <Generator>MSBuild:Compile</Generator>
 		</MauiXaml>
+		<MauiXaml Update="Views\StaanplaatsDetailView.xaml">
+		  <Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
 	</ItemGroup>
 
 	<ItemGroup>

@@ -16,17 +16,13 @@ public class AccommodatieRepository : IAccommodatieRepository
         {
             new Accommodatie { Id = 1, Name = "Tent" },
             new Accommodatie { Id = 2, Name = "Caravan" },
-            new Accommodatie { Id = 3, Name = "Camper" }
-
+            new Accommodatie { Id = 3, Name = "Camper" },
+            new Accommodatie { Id = 4, Name = "Chalet" }
         };
-
     }
 
     public IEnumerable<Accommodatie> GetAll()
     {
         return _accommodaties;
     }
-
-
-    
 }

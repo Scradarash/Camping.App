@@ -49,7 +49,27 @@ public partial class PlattegrondViewModel : ObservableObject
                 return;
             }
 
-            // Popup voor bevestiging
+            // 2. Haal de nieuwe Detail View op via Dependency Injection
+            var detailView = _serviceProvider.GetRequiredService<StaanplaatsDetailView>();
+
+            // 3. Initialiseer de ViewModel met de geklikte staanplaats
+            if (detailView.BindingContext is StaanplaatsDetailViewModel vm)
+            {
+                vm.Initialize(staanplaats);
+            }
+
+            // 4. Open als Modal (Popup)
+            await Application.Current.MainPage.Navigation.PushModalAsync(detailView);
+        }
+        catch (Exception ex)
+        {
+            await Application.Current.MainPage.DisplayAlert("Fout", ex.Message, "OK");
+        }
+    }
+
+    //oude display alert van Peter//
+
+            /*// Popup voor bevestiging
             bool wantsToReserve = await Application.Current.MainPage.DisplayAlert(
                 staanplaats.Name,
                 $"Wilt u {staanplaats.Name} reserveren voor de periode:\n" +
@@ -73,9 +93,8 @@ public partial class PlattegrondViewModel : ObservableObject
                 "Er ging iets mis",
                 ex.ToString(),   // of ex.Message voor korter
                 "OK");
-        }
-    }
-
+        }*/
+   // }
 
     [RelayCommand]
     private async Task OpenKalender()
@@ -85,8 +104,6 @@ public partial class PlattegrondViewModel : ObservableObject
 
         await Application.Current.MainPage.Navigation.PushModalAsync(kalenderView);
     }
-
-
 
     [RelayCommand]
     private void ExitApp()

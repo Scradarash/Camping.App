@@ -37,11 +37,13 @@ namespace Camping.App
             builder.Services.AddTransient<PlattegrondViewModel>();
             builder.Services.AddTransient<ReserveringsoverzichtViewModel>();
             builder.Services.AddTransient<KalenderViewModel>();
+            builder.Services.AddTransient<StaanplaatsDetailViewModel>();
 
             //Views
             builder.Services.AddTransient<PlattegrondView>();
             builder.Services.AddTransient<ReserveringsoverzichtView>();
             builder.Services.AddTransient<KalenderView>();
+            builder.Services.AddTransient<StaanplaatsDetailView>();
 
 
 #if WINDOWS
