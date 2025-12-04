@@ -13,23 +13,23 @@ namespace Camping.Core.Services
             _repository = repository;
         }
 
-        public IEnumerable<Accommodatie> GetGeschikteAccommodaties(Staanplaats staanplaats)
+        public IEnumerable<Accommodatie> GetGeschikteAccommodaties(Veld veld)
         {
             var alleAccommodaties = _repository.GetAll();
             var geschikteLijst = new List<Accommodatie>();
 
             // Veiligheidscheck
-            if (staanplaats == null) return geschikteLijst;
+            if (veld == null) return geschikteLijst;
 
             foreach (var acc in alleAccommodaties)
             {
                 bool toevoegen = false;
 
-                if (staanplaats.Name.Contains("Trekkersveld"))
+                if (veld.Name.Contains("Trekkersveld"))
                 {
                     if (acc.Name == "Tent") toevoegen = true;
                 }
-                else if (staanplaats.Name.Contains("Chaletveld"))
+                else if (veld.Name.Contains("Chaletveld"))
                 {
                     if (acc.Name == "Chalet") toevoegen = true;
                 }

@@ -11,14 +11,14 @@ namespace Camping.App.ViewModels;
 
 public partial class PlattegrondViewModel : ObservableObject
 {
-    private readonly IStaanplaatsService _staanplaatsService;
+    private readonly IVeldService _veldService;
     private readonly IReservatieDataService _reservatieDataService;
     private readonly IServiceProvider _serviceProvider;
-    public ObservableCollection<Staanplaats> Staanplaatsen { get; } = new();
+    public ObservableCollection<Veld> Velden { get; } = new();
 
-    public PlattegrondViewModel(IStaanplaatsService staanplaatsService, IReservatieDataService reservatieService, IServiceProvider serviceProvider)
+    public PlattegrondViewModel(IVeldService veldService, IReservatieDataService reservatieService, IServiceProvider serviceProvider)
     {
-        _staanplaatsService = staanplaatsService;
+        _veldService = veldService;
         _reservatieDataService = reservatieService;
         _serviceProvider = serviceProvider;
         LoadAreas();
@@ -26,20 +26,20 @@ public partial class PlattegrondViewModel : ObservableObject
 
     private void LoadAreas()
     {
-        Staanplaatsen.Clear();
-        var staanplaatsen = _staanplaatsService.GetAll();
-        foreach (var p in staanplaatsen)
+        Velden.Clear();
+        var velden = _veldService.GetAll();
+        foreach (var p in velden)
         {
-            Staanplaatsen.Add(p);
+            Velden.Add(p);
         }
     }
 
     [RelayCommand]
-    private async Task SelectStaanplaats(Staanplaats staanplaats)
+    private async Task SelectVeld(Veld veld)
     {
         try
         {
-            // Checken of datum ingevoerd is, zoniet tonen alert met info bij klikken staanplaats
+            // Checken of datum ingevoerd is, zoniet tonen alert met info bij klikken op veld
             if (!_reservatieDataService.IsValidPeriod())
             {
                 await Application.Current.MainPage.DisplayAlert(
@@ -50,12 +50,12 @@ public partial class PlattegrondViewModel : ObservableObject
             }
 
             // 2. Haal de nieuwe Detail View op via Dependency Injection
-            var detailView = _serviceProvider.GetRequiredService<StaanplaatsDetailView>();
+            var detailView = _serviceProvider.GetRequiredService<VeldDetailView>();
 
-            // 3. Initialiseer de ViewModel met de geklikte staanplaats
-            if (detailView.BindingContext is StaanplaatsDetailViewModel vm)
+            // 3. Initialiseer de ViewModel met het geklikte veld
+            if (detailView.BindingContext is VeldDetailViewModel vm)
             {
-                vm.Initialize(staanplaats);
+                vm.Initialize(veld);
             }
 
             // 4. Open als Modal (Popup)
@@ -66,35 +66,6 @@ public partial class PlattegrondViewModel : ObservableObject
             await Application.Current.MainPage.DisplayAlert("Fout", ex.Message, "OK");
         }
     }
-
-    //oude display alert van Peter//
-
-            /*// Popup voor bevestiging
-            bool wantsToReserve = await Application.Current.MainPage.DisplayAlert(
-                staanplaats.Name,
-                $"Wilt u {staanplaats.Name} reserveren voor de periode:\n" +
-                $"{_reservatieDataService.StartDate:dd-MM-yyyy} - {_reservatieDataService.EndDate:dd-MM-yyyy}?",
-                "Reserveer",
-                "Annuleer");
-
-            if (wantsToReserve)
-            {
-                // Tijdelijk opslaan
-                _reservatieDataService.SelectedStaanplaats = staanplaats;
-
-                // Navigatie naar volgende view
-                await Shell.Current.GoToAsync(nameof(ReserveringsoverzichtView));
-            }
-        }
-        catch (Exception ex)
-        {
-            // Tijdelijk: toon de echte fout
-            await Application.Current.MainPage.DisplayAlert(
-                "Er ging iets mis",
-                ex.ToString(),   // of ex.Message voor korter
-                "OK");
-        }*/
-   // }
 
     [RelayCommand]
     private async Task OpenKalender()

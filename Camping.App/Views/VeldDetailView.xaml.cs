@@ -2,9 +2,9 @@ using Camping.App.ViewModels;
 
 namespace Camping.App.Views;
 
-public partial class StaanplaatsDetailView : ContentPage
+public partial class VeldDetailView : ContentPage
 {
-    public StaanplaatsDetailView(StaanplaatsDetailViewModel viewModel)
+    public VeldDetailView(VeldDetailViewModel viewModel)
     {
         InitializeComponent();
         BindingContext = viewModel;

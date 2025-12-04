@@ -35,20 +35,20 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
 
     private void LoadData()
     {
-        // Veiligheidscheck: als er geen staanplaats is, stop dan (voorkomt crashes)
-        if (_reservatieDataService.SelectedStaanplaats == null || _reservatieDataService.StartDate == null)
+        // Veiligheidscheck: als er geen veld is, stop dan (voorkomt crashes)
+        if (_reservatieDataService.SelectedVeld == null || _reservatieDataService.StartDate == null)
         {
             return;
         }
 
-        FieldName = _reservatieDataService.SelectedStaanplaats.Name;
+        FieldName = _reservatieDataService.SelectedVeld.Name;
         PeriodDescription = $"{_reservatieDataService.StartDate:dd-MM-yyyy} tot {_reservatieDataService.EndDate:dd-MM-yyyy}";
 
         // HIER GEBEURT HET FILTEREN
         Accommodaties.Clear();
 
         // We vragen aan de service: wat mag er staan op dit veld"
-        var gefilterdeLijst = _accommodatieService.GetGeschikteAccommodaties(_reservatieDataService.SelectedStaanplaats);
+        var gefilterdeLijst = _accommodatieService.GetGeschikteAccommodaties(_reservatieDataService.SelectedVeld);
 
         foreach (var acc in gefilterdeLijst)
         {

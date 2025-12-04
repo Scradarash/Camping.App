@@ -2,7 +2,7 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:Camping.App.ViewModels"
-             x:Class="Camping.App.Views.StaanplaatsDetailView"
+             x:Class="Camping.App.Views.VeldDetailView"
              BackgroundColor="#80000000">
 
     <Border Stroke="Gray"
@@ -23,7 +23,7 @@
 
             <!-- Titel -->
             <Label Grid.Row="0" 
-                   Text="{Binding Staanplaats.Name}" 
+                   Text="{Binding Veld.Name}" 
                    FontSize="24" 
                    FontAttributes="Bold" 
                    TextColor="Black"
@@ -47,7 +47,7 @@
                     <VerticalStackLayout Spacing="15">
 
                         <!-- Beschrijving -->
-                        <Label Text="{Binding Staanplaats.Description}"
+                        <Label Text="{Binding Veld.Description}"
                                TextColor="Black"
                                FontSize="15"
                                LineBreakMode="WordWrap" />
@@ -93,7 +93,7 @@
                            HorizontalOptions="Center"/>
 
                     <!-- Stroom Icoon -->
-                    <Border IsVisible="{Binding Staanplaats.HasElectricity}"
+                    <Border IsVisible="{Binding Veld.HasElectricity}"
                             Stroke="LightGray"
                             StrokeThickness="1"
                             BackgroundColor="#FAFAFA"
@@ -109,7 +109,7 @@
                     </Border>
 
                     <!-- Water Icoon -->
-                    <Border IsVisible="{Binding Staanplaats.HasWater}"
+                    <Border IsVisible="{Binding Veld.HasWater}"
                             Stroke="LightGray"
                             StrokeThickness="1"
                             BackgroundColor="#FAFAFA"

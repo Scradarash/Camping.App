@@ -8,13 +8,13 @@ using System.Collections.ObjectModel;
 
 namespace Camping.App.ViewModels
 {
-    public partial class StaanplaatsDetailViewModel : ObservableObject
+    public partial class VeldDetailViewModel : ObservableObject
     {
         private readonly IReservatieDataService _reservatieDataService;
         private readonly IAccommodatieService _accommodatieService; // Gebruik Service ipv Repository
 
         [ObservableProperty]
-        private Staanplaats? staanplaats;
+        private Veld? veld;
 
         [ObservableProperty]
         private string? periodeTekst;
@@ -22,15 +22,15 @@ namespace Camping.App.ViewModels
         public ObservableCollection<Accommodatie> GeschikteAccommodaties { get; } = new();
 
         // Constructor injecteert nu de Service
-        public StaanplaatsDetailViewModel(IReservatieDataService reservatieDataService, IAccommodatieService accommodatieService)
+        public VeldDetailViewModel(IReservatieDataService reservatieDataService, IAccommodatieService accommodatieService)
         {
             _reservatieDataService = reservatieDataService;
             _accommodatieService = accommodatieService;
         }
 
-        public void Initialize(Staanplaats geselecteerdeStaanplaats)
+        public void Initialize(Veld geselecteerdeVeld)
         {
-            Staanplaats = geselecteerdeStaanplaats;
+            Veld = geselecteerdeVeld;
 
             if (_reservatieDataService.StartDate.HasValue && _reservatieDataService.EndDate.HasValue)
             {
@@ -38,7 +38,7 @@ namespace Camping.App.ViewModels
             }
 
             GeschikteAccommodaties.Clear();
-            var lijst = _accommodatieService.GetGeschikteAccommodaties(Staanplaats);
+            var lijst = _accommodatieService.GetGeschikteAccommodaties((Veld)Veld);
 
             foreach (var item in lijst)
             {
@@ -49,7 +49,7 @@ namespace Camping.App.ViewModels
         [RelayCommand]
         private async Task Reserveer()
         {
-            _reservatieDataService.SelectedStaanplaats = Staanplaats;
+            _reservatieDataService.SelectedVeld = Veld;
 
             await Application.Current.MainPage.Navigation.PopModalAsync();
             await Shell.Current.GoToAsync(nameof(ReserveringsoverzichtView));

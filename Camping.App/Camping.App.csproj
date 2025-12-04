@@ -50,6 +50,9 @@
 		<Compile Update="Views\PlattegrondView.xaml.cs">
 			<DependentUpon>PlattegrondView.xaml</DependentUpon>
 		</Compile>
+		<Compile Update="Views\VeldDetailView.xaml.cs">
+		  <DependentUpon>VeldDetailView.xaml</DependentUpon>
+		</Compile>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -62,7 +65,7 @@
 		<MauiXaml Update="Views\ReserveringsoverzichtView.xaml">
 		  <Generator>MSBuild:Compile</Generator>
 		</MauiXaml>
-		<MauiXaml Update="Views\StaanplaatsDetailView.xaml">
+		<MauiXaml Update="Views\VeldDetailView.xaml">
 		  <Generator>MSBuild:Compile</Generator>
 		</MauiXaml>
 	</ItemGroup>

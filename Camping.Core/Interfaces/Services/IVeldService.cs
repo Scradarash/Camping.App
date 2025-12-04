@@ -7,8 +7,8 @@ using Camping.Core.Models;
 
 namespace Camping.Core.Interfaces.Services
 {
-    public interface IStaanplaatsService
+    public interface IVeldService
     {
-        IEnumerable<Staanplaats> GetAll();
+        IEnumerable<Veld> GetAll();
     }
 }

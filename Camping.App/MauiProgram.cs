@@ -26,11 +26,11 @@ namespace Camping.App
                 });
 
             //Repositories
-            builder.Services.AddSingleton<IStaanplaatsRepository, InMemoryStaanplaatsRepository>();
+            builder.Services.AddSingleton<IVeldRepository, VeldRepository>();
             builder.Services.AddSingleton<IAccommodatieRepository, AccommodatieRepository>();
 
             //Services
-            builder.Services.AddSingleton<IStaanplaatsService, StaanplaatsService>();
+            builder.Services.AddSingleton<IVeldService, VeldService>();
             builder.Services.AddSingleton<IReservatieDataService, ReservatieDataService>();
             builder.Services.AddSingleton<IAccommodatieService, AccommodatieService>();
 
@@ -38,13 +38,13 @@ namespace Camping.App
             builder.Services.AddTransient<PlattegrondViewModel>();
             builder.Services.AddTransient<ReserveringsoverzichtViewModel>();
             builder.Services.AddTransient<KalenderViewModel>();
-            builder.Services.AddTransient<StaanplaatsDetailViewModel>();
+            builder.Services.AddTransient<VeldDetailViewModel>();
 
             //Views
             builder.Services.AddTransient<PlattegrondView>();
             builder.Services.AddTransient<ReserveringsoverzichtView>();
             builder.Services.AddTransient<KalenderView>();
-            builder.Services.AddTransient<StaanplaatsDetailView>();
+            builder.Services.AddTransient <VeldDetailView>();
 
 
 #if WINDOWS

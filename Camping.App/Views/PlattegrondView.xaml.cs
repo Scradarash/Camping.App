@@ -33,22 +33,22 @@ public partial class PlattegrondView : ContentPage
         // Als de breedte of de hoogte 0 is (app start net op), doen we niks
         if (imgWidth <= 0 || imgHeight <= 0) return;
 
-        // De Staanplaatsen uit het ViewModel genereren
-        foreach (var staanplaats in _viewModel.Staanplaatsen)
+        // De velden uit het ViewModel genereren
+        foreach (var veld in _viewModel.Velden)
         {
             var btn = new Button
             {
-                Text = staanplaats.Name,
+                Text = veld.Name,
                 Style = (Style)Resources["MapButtonStyle"],
 
-                Command = _viewModel.SelectStaanplaatsCommand,
-                CommandParameter = staanplaats
+                Command = _viewModel.SelectVeldCommand,
+                CommandParameter = veld
             };
 
-            double x = staanplaats.XPosition * imgWidth;
-            double y = staanplaats.YPosition * imgHeight;
-            double w = staanplaats.Width * imgWidth;
-            double h = staanplaats.Height * imgHeight;
+            double x = veld.XPosition * imgWidth;
+            double y = veld.YPosition * imgHeight;
+            double w = veld.Width * imgWidth;
+            double h = veld.Height * imgHeight;
 
             AbsoluteLayout.SetLayoutFlags(btn, AbsoluteLayoutFlags.None);
             AbsoluteLayout.SetLayoutBounds(btn, new Rect(x, y, w, h));
