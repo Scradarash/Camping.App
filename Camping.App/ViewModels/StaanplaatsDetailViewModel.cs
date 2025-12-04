@@ -11,7 +11,7 @@ namespace Camping.App.ViewModels
     public partial class StaanplaatsDetailViewModel : ObservableObject
     {
         private readonly IReservatieDataService _reservatieDataService;
-        private readonly IAccommodatieRepository _accommodatieRepository;
+        private readonly IAccommodatieService _accommodatieService; // Gebruik Service ipv Repository
 
         [ObservableProperty]
         private Staanplaats? staanplaats;
@@ -21,10 +21,11 @@ namespace Camping.App.ViewModels
 
         public ObservableCollection<Accommodatie> GeschikteAccommodaties { get; } = new();
 
-        public StaanplaatsDetailViewModel(IReservatieDataService reservatieDataService, IAccommodatieRepository accommodatieRepository)
+        // Constructor injecteert nu de Service
+        public StaanplaatsDetailViewModel(IReservatieDataService reservatieDataService, IAccommodatieService accommodatieService)
         {
             _reservatieDataService = reservatieDataService;
-            _accommodatieRepository = accommodatieRepository;
+            _accommodatieService = accommodatieService;
         }
 
         public void Initialize(Staanplaats geselecteerdeStaanplaats)
@@ -36,35 +37,12 @@ namespace Camping.App.ViewModels
                 PeriodeTekst = $"{_reservatieDataService.StartDate:dd-MM-yyyy} - {_reservatieDataService.EndDate:dd-MM-yyyy}";
             }
 
-            FilterAccommodaties();
-        }
-
-        private void FilterAccommodaties()
-        {
             GeschikteAccommodaties.Clear();
-            var alleAccommodaties = _accommodatieRepository.GetAll();
+            var lijst = _accommodatieService.GetGeschikteAccommodaties(Staanplaats);
 
-            foreach (var acc in alleAccommodaties) //filter welke accomodatie op welk veld komt
+            foreach (var item in lijst)
             {
-                bool toevoegen = false;
-
-                if (Staanplaats.Name.Contains("Trekkersveld"))
-                {
-                    if (acc.Name == "Tent") toevoegen = true;
-                }
-                else if (Staanplaats.Name.Contains("Chaletveld"))
-                {
-                    if (acc.Name == "Chalet") toevoegen = true;
-                }
-                else
-                {
-                    if (acc.Name != "Chalet") toevoegen = true;
-                }
-
-                if (toevoegen)
-                {
-                    GeschikteAccommodaties.Add(acc);
-                }
+                GeschikteAccommodaties.Add(item);
             }
         }
 

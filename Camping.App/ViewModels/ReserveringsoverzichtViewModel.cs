@@ -2,7 +2,6 @@
 using Camping.Core.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Camping.Core.Interfaces.Repositories;
 using System.Collections.ObjectModel;
 
 namespace Camping.App.ViewModels;
@@ -10,7 +9,9 @@ namespace Camping.App.ViewModels;
 public partial class ReserveringsoverzichtViewModel : ObservableObject
 {
     private readonly IReservatieDataService _reservatieDataService;
-    private readonly IAccommodatieRepository _accommodatieRepository;
+
+    // gebruiken de Service voor de logica (ipv de Repository)
+    private readonly IAccommodatieService _accommodatieService;
 
     [ObservableProperty]
     private string periodDescription;
@@ -23,27 +24,41 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
 
     public ObservableCollection<Accommodatie> Accommodaties { get; } = new();
 
-    public ReserveringsoverzichtViewModel(IReservatieDataService reservatieDataService, IAccommodatieRepository accommodatieRepository)
+    // De Service komt binnen via de constructor
+    public ReserveringsoverzichtViewModel(IReservatieDataService reservatieDataService, IAccommodatieService accommodatieService)
     {
         _reservatieDataService = reservatieDataService;
-        _accommodatieRepository = accommodatieRepository;
+        _accommodatieService = accommodatieService; // Opslaan in de variabele
 
         LoadData();
     }
 
     private void LoadData()
     {
-        if (_reservatieDataService.SelectedStaanplaats != null && _reservatieDataService.StartDate != null)
+        // Veiligheidscheck: als er geen staanplaats is, stop dan (voorkomt crashes)
+        if (_reservatieDataService.SelectedStaanplaats == null || _reservatieDataService.StartDate == null)
         {
-            FieldName = _reservatieDataService.SelectedStaanplaats.Name;
-            PeriodDescription = $"{_reservatieDataService.StartDate:dd-MM-yyyy} tot {_reservatieDataService.EndDate:dd-MM-yyyy}";
+            return;
         }
 
-        // checkboxen
+        FieldName = _reservatieDataService.SelectedStaanplaats.Name;
+        PeriodDescription = $"{_reservatieDataService.StartDate:dd-MM-yyyy} tot {_reservatieDataService.EndDate:dd-MM-yyyy}";
+
+        // HIER GEBEURT HET FILTEREN
         Accommodaties.Clear();
-        foreach (var acc in _accommodatieRepository.GetAll())
+
+        // We vragen aan de service: wat mag er staan op dit veld"
+        var gefilterdeLijst = _accommodatieService.GetGeschikteAccommodaties(_reservatieDataService.SelectedStaanplaats);
+
+        foreach (var acc in gefilterdeLijst)
         {
             Accommodaties.Add(acc);
+        }
+
+        // Selecteer automatisch de eerste optie (handig voor de gebruiker)
+        if (Accommodaties.Count > 0)
+        {
+            SelectedAccommodatie = Accommodaties[0];
         }
     }
 
