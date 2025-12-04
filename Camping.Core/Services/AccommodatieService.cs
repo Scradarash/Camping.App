@@ -25,7 +25,6 @@ namespace Camping.Core.Services
             {
                 bool toevoegen = false;
 
-                // --- CENTRALE LOGICA ---
                 if (staanplaats.Name.Contains("Trekkersveld"))
                 {
                     if (acc.Name == "Tent") toevoegen = true;
@@ -39,7 +38,6 @@ namespace Camping.Core.Services
                     // Overige velden: Alles behalve Chalet
                     if (acc.Name != "Chalet") toevoegen = true;
                 }
-                // -----------------------
 
                 if (toevoegen)
                 {

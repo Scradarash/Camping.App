@@ -5,7 +5,6 @@
              x:Class="Camping.App.Views.StaanplaatsDetailView"
              BackgroundColor="#80000000">
 
-    <!-- AANPASSINGEN ZITTEN IN DEZE BORDER -->
     <Border Stroke="Gray"
             StrokeThickness="1"
             BackgroundColor="White"
@@ -13,85 +12,137 @@
             Margin="30"
             HorizontalOptions="Center"
             VerticalOptions="Center"
-            WidthRequest="500"
-            HeightRequest="600">
+            WidthRequest="600"
+            HeightRequest="550">
 
         <Border.StrokeShape>
             <RoundRectangle CornerRadius="15"/>
         </Border.StrokeShape>
 
-        <Grid RowDefinitions="Auto, Auto, Auto, Auto, *, Auto" RowSpacing="15">
+        <Grid RowDefinitions="Auto, Auto, Auto, *, Auto" RowSpacing="15">
 
-            <!-- 1. Titel (Iets groter gemaakt) -->
+            <!-- Titel -->
             <Label Grid.Row="0" 
                    Text="{Binding Staanplaats.Name}" 
-                   FontSize="26" 
+                   FontSize="24" 
                    FontAttributes="Bold" 
                    TextColor="Black"
                    HorizontalOptions="Center"/>
 
-            <!-- 2. Periode -->
+            <!-- Periode -->
             <Label Grid.Row="1" 
                    Text="{Binding PeriodeTekst}"
                    TextColor="#416722"
                    FontSize="16"
                    HorizontalOptions="Center"/>
 
+            <!-- Scheidingslijn -->
             <BoxView Grid.Row="2" HeightRequest="1" Color="LightGray" />
 
-            <!-- 3. Beschrijving -->
-            <Label Grid.Row="3"
-                   Text="{Binding Staanplaats.Description}"
-                   TextColor="Black"
-                   FontSize="16"
-                   LineBreakMode="WordWrap" />
+            <!-- HOOFD INHOUD (2 Kolommen) -->
+            <Grid Grid.Row="3" ColumnDefinitions="*, Auto" ColumnSpacing="20">
 
-            <!-- 4. Lijst (Scrollbaar gemaakt voor als het veel tekst is) -->
-            <ScrollView Grid.Row="4">
-                <VerticalStackLayout>
-                    <Label Text="Toegestaan op dit veld:" 
+                <!-- LINKER KOLOM: Beschrijving + Lijst -->
+                <ScrollView Grid.Column="0">
+                    <VerticalStackLayout Spacing="15">
+
+                        <!-- Beschrijving -->
+                        <Label Text="{Binding Staanplaats.Description}"
+                               TextColor="Black"
+                               FontSize="15"
+                               LineBreakMode="WordWrap" />
+
+                        <!-- Lijst Accommodaties -->
+                        <VerticalStackLayout>
+                            <Label Text="Toegestaan:" 
+                                   FontAttributes="Bold" 
+                                   FontSize="14"
+                                   TextColor="Gray"
+                                   Margin="0,0,0,5"/>
+
+                            <CollectionView ItemsSource="{Binding GeschikteAccommodaties}"
+                                            SelectionMode="None">
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Stroke="Transparent" 
+                                                BackgroundColor="#F0F0F0" 
+                                                Padding="10,5" 
+                                                Margin="0,3"
+                                                HorizontalOptions="Start">
+                                            <Border.StrokeShape>
+                                                <RoundRectangle CornerRadius="5"/>
+                                            </Border.StrokeShape>
+                                            <Label Text="{Binding Name}" 
+                                                   TextColor="#333"
+                                                   FontSize="14"
+                                                   FontAttributes="Bold"/>
+                                        </Border>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </ScrollView>
+
+                <!-- RECHTER KOLOM: Voorzieningen -->
+                <VerticalStackLayout Grid.Column="1" Spacing="10" WidthRequest="100">
+                    <Label Text="Voorzieningen:" 
                            FontAttributes="Bold" 
-                           FontSize="14"
+                           FontSize="12"
                            TextColor="Gray"
-                           Margin="0,0,0,10"/>
+                           HorizontalOptions="Center"/>
 
-                    <CollectionView ItemsSource="{Binding GeschikteAccommodaties}"
-                                    SelectionMode="None">
-                        <CollectionView.ItemTemplate>
-                            <DataTemplate>
-                                <Border Stroke="Transparent" 
-                                        BackgroundColor="#F0F0F0" 
-                                        Padding="15,10" 
-                                        Margin="0,4">
-                                    <Border.StrokeShape>
-                                        <RoundRectangle CornerRadius="8"/>
-                                    </Border.StrokeShape>
-                                    <Label Text="{Binding Name}" 
-                                           TextColor="#333"
-                                           FontSize="16"
-                                           FontAttributes="Bold"/>
-                                </Border>
-                            </DataTemplate>
-                        </CollectionView.ItemTemplate>
-                    </CollectionView>
+                    <!-- Stroom Icoon -->
+                    <Border IsVisible="{Binding Staanplaats.HasElectricity}"
+                            Stroke="LightGray"
+                            StrokeThickness="1"
+                            BackgroundColor="#FAFAFA"
+                            Padding="10"
+                            HorizontalOptions="Center">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="10"/>
+                        </Border.StrokeShape>
+                        <VerticalStackLayout>
+                            <Label Text="⚡" FontSize="24" HorizontalOptions="Center"/>
+                            <Label Text="Stroom" FontSize="10" TextColor="Gray" HorizontalOptions="Center"/>
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- Water Icoon -->
+                    <Border IsVisible="{Binding Staanplaats.HasWater}"
+                            Stroke="LightGray"
+                            StrokeThickness="1"
+                            BackgroundColor="#FAFAFA"
+                            Padding="10"
+                            HorizontalOptions="Center">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="10"/>
+                        </Border.StrokeShape>
+                        <VerticalStackLayout>
+                            <Label Text="💧" FontSize="24" HorizontalOptions="Center"/>
+                            <Label Text="Water" FontSize="10" TextColor="Gray" HorizontalOptions="Center"/>
+                        </VerticalStackLayout>
+                    </Border>
                 </VerticalStackLayout>
-            </ScrollView>
+            </Grid>
 
-            <!-- 5. Knoppen (Iets groter gemaakt) -->
-            <Grid Grid.Row="5" ColumnDefinitions="*,*" ColumnSpacing="15" Margin="0,10,0,0">
+            <!-- Knoppen -->
+            <Grid Grid.Row="4" ColumnDefinitions="*,*" ColumnSpacing="15" Margin="0,10,0,0">
                 <Button Grid.Column="0" 
                         Text="Annuleer" 
                         Command="{Binding AnnuleerCommand}" 
                         BackgroundColor="Gray" 
                         TextColor="White"
-                        HeightRequest="50"/>
+                        HeightRequest="50"
+                        CornerRadius="10"/>
 
                 <Button Grid.Column="1" 
                         Text="Reserveer" 
                         Command="{Binding ReserveerCommand}" 
                         BackgroundColor="#0a5dc9" 
                         TextColor="White"
-                        HeightRequest="50"/>
+                        HeightRequest="50"
+                        CornerRadius="10"/>
             </Grid>
         </Grid>
     </Border>
