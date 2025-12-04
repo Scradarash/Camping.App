@@ -7,6 +7,7 @@ using MySqlConnector;
 using Camping.Core.Data.Repositories;
 using Camping.Core.Interfaces.Repositories;
 using Camping.Core.Models;
+using Camping.Core.Data.Helpers;
 
 namespace Camping.Core.Data.Repositories
 {
