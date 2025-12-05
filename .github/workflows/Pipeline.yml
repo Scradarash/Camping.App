@@ -24,13 +24,17 @@ jobs:
       - name: Haal repository op
         uses: actions/checkout@v4
 
+      - name: Verwijder vooraf geïnstalleerde .NET SDK’s
+        run: |
+          Get-ChildItem "C:\Program Files\dotnet\sdk" | Remove-Item -Recurse -Force
+
       - name: Installeer .NET SDK 8
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '8.0.x'
 
-      - name: Installeer MAUI workload voor .NET8
-        run: dotnet workload install maui
+      - name: Restore MAUI workloads
+        run: dotnet workload restore
 
       - name: Herstel afhankelijkheden
         run: dotnet restore
