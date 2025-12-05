@@ -13,6 +13,7 @@ namespace Camping.Core.Data.Helpers
         private readonly string _connectionString;
 
         // Connectie gegevens invoeren database in constructor
+        // Gegevens veranderen naar je eigen gegevens (vooral UserID, Port en Password)
         public DbConnection()
         {
             var builder = new MySqlConnectionStringBuilder
