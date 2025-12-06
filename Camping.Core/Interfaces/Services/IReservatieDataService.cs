@@ -11,5 +11,6 @@ namespace Camping.Core.Interfaces.Services
         Veld? SelectedVeld { get; set; }
 
         bool IsValidPeriod();
+        string ValidateInput(DateTime? start, DateTime? end);
     }
 }

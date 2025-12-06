@@ -70,9 +70,9 @@ namespace Camping.App.ViewModels
                 bool openKalender = await Application.Current.MainPage.DisplayAlert(
                     "Geen datum",
                     "U moet een periode selecteren om te kunnen reserveren.",
-                    "Open Kalender", "Annuleer");
+                    "Annuleer", "Open Kalender");
 
-                if (openKalender)
+                if (!openKalender)
                 {
                     // ALS de gebruiker op "Open Kalender" klikt, open dan de Kalender View en sluit deze View
                     await Application.Current.MainPage.Navigation.PopModalAsync();
