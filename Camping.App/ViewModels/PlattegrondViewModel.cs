@@ -3,8 +3,6 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Camping.Core.Models;
 using Camping.Core.Interfaces.Services;
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using Camping.App.Views;
 
 namespace Camping.App.ViewModels;
@@ -28,9 +26,9 @@ public partial class PlattegrondViewModel : ObservableObject
     {
         Velden.Clear();
         var velden = _veldService.GetAll();
-        foreach (var p in velden)
+        foreach (var v in velden)
         {
-            Velden.Add(p);
+            Velden.Add(v);
         }
     }
 
@@ -39,16 +37,6 @@ public partial class PlattegrondViewModel : ObservableObject
     {
         try
         {
-            // Checken of datum ingevoerd is, zoniet tonen alert met info bij klikken op veld
-            if (!_reservatieDataService.IsValidPeriod())
-            {
-                await Application.Current.MainPage.DisplayAlert(
-                    "Geen datum",
-                    "Selecteer eerst een datum via het kalender icoon.",
-                    "OK");
-                return;
-            }
-
             // 2. Haal de nieuwe Detail View op via Dependency Injection
             var detailView = _serviceProvider.GetRequiredService<VeldDetailView>();
 

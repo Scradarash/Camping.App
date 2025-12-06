@@ -14,5 +14,22 @@ namespace Camping.Core.Services
         {
             return StartDate != null && EndDate != null && EndDate > StartDate;
         }
+        public string ValidateInput(DateTime? start, DateTime? end)
+        {
+            // Check of de datums zijn ingevuld
+            if (start == null || end == null)
+                return "Selecteer alstublieft een start- en einddatum.";
+
+            // Check of de einddatum na de startdatum ligt
+            if (end <= start)
+                return "De vertrekdatum moet na de aankomstdatum liggen.";
+
+            // Check of de datums binnen het huidige kalenderjaar liggen
+            if (start.Value.Year != DateTime.Now.Year || end.Value.Year != DateTime.Now.Year)
+                return "Reserveren is alleen mogelijk binnen het huidige kalenderjaar.";
+
+            // Als alle checks slagen, empty string, dus geen foutmelding
+            return string.Empty;
+        }
     }
 }

@@ -14,32 +14,49 @@ namespace Camping.App.ViewModels
         public KalenderViewModel(IReservatieDataService reservatieService)
         {
             _reservatieService = reservatieService;
+
+            // Minimum datum ingesteld op vandaag, dus er kan niet in het verleden geboekt worden (door binding in view)
+            MinDate = DateTime.Now.Date;
+            // En de maximum datum stellen we in op het einde van het huidige jaar
+            MaxDate = new DateTime(DateTime.Now.Year + 1, 12, 31);
         }
 
-        // Publieke read-only properties zodat de View ze kan lezen, dit was dus een omweg om dingen CA vriendelijk te houden,
-        // maar dit is mogelijk niet t beste oplossing.
+        // Properties voor de kalender restricties
+        public DateTime MinDate { get; }
+        public DateTime MaxDate { get; }
+
         public DateTime? StartDatum => _startDatum;
         public DateTime? EndDatum => _eindDatum;
 
-        // Deze metode wordt vanuit de KlanederView aangeroepen in OnSelectionChanged,
-        // als de geselecteerde periode verandert, wordt het nieuwe periode opgeslagen
         public void UpdateRange(CalendarDateRange range)
         {
             _startDatum = range?.StartDate;
             _eindDatum = range?.EndDate;
         }
 
-        // Logica om op te slaan. De View vraagt of he gelukt is of niet voordat die de datums opslaat,
-        // om later bij niet  invoeren van een datum een melding te kunnen tonen
-        public bool TrySaveDates()
+        // Veranderd van bool naar string voor betere foutmeldingen (error opslaan in string, tonen in view.xaml.cs)
+        public string OpslaanDatum()
         {
+            // Checken of er iets is geselecteerd, zo niet, gewoon lege string teruggeven.
             if (_startDatum == null || _eindDatum == null)
-                return false;
+            {
+                return string.Empty;
+            }
 
+            // Als er wel iets is geselecteerd, valideren we de input (check service voor details)
+            string error = _reservatieService.ValidateInput(_startDatum, _eindDatum);
+
+            // Als er een error is (dus string = niet leeg) error returnen.
+            if (!string.IsNullOrEmpty(error))
+            {
+                return error;
+            }
+
+            // Na checks, datums opslaan
             _reservatieService.StartDate = _startDatum;
             _reservatieService.EndDate = _eindDatum;
 
-            return true;
+            return string.Empty;
         }
     }
 }
