@@ -2,7 +2,7 @@
 
 namespace Camping.Core.Interfaces.Repositories;
 
-public interface IStaanplaatsRepository
+public interface IVeldRepository
 {
-    IEnumerable<Staanplaats> GetAll();
+    IEnumerable<Veld> GetAll();
 }

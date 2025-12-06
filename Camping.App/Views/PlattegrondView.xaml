@@ -3,7 +3,7 @@
              x:Class="Camping.App.Views.PlattegrondView">
 
     <ContentPage.Resources>
-        <!-- Stijl voor staanplaatsen -->
+        <!-- Stijl voor velden -->
         <Style x:Key="MapButtonStyle" TargetType="Button">
             <Setter Property="TextColor" Value="Black"/>
             <Setter Property="FontAttributes" Value="Bold"/>

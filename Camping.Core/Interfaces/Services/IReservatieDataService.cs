@@ -8,7 +8,7 @@ namespace Camping.Core.Interfaces.Services
         DateTime? StartDate { get; set; }
         DateTime? EndDate { get; set; }
 
-        Staanplaats? SelectedStaanplaats { get; set; }
+        Veld? SelectedVeld { get; set; }
 
         bool IsValidPeriod();
     }

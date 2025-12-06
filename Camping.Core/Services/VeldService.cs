@@ -9,16 +9,16 @@ using Camping.Core.Models;
 
 namespace Camping.Core.Services
 {
-    public class StaanplaatsService : IStaanplaatsService
+    public class VeldService : IVeldService
     {
-        private readonly IStaanplaatsRepository _repository;
+        private readonly IVeldRepository _repository;
 
-        public StaanplaatsService(IStaanplaatsRepository repository)
+        public VeldService(IVeldRepository repository)
         {
             _repository = repository;
         }
 
-        public IEnumerable<Staanplaats> GetAll()
+        public IEnumerable<Veld> GetAll()
         {
             return _repository.GetAll();
         }

@@ -6,9 +6,12 @@ using System.Threading.Tasks;
 
 namespace Camping.Core.Models
 {
-    public class Staanplaats : ClickArea
+    public class Veld : ClickArea
     {
         public required string Name { get; set; }
         public required int id { get; set; }
+
+        //Beschrijving veld
+        public string Description { get; set; } = "Geen beschrijving beschikbaar.";
     }
 }

@@ -7,11 +7,11 @@ namespace Camping.Core.Models
 {
     public class CampingPlattegrond
     {
-        public List<Staanplaats> Staanplaatsen { get; }
+        public List<Veld> Velden { get; }
 
-        public CampingPlattegrond(IStaanplaatsRepository repo)
+        public CampingPlattegrond(IVeldRepository repo)
         {
-            Staanplaatsen = repo.GetAll().ToList();
+            Velden = repo.GetAll().ToList();
         }
     }
 }
