@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Camping.Core", "Camping.Cor
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestCore", "TestCore\TestCore.csproj", "{D10BE4E2-89D6-438D-A118-2188FBF93474}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DB_connectie test", "DB_connectie test\DB_connectie test.csproj", "{F0BC80C2-5F1D-4909-811F-B3F895F0A8B1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -34,6 +36,10 @@ Global
 		{D10BE4E2-89D6-438D-A118-2188FBF93474}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D10BE4E2-89D6-438D-A118-2188FBF93474}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D10BE4E2-89D6-438D-A118-2188FBF93474}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F0BC80C2-5F1D-4909-811F-B3F895F0A8B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F0BC80C2-5F1D-4909-811F-B3F895F0A8B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F0BC80C2-5F1D-4909-811F-B3F895F0A8B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F0BC80C2-5F1D-4909-811F-B3F895F0A8B1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
