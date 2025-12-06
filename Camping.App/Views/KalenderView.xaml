@@ -28,7 +28,8 @@
         <calendar:SfCalendar x:Name="CampingCalendar"
                              Grid.Row="1"
                              SelectionMode="Range"
-                             EnablePastDates="False"
+                             MinimumDate="{Binding MinDate}"
+                             MaximumDate="{Binding MaxDate}"
                              SelectionChanged="OnSelectionChanged" />
 
         <!-- Afsluitknop -->

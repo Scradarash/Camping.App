@@ -14,32 +14,42 @@ namespace Camping.App.ViewModels
         public KalenderViewModel(IReservatieDataService reservatieService)
         {
             _reservatieService = reservatieService;
+
+            // Minimum datum ingesteld op vandaag, dus er kan niet in het verleden geboekt worden (door binding in view)
+            MinDate = DateTime.Now.Date;
+            // En de maximum datum stellen we in op het einde van het huidige jaar
+            MaxDate = new DateTime(DateTime.Now.Year, 12, 31);
         }
 
-        // Publieke read-only properties zodat de View ze kan lezen, dit was dus een omweg om dingen CA vriendelijk te houden,
-        // maar dit is mogelijk niet t beste oplossing.
+        // Properties voor de kalender restricties
+        public DateTime MinDate { get; }
+        public DateTime MaxDate { get; }
+
         public DateTime? StartDatum => _startDatum;
         public DateTime? EndDatum => _eindDatum;
 
-        // Deze metode wordt vanuit de KlanederView aangeroepen in OnSelectionChanged,
-        // als de geselecteerde periode verandert, wordt het nieuwe periode opgeslagen
         public void UpdateRange(CalendarDateRange range)
         {
             _startDatum = range?.StartDate;
             _eindDatum = range?.EndDate;
         }
 
-        // Logica om op te slaan. De View vraagt of he gelukt is of niet voordat die de datums opslaat,
-        // om later bij niet  invoeren van een datum een melding te kunnen tonen
-        public bool TrySaveDates()
+        // Veranderd van bool naar string voor betere foutmeldingen (error opslaan in string, tonen in view.xaml.cs)
+        public string OpslaanDatum()
         {
+            // Contoleren of er een datum geselecteerd is
             if (_startDatum == null || _eindDatum == null)
-                return false;
+                return string.Empty;
 
+            // Dan controleren of die datum ook binnen het huidige jaar valt
+            if (_startDatum.Value.Year != DateTime.Now.Year || _eindDatum.Value.Year != DateTime.Now.Year)
+                return "Reserveren is alleen mogelijk binnen het huidige kalenderjaar.";
+
+            // Zo ja, opslaan
             _reservatieService.StartDate = _startDatum;
             _reservatieService.EndDate = _eindDatum;
 
-            return true;
+            return string.Empty;
         }
     }
 }
