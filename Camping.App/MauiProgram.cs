@@ -27,6 +27,7 @@ namespace Camping.App
 
             //Repositories
             builder.Services.AddSingleton<IVeldRepository, VeldRepository>();
+            builder.Services.AddSingleton<IStaanplaatsRepository, StaanplaatsRepository>();
             builder.Services.AddSingleton<IAccommodatieRepository, AccommodatieRepository>();
 
             //Services

@@ -39,8 +39,7 @@ public partial class PlattegrondView : ContentPage
             var btn = new Button
             {
                 Text = veld.Name,
-                Style = (Style)Resources["MapButtonStyle"],
-
+                Style = (Style)Application.Current.Resources["MapButtonStyle"],
                 Command = _viewModel.SelectVeldCommand,
                 CommandParameter = veld
             };

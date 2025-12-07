@@ -1,4 +1,5 @@
 ﻿using Camping.App.Views;
+using Camping.Core.Interfaces.Repositories;
 using Camping.Core.Interfaces.Services;
 using Camping.Core.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -10,8 +11,8 @@ namespace Camping.App.ViewModels
     public partial class VeldDetailViewModel : ObservableObject
     {
         private readonly IReservatieDataService _reservatieDataService;
-        private readonly IAccommodatieService _accommodatieService;
-        private readonly IServiceProvider _serviceProvider; // Nodig om de Kalender te kunnen openen
+        private readonly IStaanplaatsRepository _staanplaatsRepository;
+        private readonly IServiceProvider _serviceProvider;
 
         [ObservableProperty]
         private Veld? veld;
@@ -19,13 +20,18 @@ namespace Camping.App.ViewModels
         [ObservableProperty]
         private string? periodeTekst;
 
-        public ObservableCollection<Accommodatie> GeschikteAccommodaties { get; } = new();
+        public ObservableCollection<Staanplaats> Staanplaatsen { get; } = new();
 
-        // ServiceProvider toegevoegd aan constructor
-        public VeldDetailViewModel(IReservatieDataService reservatieDataService, IAccommodatieService accommodatieService, IServiceProvider serviceProvider)
+        [ObservableProperty]
+        private Staanplaats? geselecteerdeStaanplaats;
+
+        public VeldDetailViewModel(
+            IReservatieDataService reservatieDataService,
+            IStaanplaatsRepository staanplaatsRepository,
+            IServiceProvider serviceProvider)
         {
             _reservatieDataService = reservatieDataService;
-            _accommodatieService = accommodatieService;
+            _staanplaatsRepository = staanplaatsRepository;
             _serviceProvider = serviceProvider;
         }
 
@@ -41,23 +47,26 @@ namespace Camping.App.ViewModels
                 PeriodeTekst = $"{_reservatieDataService.StartDate:dd-MM-yyyy} - {_reservatieDataService.EndDate:dd-MM-yyyy}";
             }
 
-            // 3. Probeer accommodaties te laden, maar crash niet als dit mislukt (bijv. door missende datum)
-            try
-            {
-                GeschikteAccommodaties.Clear();
-                // Als de service datums nodig heeft, kan dit fout gaan als ze null zijn.
-                // Daarom try-catch gebruiken. Dit is een tijdelijke oplossing, idealiter zou de service zelf beter met null-waarden om moeten gaan.
-                var lijst = _accommodatieService.GetGeschikteAccommodaties((Veld)Veld);
+            Staanplaatsen.Clear();
+            // Haal alle staanplaatsen op voor dit veld
+            var plekken = _staanplaatsRepository.GetByVeldId(Veld.id);
 
-                foreach (var item in lijst)
-                {
-                    GeschikteAccommodaties.Add(item);
-                }
-            }
-            catch (Exception)
+            foreach (var plek in plekken)
             {
-                // Een catch zodat het scherm niet crasht bij fouten, zoals missende periode.
+                Staanplaatsen.Add(plek);
             }
+        }
+
+        [RelayCommand]
+        // Klikken op een staanplaats
+        private async Task KiesPlek(Staanplaats plek)
+        {
+            GeselecteerdeStaanplaats = plek;
+
+            await Application.Current.MainPage.DisplayAlert(
+                "Plek Geselecteerd",
+                $"Je hebt plek nummer {plek.id} ({plek.AccommodatieType}) geselecteerd.",
+                "OK");
         }
 
         [RelayCommand]
@@ -83,7 +92,7 @@ namespace Camping.App.ViewModels
             }
 
             // Wel nog ff periode checken op geldigheid, ook al zou dit al in de Kalender gebeurd moeten zijn
-            if (!_reservatieDataService.IsValidPeriod()) 
+            if (!_reservatieDataService.IsValidPeriod())
             {
                 await Application.Current.MainPage.DisplayAlert("Ongeldig", "De geselecteerde periode is niet geldig.", "OK");
                 return;
