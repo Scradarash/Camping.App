@@ -1,52 +1,53 @@
-using Microsoft.Maui.Layouts;
 using Camping.App.ViewModels;
+using Microsoft.Maui.Layouts;
 
 namespace Camping.App.Views;
 
 public partial class PlattegrondView : ContentPage
 {
     private readonly PlattegrondViewModel _viewModel;
+
     public PlattegrondView(PlattegrondViewModel viewModel)
     {
         InitializeComponent();
         _viewModel = viewModel;
         BindingContext = _viewModel;
 
-        CampingPlattegrond.SizeChanged += (s, e) => AddButtons();
+        // Wacht tot het plaatje van grootte verandert (bij opstarten of draaien)
+        // Dit doen we zodat we de knoppen altijd op de juiste plek kunnen zetten
+        CampingPlattegrond.SizeChanged += (s, e) => UpdateButtons();
     }
 
-    private void AddButtons()
+    private void UpdateButtons()
     {
+        // De overlay layout op de zelfde grootte zetten als de plattegrond afbeelding
+        // Hierdoor komen de knoppen altijd op de juiste plek te staan
+        ButtonOverlayLayout.WidthRequest = CampingPlattegrond.Width;
+        ButtonOverlayLayout.HeightRequest = CampingPlattegrond.Height;
+
         ButtonOverlayLayout.Children.Clear();
 
         double imgWidth = CampingPlattegrond.Width;
         double imgHeight = CampingPlattegrond.Height;
 
-        foreach (var area in _viewModel.Areas)
+        // Als de breedte of de hoogte 0 is (app start net op), doen we niks
+        if (imgWidth <= 0 || imgHeight <= 0) return;
+
+        // De velden uit het ViewModel genereren
+        foreach (var veld in _viewModel.Velden)
         {
             var btn = new Button
             {
-                Text = area.Name,
-                TextColor = Colors.Black,
-                FontAttributes = FontAttributes.Bold,
-                FontSize = 22,
-                BackgroundColor = Color.FromArgb("#416722"),
-                BorderColor = Colors.Black,
-                BorderWidth = 3,
-                CornerRadius = 15
+                Text = veld.Name,
+                Style = (Style)Application.Current.Resources["MapButtonStyle"],
+                Command = _viewModel.SelectVeldCommand,
+                CommandParameter = veld
             };
 
-            btn.Clicked += (s, e) => DisplayAlert($"{area.Name}", $"Het {area.Name.ToLower()} is een prachtige staanplaats voor al uw campeergenot", "OK");
-
-            var pointer = new PointerGestureRecognizer();
-            pointer.PointerEntered += (s, e) => btn.BackgroundColor = Color.FromArgb("#369c0b");
-            pointer.PointerExited += (s, e) => btn.BackgroundColor = Color.FromArgb("#416722");
-            btn.GestureRecognizers.Add(pointer);
-
-            double x = area.XPosition * imgWidth;
-            double y = area.YPosition * imgHeight;
-            double w = area.Width * imgWidth;
-            double h = area.Height * imgHeight;
+            double x = veld.XPosition * imgWidth;
+            double y = veld.YPosition * imgHeight;
+            double w = veld.Width * imgWidth;
+            double h = veld.Height * imgHeight;
 
             AbsoluteLayout.SetLayoutFlags(btn, AbsoluteLayoutFlags.None);
             AbsoluteLayout.SetLayoutBounds(btn, new Rect(x, y, w, h));
@@ -54,24 +55,31 @@ public partial class PlattegrondView : ContentPage
             ButtonOverlayLayout.Children.Add(btn);
         }
 
+        // Kalender Knop
+        var kalenderBtn = new Button
+        {
+            Text = "Kalender",
+            Style = (Style)Resources["KalenderButtonStyle"],
+            Command = _viewModel.OpenKalenderCommand
+        };
+
+        double kalenderX = 0.4 * imgWidth;
+        double kalenderY = 0.05 * imgHeight;
+        double kalenderW = 0.08 * imgWidth;
+        double kalenderH = 0.06 * imgHeight;
+
+        AbsoluteLayout.SetLayoutFlags(kalenderBtn, AbsoluteLayoutFlags.None);
+        AbsoluteLayout.SetLayoutBounds(kalenderBtn, new Rect(kalenderX, kalenderY, kalenderW, kalenderH));
+        ButtonOverlayLayout.Children.Add(kalenderBtn);
+
+        // Afsluiten Knop
         var exitBtn = new Button
         {
             Text = "Afsluiten",
-            TextColor = Colors.White,
-            FontAttributes = FontAttributes.Bold,
-            FontSize = 22,
-            BackgroundColor = Color.FromArgb("#701212"),
-            BorderColor = Colors.Black,
-            BorderWidth = 3,
-            CornerRadius = 10
+            // Stijl ophalen uit de App.xaml resources, daar staat namelijk alle styling voor knoppen die niet per view verschillen.
+            Style = (Style)Application.Current.Resources["ExitButtonStyle"],
+            Command = _viewModel.ExitAppCommand
         };
-
-        exitBtn.Clicked += (s, e) => System.Environment.Exit(0);
-
-        var exitPointer = new PointerGestureRecognizer();
-        exitPointer.PointerEntered += (s, e) => exitBtn.BackgroundColor = Color.FromArgb("#b30c0c");
-        exitPointer.PointerExited += (s, e) => exitBtn.BackgroundColor = Color.FromArgb("#701212");
-        exitBtn.GestureRecognizers.Add(exitPointer);
 
         double exitX = 0.8632 * imgWidth;
         double exitY = 0.89 * imgHeight;
@@ -80,7 +88,6 @@ public partial class PlattegrondView : ContentPage
 
         AbsoluteLayout.SetLayoutFlags(exitBtn, AbsoluteLayoutFlags.None);
         AbsoluteLayout.SetLayoutBounds(exitBtn, new Rect(exitX, exitY, exitW, exitH));
-
         ButtonOverlayLayout.Children.Add(exitBtn);
     }
 }

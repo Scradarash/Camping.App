@@ -1,9 +1,13 @@
-﻿using Microsoft.Extensions.Logging;
-using Camping.App.ViewModels;
+﻿using Camping.App.ViewModels;
 using Camping.App.Views;
-using Microsoft.Maui.LifecycleEvents;
-using Camping.Core.Interfaces.Repositories;
 using Camping.Core.Data.Repositories;
+using Camping.Core.Data.Helpers;
+using Camping.Core.Interfaces.Repositories;
+using Camping.Core.Interfaces.Services;
+using Camping.Core.Services;
+using Microsoft.Extensions.Logging;
+using Microsoft.Maui.LifecycleEvents;
+using Syncfusion.Maui.Core.Hosting;
 
 namespace Camping.App
 {
@@ -12,19 +16,40 @@ namespace Camping.App
         public static MauiApp CreateMauiApp()
         {
             var builder = MauiApp.CreateBuilder();
+
             builder
                 .UseMauiApp<App>()
+                .ConfigureSyncfusionCore()
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
+            builder.Services.AddSingleton<DbConnection>();
+            //Repositories
+            builder.Services.AddSingleton<IVeldRepository, VeldRepository>();
+            builder.Services.AddSingleton<IStaanplaatsRepository, StaanplaatsRepository>();
+            builder.Services.AddSingleton<IAccommodatieRepository, AccommodatieRepository>();
+            builder.Services.AddSingleton<IReserveringRepository, ReserveringRepository>();
 
-            builder.Services.AddSingleton<PlattegrondViewModel>();
-            builder.Services.AddSingleton<PlattegrondView>();
-            builder.Services.AddSingleton<IStaanplaatsRepository, InMemoryStaanplaatsRepository>();
-            builder.Services.AddSingleton<PlattegrondViewModel>();
-            builder.Services.AddSingleton<PlattegrondView>();
+            //Services
+            builder.Services.AddSingleton<IVeldService, VeldService>();
+            builder.Services.AddSingleton<IReservatieDataService, ReservatieDataService>();
+            builder.Services.AddSingleton<IAccommodatieService, AccommodatieService>();
+            builder.Services.AddSingleton<IReserveringService, ReserveringService>();
+
+            //ViewModels
+            builder.Services.AddTransient<PlattegrondViewModel>();
+            builder.Services.AddTransient<ReserveringsoverzichtViewModel>();
+            builder.Services.AddTransient<KalenderViewModel>();
+            builder.Services.AddTransient<VeldDetailViewModel>();
+
+            //Views
+            builder.Services.AddTransient<PlattegrondView>();
+            builder.Services.AddTransient<ReserveringsoverzichtView>();
+            builder.Services.AddTransient<KalenderView>();
+            builder.Services.AddTransient <VeldDetailView>();
+
 
 #if WINDOWS
             builder.ConfigureLifecycleEvents(events =>
@@ -53,7 +78,6 @@ namespace Camping.App
 #if DEBUG
             builder.Logging.AddDebug();
 #endif
-
             return builder.Build();
         }
     }
