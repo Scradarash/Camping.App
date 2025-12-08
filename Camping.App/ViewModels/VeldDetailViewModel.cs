@@ -66,11 +66,11 @@ namespace Camping.App.ViewModels
         }
 
         [RelayCommand]
-        // Klikken op een staanplaats
-        private void KiesStaanplaats(Staanplaats plek)
+        //Klikken op een staanplaats
+        private async Task KiesStaanplaats(Staanplaats plek)
         {
             GeselecteerdeStaanplaats = plek;
-            _reservatieDataService.SelectedStaanplaats = plek;
+            _reservatieDataService.SelectedStaanplaats = plek; // FIX: gekozen plek ook opslaan in service
 
             await Application.Current.MainPage.DisplayAlert(
                 "Plek Geselecteerd",
