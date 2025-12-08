@@ -75,7 +75,7 @@ namespace Camping.Core.Data.Repositories
                     id = reader.GetInt32("id"),
                     VeldId = reader.GetInt32("veld_id"),
 
-                    // Als er geen types gekoppeld zijn, toon 'Onbekend', anders de lijst met types (dit is AI, ik snap t ook niet helemaal)
+                    // Als er geen types gekoppeld zijn, toon 'Onbekend', anders de lijst met types
                     AccommodatieType = reader.IsDBNull(reader.GetOrdinal("types"))
                                        ? "Onbekend"
                                        : reader.GetString("types"),

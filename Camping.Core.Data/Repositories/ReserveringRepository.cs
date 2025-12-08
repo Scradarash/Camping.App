@@ -16,7 +16,7 @@ namespace Camping.Core.Data.Repositories
 
         public void Add(Reservering reservering)
         {
-            // Connectie maken via de helper in plaats van direct in de repository (fucking Peter jonge)
+            // Connectie maken via de helper in plaats van direct in de repository
             using var connection = _db.CreateConnection();
             connection.Open();
 

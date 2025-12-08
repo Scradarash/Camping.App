@@ -35,8 +35,7 @@ namespace Camping.Core.Services
                 }
                 else
                 {
-                    // Overige velden: Alles behalve Chalet
-                    if (acc.Name != "Chalet") toevoegen = true;
+                    toevoegen = true;
                 }
 
                 if (toevoegen)
