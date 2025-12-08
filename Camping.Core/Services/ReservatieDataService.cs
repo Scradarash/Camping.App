@@ -8,6 +8,7 @@ namespace Camping.Core.Services
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
         public Veld? SelectedVeld { get; set; }
+        public Staanplaats? SelectedStaanplaats { get; set; }
 
         //Nodig voor later controleren op correctheid datum
         public bool IsValidPeriod()

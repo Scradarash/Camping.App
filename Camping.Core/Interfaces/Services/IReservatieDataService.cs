@@ -7,8 +7,8 @@ namespace Camping.Core.Interfaces.Services
 
         DateTime? StartDate { get; set; }
         DateTime? EndDate { get; set; }
-
         Veld? SelectedVeld { get; set; }
+        Staanplaats? SelectedStaanplaats { get; set; }
 
         bool IsValidPeriod();
         string ValidateInput(DateTime? start, DateTime? end);

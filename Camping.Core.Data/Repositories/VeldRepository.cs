@@ -42,7 +42,7 @@ public class VeldRepository : IVeldRepository
                 id = 3,
                 Name = "Winterveld",
                 ImageName = "winterveld.png",
-                Description = "Luxe veld voorzien van verharde paden en eigen stroomaansluitingen, uitsluitend voor chalets.",
+                Description = "Mooi veld dat geschikt is voor winterkamperen.",
                 XPosition = 0.11,
                 YPosition = 0.669,
                 Width = 0.195,

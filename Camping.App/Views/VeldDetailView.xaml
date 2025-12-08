@@ -5,6 +5,39 @@
              x:Class="Camping.App.Views.VeldDetailView"
              BackgroundColor="#80000000">
 
+    <!-- Stijl voor het kleuren van aangeklikte knop -->
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Style x:Key="SelectedMapButtonStyle" TargetType="Button">
+                <Setter Property="TextColor" Value="White"/>
+                <Setter Property="FontAttributes" Value="Bold"/>
+                <Setter Property="FontSize" Value="22"/>
+                <Setter Property="BorderColor" Value="Black"/>
+                <Setter Property="BorderWidth" Value="2"/>
+                <Setter Property="CornerRadius" Value="15"/>
+                <Setter Property="Padding" Value="0"/>
+                <Setter Property="BackgroundColor" Value="#0a5dc9"/>
+
+                <Setter Property="VisualStateManager.VisualStateGroups">
+                    <VisualStateGroupList>
+                        <VisualStateGroup x:Name="CommonStates">
+                            <VisualState x:Name="Normal">
+                                <VisualState.Setters>
+                                    <Setter Property="BackgroundColor" Value="#0a5dc9" />
+                                </VisualState.Setters>
+                            </VisualState>
+                            <VisualState x:Name="PointerOver">
+                                <VisualState.Setters>
+                                    <Setter Property="BackgroundColor" Value="#0a5dc9" />
+                                </VisualState.Setters>
+                            </VisualState>
+                        </VisualStateGroup>
+                    </VisualStateGroupList>
+                </Setter>
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    
     <Border Stroke="Gray" 
             StrokeThickness="1" 
             BackgroundColor="White"
@@ -29,12 +62,21 @@
                    TextColor="Black" 
                    HorizontalOptions="Center"/>
 
-            <!-- Periode -->
-            <Label Grid.Row="1" 
-                   Text="{Binding PeriodeTekst}" 
-                   TextColor="#416722" 
-                   FontSize="16" 
-                   HorizontalOptions="Center"/>
+            <VerticalStackLayout Grid.Row="1" Spacing="5" HorizontalOptions="Center">
+
+                <!-- De Datum -->
+                <Label Text="{Binding PeriodeTekst}" 
+                       TextColor="#416722" 
+                       FontSize="16" 
+                       HorizontalOptions="Center"/>
+
+                <!-- De Geselecteerde Staanplaats -->
+                <Label Text="{Binding GeselecteerdeStaanplaatsTekst}"
+                       TextColor="Black"
+                       FontSize="14"
+                       FontAttributes="Bold"
+                       HorizontalOptions="Center"/>
+            </VerticalStackLayout>
 
             <!-- Scheidingslijn -->
             <BoxView Grid.Row="2" HeightRequest="1" Color="LightGray" />
