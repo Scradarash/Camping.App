@@ -227,6 +227,8 @@ CREATE TABLE `velden` (
   `y_position` float NOT NULL DEFAULT '0',
   `width` float NOT NULL DEFAULT '0',
   `height` float NOT NULL DEFAULT '0',
+  `description` text,
+  `image_name` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -237,7 +239,7 @@ CREATE TABLE `velden` (
 
 LOCK TABLES `velden` WRITE;
 /*!40000 ALTER TABLE `velden` DISABLE KEYS */;
-INSERT INTO `velden` VALUES (1,'Groepsveld',0.08,0.13,0.232,0.213),(2,'Trekkersveld',0.11,0.4457,0.195,0.181),(3,'Winterveld',0.11,0.669,0.195,0.181),(4,'Staatseveld',0.5677,0.576,0.195,0.1952),(5,'Oranjeveld',0.37,0.59,0.145,0.254);
+INSERT INTO `velden` VALUES (1,'Groepsveld',0.08,0.13,0.232,0.213,'Een groot en gezellig veld, perfect voor groepen en families die dicht bij elkaar willen staan. Dicht bij de sanitaire voorzieningen.','groepsveld.png'),(2,'Trekkersveld',0.11,0.4457,0.195,0.181,'Speciaal ingericht voor wandelaars en fietsers met kleine tentjes. Auto\'s zijn hier niet toegestaan.','trekkersveld.png'),(3,'Winterveld',0.11,0.669,0.195,0.181,'Mooi veld dat geschikt is voor winterkamperen.','winterveld.png'),(4,'Staatseveld',0.5677,0.576,0.195,0.1952,'Een rustig gelegen veld aan de rand van het bos. Ideaal voor rustzoekers.','staatseveld.png'),(5,'Oranjeveld',0.37,0.59,0.145,0.254,'Het zonnigste veld van de camping, centraal gelegen nabij de speeltuin.','oranjeveld.png');
 /*!40000 ALTER TABLE `velden` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -274,4 +276,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-12-08 17:55:50
+-- Dump completed on 2025-12-08 19:00:24

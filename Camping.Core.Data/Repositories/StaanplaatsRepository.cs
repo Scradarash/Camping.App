@@ -1,4 +1,5 @@
-﻿using Camping.Core.Interfaces.Repositories;
+﻿using Camping.Core.Data.Helpers;
+using Camping.Core.Interfaces.Repositories;
 using Camping.Core.Models;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,65 +8,111 @@ namespace Camping.Core.Data.Repositories
 {
     public class StaanplaatsRepository : IStaanplaatsRepository
     {
-        private readonly List<Staanplaats> _staanplaatsen;
+        private readonly DbConnection _db;
 
-        public StaanplaatsRepository()
+        public StaanplaatsRepository(DbConnection db)
         {
-            _staanplaatsen = new List<Staanplaats>();
-            InitializeStaanplaatsen();
+            _db = db;
         }
 
-        private void InitializeStaanplaatsen()
-        {
-            // Startende ID voor staanplaatsen
-            int currentId = 1;
-            // Maken geen klikbare staanplaatsen voor groepsveld want die zijn dus niet reserveerbaar
-            currentId = AddPlekken(currentId, 2, 12, "Tent", false, false);
-            currentId = AddPlekken(currentId, 3, 12, "Tent", true, true);
-            currentId = AddPlekken(currentId, 4, 8, "Caravan", true, false);
-            currentId = AddPlekken(currentId, 5, 9, "Camper", true, true);
-        }
-        // Deze methode voegt een aantal plekken toe en retourneert de volgende beschikbare ID
-        // Dus iedere keer dat initializeStaanplaatsen wordt aangeroepen, start het met de juiste ID
-        // Hierdoor begint niet iedere veld opnieuw bij 1
-        private int AddPlekken(int startId, int veldId, int aantal, string type, bool stroom, bool water)
-        {
-            for (int i = 0; i < aantal; i++)
-            {
-                _staanplaatsen.Add(new Staanplaats
-                {
-                    id = startId,
-                    VeldId = veldId,
-                    AccommodatieType = type,
-                    HeeftStroom = stroom,
-                    HeeftWater = water,
-                    Status = "Beschikbaar"
-                });
-                startId++;
-            }
-            return startId;
-        }
-
-        // Methode om alle staanplaatsen op te halen
-        public IEnumerable<Staanplaats> GetAll() => _staanplaatsen;
-        // Methode om staanplaatsen per veld op te halen
+        // Haal alle staanplaatsen op die bij een specifiek veld horen
         public IEnumerable<Staanplaats> GetByVeldId(int veldId)
         {
-            return _staanplaatsen.Where(p => p.VeldId == veldId);
+            var staanplaatsen = new List<Staanplaats>();
+
+            using var connection = _db.CreateConnection();
+            connection.Open();
+
+            using var command = connection.CreateCommand();
+
+            // SQL Query uitleg:
+            // Selecteer de staanplaatsen (s) en hun bijbehorende accommodatie types (a) via de koppeltabel (sa)
+            // We joinen staanplaatsen aan de koppeltabel en vervolgens de koppeltabel aan de accommodatie types
+            // Die bij een bepaald veld horen (WHERE s.veld_id = @veldId) (het geselecteerde veld)
+            // Accommodatie types worden samengevoegd in 1 kolom per staanplaats via GROUP_CONCAT, om deze te tonen
+            command.CommandText = @"
+                SELECT s.id, s.veld_id, 
+                       GROUP_CONCAT(a.naam SEPARATOR ', ') as types
+                FROM staanplaatsen s
+                LEFT JOIN staanplaats_accommodatietypes sa ON s.id = sa.staanplaats_id
+                LEFT JOIN accommodatie_types a ON sa.accommodatie_type_id = a.id
+                WHERE s.veld_id = @veldId
+                GROUP BY s.id, s.veld_id";
+
+            command.Parameters.AddWithValue("@veldId", veldId);
+
+            using var reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                staanplaatsen.Add(new Staanplaats
+                {
+                    id = reader.GetInt32("id"),
+                    VeldId = reader.GetInt32("veld_id"),
+
+                    // Als er geen types gekoppeld zijn, toon 'Onbekend', anders de lijst met types (dit is AI, ik snap t ook niet helemaal)
+                    AccommodatieType = reader.IsDBNull(reader.GetOrdinal("types"))
+                                       ? "Onbekend"
+                                       : reader.GetString("types"),
+
+                    Status = "Beschikbaar", // Vooralsnog altijd beschikbaar, tot we reserveringen verder hebben uitgewerkt
+
+                    // Deze kolommen zijn uit de DB gehaald, dus zetten we ze voor nu op true
+                    // Zodat de icoontjes in de UI zichtbaar blijven
+                    HeeftStroom = true,
+                    HeeftWater = true
+                });
+            }
+
+            return staanplaatsen;
         }
-        // Methode om een staanplaats op te halen via ID
+
+        // Haal 1 specifieke staanplaats op
         public Staanplaats? GetById(int id)
         {
-            return _staanplaatsen.FirstOrDefault(p => p.id == id);
+            using var connection = _db.CreateConnection();
+            connection.Open();
+
+            using var command = connection.CreateCommand();
+
+            // Dezelfde query als hierboven, maar dan specifiek voor 1 ID
+            command.CommandText = @"
+                SELECT s.id, s.veld_id, 
+                       GROUP_CONCAT(a.naam SEPARATOR ', ') as types
+                FROM staanplaatsen s
+                LEFT JOIN staanplaats_accommodatietypes sa ON s.id = sa.staanplaats_id
+                LEFT JOIN accommodatie_types a ON sa.accommodatie_type_id = a.id
+                WHERE s.id = @id
+                GROUP BY s.id, s.veld_id";
+
+            command.Parameters.AddWithValue("@id", id);
+
+            using var reader = command.ExecuteReader();
+            if (reader.Read())
+            {
+                return new Staanplaats
+                {
+                    id = reader.GetInt32("id"),
+                    VeldId = reader.GetInt32("veld_id"),
+                    AccommodatieType = reader.IsDBNull(reader.GetOrdinal("types"))
+                                       ? "Onbekend"
+                                       : reader.GetString("types"),
+                    Status = "Beschikbaar",
+                    HeeftStroom = true,
+                    HeeftWater = true
+                };
+            }
+            return null;
         }
-        // Methode om de status van een staanplaats bij te werken (nog niet gebruikt)
+
+        public IEnumerable<Staanplaats> GetAll()
+        {
+            throw new NotImplementedException();
+            // return new List<Staanplaats>();
+        }
+
         public void UpdateStatus(int id, string nieuweStatus)
         {
-            var plek = GetById(id);
-            if (plek != null)
-            {
-                plek.Status = nieuweStatus;
-            }
+            throw new NotImplementedException();
         }
     }
 }
