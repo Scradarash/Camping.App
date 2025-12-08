@@ -85,30 +85,40 @@ public partial class VeldDetailView : ContentPage
             {
                 // Voorlopig tonen we gewoon het ID van de plek
                 Text = staanplaats.id.ToString(),
-                Style = (Style)Application.Current.Resources["MapButtonStyle"],
                 Padding = 0,
                 CornerRadius = 8,
                 Command = _viewModel.KiesStaanplaatsCommand,
                 CommandParameter = staanplaats
             };
 
-            // Geklikte button moet blauw worden, vorige weer groen.
-            btn.Clicked += (sender, args) =>
+            // Als de status bezet is, andere stijl en knop uitschakelen
+            if (staanplaats.Status == "Bezet")
             {
-                var geklikteKnop = (Button)sender;
+                btn.Style = (Style)Resources["OccupiedMapButtonStyle"];
+                btn.IsEnabled = false;
+            }
+            else
+            {
+                btn.Style = (Style)Application.Current.Resources["MapButtonStyle"];
 
-                // Als er al een knop geselecteerd was, maak die dan weer groen
-                if (_laatstGeselecteerdeKnop != null)
+                // Geklikte button moet blauw worden, vorige weer groen.
+                btn.Clicked += (sender, args) =>
                 {
-                    _laatstGeselecteerdeKnop.Style = (Style)Application.Current.Resources["MapButtonStyle"];
-                }
+                    var geklikteKnop = (Button)sender;
 
-                // De nieuw geselecteerde knop blauw machen.
-                geklikteKnop.Style = (Style)Resources["SelectedMapButtonStyle"];
+                    // Als er al een knop geselecteerd was, maak die dan weer groen
+                    if (_laatstGeselecteerdeKnop != null)
+                    {
+                        _laatstGeselecteerdeKnop.Style = (Style)Application.Current.Resources["MapButtonStyle"];
+                    }
 
-                // Knop opslaan in _laatstGeselecteerdeKnop
-                _laatstGeselecteerdeKnop = geklikteKnop;
-            };
+                    // De nieuw geselecteerde knop blauw machen.
+                    geklikteKnop.Style = (Style)Resources["SelectedMapButtonStyle"];
+
+                    // Knop opslaan in _laatstGeselecteerdeKnop
+                    _laatstGeselecteerdeKnop = geklikteKnop;
+                };
+            }
 
             AbsoluteLayout.SetLayoutFlags(btn, AbsoluteLayoutFlags.None);
             // Hier gebruiken we de los berekende breedte en hoogte

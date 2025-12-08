@@ -1,4 +1,5 @@
-﻿using Camping.Core.Interfaces.Repositories;
+﻿using Camping.Core.Data.Helpers;
+using Camping.Core.Interfaces.Repositories;
 using Camping.Core.Models;
 using MySqlConnector;
 
@@ -6,31 +7,37 @@ namespace Camping.Core.Data.Repositories
 {
     public class ReserveringRepository : IReserveringRepository
     {
-        // Pas deze connection string aan naar jouw XAMPP-config
-        private const string ConnectionString =
-            "Server=localhost;Port=3306;Database=campingapp;User ID=root;Password=;";
+        private readonly DbConnection _db;
+
+        public ReserveringRepository(DbConnection db)
+        {
+            _db = db;
+        }
 
         public void Add(Reservering reservering)
         {
-            using var connection = new MySqlConnection(ConnectionString);
+            // Connectie maken via de helper in plaats van direct in de repository (fucking Peter jonge)
+            using var connection = _db.CreateConnection();
             connection.Open();
 
             using var command = connection.CreateCommand();
+
+            // Prijs voor nu nog niet meegenomen, gasten en totaalprijs worden later toegevoegd.
+            // Voor nu alle prijzen op 0.00 zetten en reserveringhouder op id=1
             command.CommandText = @"
-                INSERT INTO reservering
-                    (startdatum, einddatum, veld_id, staanplaats_id, accommodatie_id)
+                INSERT INTO reserveringen
+                    (aankomstdatum, vertrekdatum, staanplaats_id, accommodatie_type_id, reserveringhouder_id, totaal_prijs)
                 VALUES
-                    (@start, @end, @veldId, @staanplaatsId, @accommodatieId);";
+                    (@start, @end, @staanplaatsId, @accommodatieId, 1, 0.00);";
 
             command.Parameters.Add("@start", MySqlDbType.Date).Value = reservering.StartDatum;
             command.Parameters.Add("@end", MySqlDbType.Date).Value = reservering.EindDatum;
-            command.Parameters.Add("@veldId", MySqlDbType.Int32).Value = reservering.VeldId;
             command.Parameters.Add("@staanplaatsId", MySqlDbType.Int32).Value = reservering.StaanplaatsId;
             command.Parameters.Add("@accommodatieId", MySqlDbType.Int32).Value = reservering.AccommodatieId;
 
             command.ExecuteNonQuery();
 
-            // In MySqlConnector is LastInsertedId ook beschikbaar
+            // Het ID van de nieuwe reservering opslaan in het object
             reservering.Id = (int)command.LastInsertedId;
         }
     }

@@ -19,8 +19,8 @@ namespace Camping.Core.Data.Helpers
             var builder = new MySqlConnectionStringBuilder
             {
                 Server = "localhost",
-                UserID = "root",
-                Password = "sqlmilan",
+                UserID = "camping_demo",
+                Password = "",
                 Database = "campingapp",
                 Port = 3306
             };
