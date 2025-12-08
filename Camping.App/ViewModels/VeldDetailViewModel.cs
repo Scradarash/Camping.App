@@ -20,6 +20,10 @@ namespace Camping.App.ViewModels
         [ObservableProperty]
         private string? periodeTekst;
 
+        // ObservableProperty voor het tonen van gekozen staanplaats.
+        [ObservableProperty]
+        private string geselecteerdeStaanplaatsTekst = "Kies een plaats op de kaart";
+
         public ObservableCollection<Staanplaats> Staanplaatsen { get; } = new();
 
         [ObservableProperty]
@@ -41,6 +45,10 @@ namespace Camping.App.ViewModels
             Veld = geselecteerdeVeld;
             PeriodeTekst = "Nog geen datum geselecteerd";
 
+            // GeselecteerdeStaanplaats leegmaken
+            GeselecteerdeStaanplaats = null;
+            GeselecteerdeStaanplaatsTekst = "Kies een staanplaats op de kaart";
+
             // Als er al een periode is geselecteerd, dan wordt die hier getoond bovenaan
             if (_reservatieDataService.StartDate.HasValue && _reservatieDataService.EndDate.HasValue)
             {
@@ -59,7 +67,7 @@ namespace Camping.App.ViewModels
 
         [RelayCommand]
         // Klikken op een staanplaats
-        private async Task KiesPlek(Staanplaats plek)
+        private void KiesStaanplaats(Staanplaats plek)
         {
             GeselecteerdeStaanplaats = plek;
             _reservatieDataService.SelectedStaanplaats = plek;
@@ -91,6 +99,16 @@ namespace Camping.App.ViewModels
                 }
                 return;
             }
+            
+            // Als iemand door wil gaan met reserveren voor een staanplaats is gekozen, blokkeren.
+            if (GeselecteerdeStaanplaats == null)
+            {
+                await Application.Current.MainPage.DisplayAlert(
+                    "Geen plaats gekozen",
+                    "Selecteer alstublieft een staanplaats op de kaart.",
+                    "OK");
+                return;
+            }
 
             // Wel nog ff periode checken op geldigheid, ook al zou dit al in de Kalender gebeurd moeten zijn
             if (!_reservatieDataService.IsValidPeriod())
@@ -101,6 +119,7 @@ namespace Camping.App.ViewModels
 
             // Dan, als alles ok is, het veld opslaan en doorgaan naar overzicht
             _reservatieDataService.SelectedVeld = Veld;
+            _reservatieDataService.SelectedStaanplaats = GeselecteerdeStaanplaats;
 
             await Application.Current.MainPage.Navigation.PopModalAsync();
             await Shell.Current.GoToAsync(nameof(ReserveringsoverzichtView));

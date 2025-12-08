@@ -31,6 +31,11 @@ namespace Camping.App
             builder.Services.AddSingleton<IAccommodatieRepository, AccommodatieRepository>();
             builder.Services.AddSingleton<IReserveringRepository, ReserveringRepository>();
 
+            // Uitcommenten wanneer items uit de database pas worden getoond in UI anders built error
+
+            //builder.Services.AddSingleton<DBConnection>();
+            //builder.Services.AddSingleton<IGastRepository, MySqlGastRepository>();
+
             //Services
             builder.Services.AddSingleton<IVeldService, VeldService>();
             builder.Services.AddSingleton<IReservatieDataService, ReservatieDataService>();

@@ -21,7 +21,7 @@ namespace Camping.Core.Data.Repositories
             int currentId = 1;
             // Maken geen klikbare staanplaatsen voor groepsveld want die zijn dus niet reserveerbaar
             currentId = AddPlekken(currentId, 2, 12, "Tent", false, false);
-            currentId = AddPlekken(currentId, 3, 12, "Chalet", true, true);
+            currentId = AddPlekken(currentId, 3, 12, "Tent", true, true);
             currentId = AddPlekken(currentId, 4, 8, "Caravan", true, false);
             currentId = AddPlekken(currentId, 5, 9, "Camper", true, true);
         }

@@ -10,6 +10,7 @@
         <VerticalStackLayout Grid.Row="0" Spacing="5" Margin="0,0,0,20">
             <Label Text="Overzicht Reservering" FontSize="24" FontAttributes="Bold" TextColor="Black"/>
             <Label Text="{Binding FieldName, StringFormat='Veld: {0}'}" FontSize="18" TextColor="#416722"/>
+            <Label Text="{Binding StaanplaatsNaam}" FontSize="16" TextColor="Black" />
             <Label Text="{Binding PeriodDescription}" FontSize="16" TextColor="Gray"/>
         </VerticalStackLayout>
 
