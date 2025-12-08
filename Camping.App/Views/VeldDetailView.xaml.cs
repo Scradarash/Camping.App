@@ -28,10 +28,10 @@ public partial class VeldDetailView : ContentPage
         // Afmeting van de afbeelding
         double w = VeldAfbeelding.Width;
         double h = VeldAfbeelding.Height;
-        var plekken = _viewModel.Staanplaatsen;
+        var staanplaatsen = _viewModel.Staanplaatsen;
 
-        // Als er geen plekken zijn of de afmeting is 0, niks doen
-        if (w <= 0 || h <= 0 || plekken == null || plekken.Count == 0) return;
+        // Als er geen plekken zijn, niks doen
+        if (staanplaatsen.Count == 0) return;
 
         // Overlay clearen en op de juiste grootte zetten
         PlekkenOverlay.Children.Clear();
@@ -39,7 +39,7 @@ public partial class VeldDetailView : ContentPage
         PlekkenOverlay.HeightRequest = h;
 
         // Aantal plekken tellen
-        int aantal = plekken.Count;
+        int aantal = staanplaatsen.Count;
 
         // Bepaal hoeveel kolommen we nodig hebben.
         // We nemen de wortel van het totaal om een zo vierkant mogelijk rooster te krijgen.
@@ -61,7 +61,7 @@ public partial class VeldDetailView : ContentPage
         // Loop door alle plekken en plaats ze in het grid
         for (int i = 0; i < aantal; i++)
         {
-            var plek = plekken[i];
+            var staanplaats = staanplaatsen[i];
             // Bepaal Rij en Kolom van deze plek
             int rij = i / kolommen;
             int kol = i % kolommen;
@@ -78,12 +78,12 @@ public partial class VeldDetailView : ContentPage
             var btn = new Button
             {
                 // Voorlopig tonen we gewoon het ID van de plek
-                Text = plek.id.ToString(),
+                Text = staanplaats.id.ToString(),
                 Style = (Style)Application.Current.Resources["MapButtonStyle"],
                 Padding = 0,
                 CornerRadius = 8,
-                Command = _viewModel.KiesPlekCommand,
-                CommandParameter = plek
+                Command = _viewModel.KiesStaanplaatsCommand,
+                CommandParameter = staanplaats
             };
 
             AbsoluteLayout.SetLayoutFlags(btn, AbsoluteLayoutFlags.None);

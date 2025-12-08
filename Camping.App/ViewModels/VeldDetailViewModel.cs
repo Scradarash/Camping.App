@@ -59,7 +59,7 @@ namespace Camping.App.ViewModels
 
         [RelayCommand]
         // Klikken op een staanplaats
-        private async Task KiesPlek(Staanplaats plek)
+        private async Task KiesStaanplaats(Staanplaats plek)
         {
             GeselecteerdeStaanplaats = plek;
 
