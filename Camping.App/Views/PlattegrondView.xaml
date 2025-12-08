@@ -3,34 +3,6 @@
              x:Class="Camping.App.Views.PlattegrondView">
 
     <ContentPage.Resources>
-        <!-- Stijl voor velden -->
-        <Style x:Key="MapButtonStyle" TargetType="Button">
-            <Setter Property="TextColor" Value="Black"/>
-            <Setter Property="FontAttributes" Value="Bold"/>
-            <Setter Property="FontSize" Value="22"/>
-            <Setter Property="BorderColor" Value="Black"/>
-            <Setter Property="BorderWidth" Value="3"/>
-            <Setter Property="CornerRadius" Value="15"/>
-            <Setter Property="Padding" Value="0"/>
-            <Setter Property="BackgroundColor" Value="#416722"/>
-            <Setter Property="VisualStateManager.VisualStateGroups">
-                <VisualStateGroupList>
-                    <VisualStateGroup x:Name="CommonStates">
-                        <VisualState x:Name="Normal">
-                            <VisualState.Setters>
-                                <Setter Property="BackgroundColor" Value="#416722" />
-                            </VisualState.Setters>
-                        </VisualState>
-                        <VisualState x:Name="PointerOver">
-                            <VisualState.Setters>
-                                <Setter Property="BackgroundColor" Value="#369c0b" />
-                            </VisualState.Setters>
-                        </VisualState>
-                    </VisualStateGroup>
-                </VisualStateGroupList>
-            </Setter>
-        </Style>
-
         <!-- Stijl voor de kalenderknop -->
         <Style x:Key="KalenderButtonStyle" TargetType="Button">
             <Setter Property="TextColor" Value="White"/>
