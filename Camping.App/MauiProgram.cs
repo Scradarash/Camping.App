@@ -1,6 +1,7 @@
 ﻿using Camping.App.ViewModels;
 using Camping.App.Views;
 using Camping.Core.Data.Repositories;
+using Camping.Core.Data.Helpers;
 using Camping.Core.Interfaces.Repositories;
 using Camping.Core.Interfaces.Services;
 using Camping.Core.Services;
@@ -24,17 +25,12 @@ namespace Camping.App
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
-
+            builder.Services.AddSingleton<DbConnection>();
             //Repositories
             builder.Services.AddSingleton<IVeldRepository, VeldRepository>();
             builder.Services.AddSingleton<IStaanplaatsRepository, StaanplaatsRepository>();
             builder.Services.AddSingleton<IAccommodatieRepository, AccommodatieRepository>();
             builder.Services.AddSingleton<IReserveringRepository, ReserveringRepository>();
-
-            // Uitcommenten wanneer items uit de database pas worden getoond in UI anders built error
-
-            //builder.Services.AddSingleton<DBConnection>();
-            //builder.Services.AddSingleton<IGastRepository, MySqlGastRepository>();
 
             //Services
             builder.Services.AddSingleton<IVeldService, VeldService>();
