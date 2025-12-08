@@ -70,8 +70,12 @@ namespace Camping.App.ViewModels
         private void KiesStaanplaats(Staanplaats plek)
         {
             GeselecteerdeStaanplaats = plek;
-            // Geselecteerde staanplaats veranderen en tonen in de view
-            GeselecteerdeStaanplaatsTekst = $"Geselecteerde plaats: {plek.id} ({plek.AccommodatieType})";
+            _reservatieDataService.SelectedStaanplaats = plek;
+
+            await Application.Current.MainPage.DisplayAlert(
+                "Plek Geselecteerd",
+                $"Je hebt plek nummer {plek.id} ({plek.AccommodatieType}) geselecteerd.",
+                "OK");
         }
 
         [RelayCommand]

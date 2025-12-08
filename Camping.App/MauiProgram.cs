@@ -29,6 +29,7 @@ namespace Camping.App
             builder.Services.AddSingleton<IVeldRepository, VeldRepository>();
             builder.Services.AddSingleton<IStaanplaatsRepository, StaanplaatsRepository>();
             builder.Services.AddSingleton<IAccommodatieRepository, AccommodatieRepository>();
+            builder.Services.AddSingleton<IReserveringRepository, ReserveringRepository>();
 
             // Uitcommenten wanneer items uit de database pas worden getoond in UI anders built error
 
@@ -39,6 +40,7 @@ namespace Camping.App
             builder.Services.AddSingleton<IVeldService, VeldService>();
             builder.Services.AddSingleton<IReservatieDataService, ReservatieDataService>();
             builder.Services.AddSingleton<IAccommodatieService, AccommodatieService>();
+            builder.Services.AddSingleton<IReserveringService, ReserveringService>();
 
             //ViewModels
             builder.Services.AddTransient<PlattegrondViewModel>();
