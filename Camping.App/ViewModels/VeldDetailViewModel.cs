@@ -70,12 +70,8 @@ namespace Camping.App.ViewModels
         private async Task KiesStaanplaats(Staanplaats plek)
         {
             GeselecteerdeStaanplaats = plek;
-            _reservatieDataService.SelectedStaanplaats = plek; // FIX: gekozen plek ook opslaan in service
-
-            await Application.Current.MainPage.DisplayAlert(
-                "Plek Geselecteerd",
-                $"Je hebt plek nummer {plek.id} ({plek.AccommodatieType}) geselecteerd.",
-                "OK");
+            _reservatieDataService.SelectedStaanplaats = plek;
+            GeselecteerdeStaanplaatsTekst = $"Geselecteerde plaats: {plek.id}";
         }
 
         [RelayCommand]
