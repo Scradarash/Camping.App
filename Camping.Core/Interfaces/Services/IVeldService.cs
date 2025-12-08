@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Camping.Core.Models;
 
 namespace Camping.Core.Interfaces.Services
 {
-    internal class Placeholder
+    public interface IVeldService
     {
+        IEnumerable<Veld> GetAll();
     }
 }

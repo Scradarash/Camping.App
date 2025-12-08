@@ -1,4 +1,4 @@
-name: MAUI Unit Tests
+name: MAUI Unit Tests (.NET 8)
 
 on:
   push:
@@ -6,15 +6,15 @@ on:
       - main
       - develop
       - release
-      - feat/*
-      - hotfix
+      - feature/*
+      - hotfix/*
   pull_request:
     branches:
       - main
       - release
       - develop
-      - feat/*
-      - hotfix
+      - feature/*
+      - hotfix/*
 
 jobs:
   build_and_test:
@@ -29,7 +29,7 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
-      - name: Installeer MAUI workload
+      - name: Installeer MAUI workload voor .NET8
         run: dotnet workload install maui
 
       - name: Herstel afhankelijkheden
@@ -46,4 +46,4 @@ jobs:
         with:
           name: build-output
           path: |
-            **/bin/Release/net8.0-*/ 
+            **/bin/Release/net8.0-*/

@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:Camping.App.ViewModels"
+             x:Class="Camping.App.Views.VeldDetailView"
+             BackgroundColor="#80000000">
+
+    <!-- Stijl voor het kleuren van aangeklikte knop -->
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Style x:Key="SelectedMapButtonStyle" TargetType="Button">
+                <Setter Property="TextColor" Value="White"/>
+                <Setter Property="FontAttributes" Value="Bold"/>
+                <Setter Property="FontSize" Value="22"/>
+                <Setter Property="BorderColor" Value="Black"/>
+                <Setter Property="BorderWidth" Value="2"/>
+                <Setter Property="CornerRadius" Value="15"/>
+                <Setter Property="Padding" Value="0"/>
+                <Setter Property="BackgroundColor" Value="#0a5dc9"/>
+
+                <Setter Property="VisualStateManager.VisualStateGroups">
+                    <VisualStateGroupList>
+                        <VisualStateGroup x:Name="CommonStates">
+                            <VisualState x:Name="Normal">
+                                <VisualState.Setters>
+                                    <Setter Property="BackgroundColor" Value="#0a5dc9" />
+                                </VisualState.Setters>
+                            </VisualState>
+                            <VisualState x:Name="PointerOver">
+                                <VisualState.Setters>
+                                    <Setter Property="BackgroundColor" Value="#0a5dc9" />
+                                </VisualState.Setters>
+                            </VisualState>
+                        </VisualStateGroup>
+                    </VisualStateGroupList>
+                </Setter>
+            </Style>
+
+
+            <Style x:Key="OccupiedMapButtonStyle" TargetType="Button">
+                <Setter Property="TextColor" Value="White"/>
+                <Setter Property="FontAttributes" Value="Bold"/>
+                <Setter Property="FontSize" Value="22"/>
+                <Setter Property="BorderColor" Value="#701212"/>
+                <Setter Property="BorderWidth" Value="2"/>
+                <Setter Property="CornerRadius" Value="15"/>
+                <Setter Property="Padding" Value="0"/>
+                <Setter Property="BackgroundColor" Value="#d9534f"/>
+
+                <Setter Property="VisualStateManager.VisualStateGroups">
+                    <VisualStateGroupList>
+                        <VisualStateGroup x:Name="CommonStates">
+                            <VisualState x:Name="Normal" />
+                            <VisualState x:Name="Disabled">
+                                <VisualState.Setters>
+                                    <Setter Property="BackgroundColor" Value="#701212" />
+                                    <Setter Property="BorderColor" Value="#8B0000" />
+                                    <Setter Property="TextColor" Value="White" />
+                                </VisualState.Setters>
+                            </VisualState>
+
+                        </VisualStateGroup>
+                    </VisualStateGroupList>
+                </Setter>
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    
+    <Border Stroke="Gray" 
+            StrokeThickness="1" 
+            BackgroundColor="White"
+            Padding="25" 
+            Margin="30" 
+            HorizontalOptions="Center" 
+            VerticalOptions="Center"
+            WidthRequest="850" 
+            HeightRequest="650">
+
+        <Border.StrokeShape>
+            <RoundRectangle CornerRadius="15"/>
+        </Border.StrokeShape>
+
+        <Grid RowDefinitions="Auto, Auto, Auto, *, Auto" RowSpacing="15">
+
+            <!-- Titel -->
+            <Label Grid.Row="0" 
+                   Text="{Binding Veld.Name}" 
+                   FontSize="24" 
+                   FontAttributes="Bold" 
+                   TextColor="Black" 
+                   HorizontalOptions="Center"/>
+
+            <VerticalStackLayout Grid.Row="1" Spacing="5" HorizontalOptions="Center">
+
+                <!-- De Datum -->
+                <Label Text="{Binding PeriodeTekst}" 
+                       TextColor="#416722" 
+                       FontSize="16" 
+                       HorizontalOptions="Center"/>
+
+                <!-- De Geselecteerde Staanplaats -->
+                <Label Text="{Binding GeselecteerdeStaanplaatsTekst}"
+                       TextColor="Black"
+                       FontSize="14"
+                       FontAttributes="Bold"
+                       HorizontalOptions="Center"/>
+            </VerticalStackLayout>
+
+            <!-- Scheidingslijn -->
+            <BoxView Grid.Row="2" HeightRequest="1" Color="LightGray" />
+
+            <!-- HOOFD INHOUD (2 Kolommen) -->
+            <Grid Grid.Row="3" ColumnDefinitions="2*, 1*" ColumnSpacing="20">
+
+                <!-- Linker kolom nu de afbeelding van het veld. -->
+                <Grid Grid.Column="0" RowDefinitions="Auto, *">
+                    <Label Text="Kies een plaats op de kaart:" 
+                           FontAttributes="Bold" 
+                           Margin="0,0,0,5" 
+                           TextColor="Gray"/>
+
+                    <!-- Afbeelding van veld, met knoppen voor staanplaatsen -->
+                    <Border Grid.Row="1" Stroke="Black" StrokeThickness="1">
+
+                        <Grid>
+                            <!-- Mooi gras achtergrondje voor de leuk -->
+                            <Image Source="gras.png"
+                                   Aspect="AspectFill"
+                                   HorizontalOptions="Fill"
+                                   VerticalOptions="Fill"/>
+
+                            <!-- Grid voor afbeelding van het veld -->
+                            <Grid HorizontalOptions="Center" 
+                                  VerticalOptions="Center">
+
+                                <!-- Plaatje van het veld -->
+                                <Image x:Name="VeldAfbeelding"
+                                       Source="{Binding Veld.ImageName}"
+                                       Aspect="AspectFit"
+                                       HorizontalOptions="Center" 
+                                       VerticalOptions="Center"/>
+
+                                <!-- De knoppen over het veld -->
+                                <AbsoluteLayout x:Name="PlekkenOverlay"
+                                                InputTransparent="True"
+                                                CascadeInputTransparent="False"/>
+                            </Grid>
+                        </Grid>
+                    </Border>
+
+                </Grid>
+
+                <!-- Rechterkant nu beschrijving en info veld etc -->
+                <ScrollView Grid.Column="1">
+                    <VerticalStackLayout Spacing="15">
+
+                        <!-- Beschrijving -->
+                        <VerticalStackLayout>
+                            <Label Text="Beschrijving:" FontAttributes="Bold" TextColor="Black"/>
+                            <Label Text="{Binding Veld.Description}" FontSize="14" TextColor="#333"/>
+                        </VerticalStackLayout>
+
+                        <!-- Voorzieningen nog niet gekoppeld aan staanplaatsen atm -->
+                        <VerticalStackLayout Spacing="10">
+                            <Label Text="Voorzieningen:" FontAttributes="Bold" TextColor="Gray"/>
+
+                            <HorizontalStackLayout Spacing="10">
+                                <!-- Stroom Icoon -->
+                                <Border Stroke="LightGray" BackgroundColor="#FAFAFA" Padding="10" StrokeShape="RoundRectangle 10">
+                                    <VerticalStackLayout>
+                                        <Label Text="⚡" FontSize="20" HorizontalOptions="Center"/>
+                                        <Label Text="Stroom" FontSize="10" HorizontalOptions="Center"/>
+                                    </VerticalStackLayout>
+                                </Border>
+
+                                <!-- Water Icoon -->
+                                <Border Stroke="LightGray" BackgroundColor="#FAFAFA" Padding="10" StrokeShape="RoundRectangle 10">
+                                    <VerticalStackLayout>
+                                        <Label Text="💧" FontSize="20" HorizontalOptions="Center"/>
+                                        <Label Text="Water" FontSize="10" HorizontalOptions="Center"/>
+                                    </VerticalStackLayout>
+                                </Border>
+                            </HorizontalStackLayout>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </ScrollView>
+            </Grid>
+
+            <!-- Knoppen -->
+            <Grid Grid.Row="4" ColumnDefinitions="*,*" ColumnSpacing="15" Margin="0,10,0,0">
+                <Button Grid.Column="0" 
+                        Text="Annuleer" 
+                        Command="{Binding AnnuleerCommand}" 
+                        BackgroundColor="Gray" 
+                        TextColor="White" 
+                        CornerRadius="10"/>
+
+                <Button Grid.Column="1" 
+                        Text="Reserveer" 
+                        Command="{Binding ReserveerCommand}" 
+                        BackgroundColor="#0a5dc9" 
+                        TextColor="White" 
+                        CornerRadius="10"/>
+            </Grid>
+        </Grid>
+    </Border>
+</ContentPage>
