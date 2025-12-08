@@ -57,7 +57,11 @@ namespace Camping.App.ViewModels
 
             Staanplaatsen.Clear();
             // Haal alle staanplaatsen op voor dit veld
-            var plekken = _staanplaatsRepository.GetByVeldId(Veld.id);
+            var plekken = _staanplaatsRepository.GetByVeldId(
+                Veld.id,
+                _reservatieDataService.StartDate,
+                _reservatieDataService.EndDate
+            );
 
             foreach (var plek in plekken)
             {
