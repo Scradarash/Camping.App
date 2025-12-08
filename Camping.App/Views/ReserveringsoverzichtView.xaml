@@ -52,8 +52,12 @@
         <!-- Navigation Buttons -->
         <Grid Grid.Row="3" ColumnDefinitions="*,*" ColumnSpacing="20" Margin="0,20,0,0">
             <Button Grid.Column="0" Text="Terug" Command="{Binding GoBackCommand}" BackgroundColor="Gray"/>
-            <Button Grid.Column="1" Text="Volgende" Command="{Binding ConfirmAccommodationCommand}" BackgroundColor="#0a5dc9"/>
+            <Button Grid.Column="1"
+            Text="Voltooi reservering"
+            Command="{Binding BevestigAccommodatieCommand}"
+            BackgroundColor="#0a5dc9"/>
         </Grid>
+
 
     </Grid>
 </ContentPage>

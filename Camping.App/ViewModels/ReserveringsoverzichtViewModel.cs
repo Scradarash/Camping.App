@@ -13,6 +13,8 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
     // gebruiken de Service voor de logica (ipv de Repository)
     private readonly IAccommodatieService _accommodatieService;
 
+    private readonly IReserveringService _reserveringService;
+
     [ObservableProperty]
     private string periodDescription;
 
@@ -25,10 +27,11 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
     public ObservableCollection<Accommodatie> Accommodaties { get; } = new();
 
     // De Service komt binnen via de constructor
-    public ReserveringsoverzichtViewModel(IReservatieDataService reservatieDataService, IAccommodatieService accommodatieService)
+    public ReserveringsoverzichtViewModel(IReservatieDataService reservatieDataService, IAccommodatieService accommodatieService, IReserveringService reserveringService)
     {
         _reservatieDataService = reservatieDataService;
         _accommodatieService = accommodatieService; // Opslaan in de variabele
+        _reserveringService = reserveringService;
 
         LoadData();
     }
@@ -63,15 +66,62 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private async Task ConfirmAccommodation()
+    private async Task BevestigAccommodatie()
     {
+        //Validatie en daadwerkelijk opslaan van de reservering
+
         if (SelectedAccommodatie == null)
         {
             await Application.Current.MainPage.DisplayAlert("Fout", "Kies een accommodatie type.", "OK");
             return;
         }
 
-        await Application.Current.MainPage.DisplayAlert("Volgende stap", $"U heeft gekozen voor: {SelectedAccommodatie.Name}. \nNu naar voorzieningen...", "OK");
+        if (!_reservatieDataService.StartDate.HasValue || !_reservatieDataService.EndDate.HasValue)
+        {
+            await Application.Current.MainPage.DisplayAlert("Fout", "Er is nog geen periode geselecteerd.", "OK");
+            return;
+        }
+
+        if (_reservatieDataService.SelectedVeld == null)
+        {
+            await Application.Current.MainPage.DisplayAlert("Fout", "Er is geen veld geselecteerd.", "OK");
+            return;
+        }
+
+        if (_reservatieDataService.SelectedStaanplaats == null)
+        {
+            await Application.Current.MainPage.DisplayAlert("Fout", "Er is geen staanplaats geselecteerd.", "OK");
+            return;
+        }
+
+        try
+        {
+            //Gekozen accommodatie tijdelijk bewaren in data service
+            _reservatieDataService.SelectedAccommodatie = SelectedAccommodatie;
+
+            //Reservering opslaan via de ReservatieService
+            _reserveringService.MaakReservering(
+                _reservatieDataService.StartDate.Value,
+                _reservatieDataService.EndDate.Value,
+                _reservatieDataService.SelectedVeld,
+                _reservatieDataService.SelectedStaanplaats,
+                SelectedAccommodatie);
+
+            await Application.Current.MainPage.DisplayAlert(
+                "Reservering voltooid",
+                "De reservering is succesvol opgeslagen.",
+                "OK");
+
+            //Na opslaan terug naar de PlattegrondView
+            await Shell.Current.GoToAsync("//PlattegrondView");
+        }
+        catch (Exception ex)
+        {
+            await Application.Current.MainPage.DisplayAlert(
+                "Fout bij opslaan",
+                $"Er ging iets mis bij het opslaan van de reservering:\n{ex.Message}",
+                "OK");
+        }
     }
 
     [RelayCommand]

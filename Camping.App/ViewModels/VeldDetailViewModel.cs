@@ -62,6 +62,7 @@ namespace Camping.App.ViewModels
         private async Task KiesPlek(Staanplaats plek)
         {
             GeselecteerdeStaanplaats = plek;
+            _reservatieDataService.SelectedStaanplaats = plek;
 
             await Application.Current.MainPage.DisplayAlert(
                 "Plek Geselecteerd",
