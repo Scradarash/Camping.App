@@ -115,6 +115,7 @@ namespace Camping.App.ViewModels
 
             // Dan, als alles ok is, het veld opslaan en doorgaan naar overzicht
             _reservatieDataService.SelectedVeld = Veld;
+            _reservatieDataService.SelectedStaanplaats = GeselecteerdeStaanplaats;
 
             await Application.Current.MainPage.Navigation.PopModalAsync();
             await Shell.Current.GoToAsync(nameof(ReserveringsoverzichtView));

@@ -19,6 +19,10 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
     [ObservableProperty]
     private string fieldName;
 
+    // Nieuwe property om de naam van de geselecteerde staanplaats weer te geven in de View
+    [ObservableProperty]
+    private string staanplaatsNaam;
+
     [ObservableProperty]
     private Accommodatie selectedAccommodatie;
 
@@ -44,6 +48,19 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
         FieldName = _reservatieDataService.SelectedVeld.Name;
         PeriodDescription = $"{_reservatieDataService.StartDate:dd-MM-yyyy} tot {_reservatieDataService.EndDate:dd-MM-yyyy}";
 
+        // Gegevens ophalen van de geselecteerde staanplaats uit de service
+        var gekozenPlek = _reservatieDataService.SelectedStaanplaats;
+
+        if (gekozenPlek != null)
+        {
+            // Als er een plek gekozen is, tonen we het nummer en type
+            StaanplaatsNaam = $"Plaats: {gekozenPlek.id} ({gekozenPlek.AccommodatieType})";
+        }
+        else
+        {
+            StaanplaatsNaam = "Geen specifieke plaats gekozen";
+        }
+
         // HIER GEBEURT HET FILTEREN
         Accommodaties.Clear();
 
@@ -52,7 +69,22 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
 
         foreach (var acc in gefilterdeLijst)
         {
-            Accommodaties.Add(acc);
+            // In het reserveringsoverzicht alleen accommodaties tonen die overeenkomen met de gekozen staanplaats
+            if (gekozenPlek != null)
+            {
+                // Hier doen we de vergelijking op naam (case insensitive), beetje scuffed maar werkt voor nu
+                if (acc.Name.Contains(gekozenPlek.AccommodatieType, StringComparison.OrdinalIgnoreCase)
+                    || gekozenPlek.AccommodatieType.Contains(acc.Name, StringComparison.OrdinalIgnoreCase))
+                {
+                    Accommodaties.Add(acc);
+                }
+            }
+            else
+            {
+                // Als er geen specifieke plek is gekozen, voegen we alles toe wat op het veld mag, maar filteren we niet verder op staanplaats type
+                // Dit was hoe Jos het oorspronkelijk had
+                Accommodaties.Add(acc);
+            }
         }
 
         // Selecteer automatisch de eerste optie (handig voor de gebruiker)
@@ -71,7 +103,12 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
             return;
         }
 
-        await Application.Current.MainPage.DisplayAlert("Volgende stap", $"U heeft gekozen voor: {SelectedAccommodatie.Name}. \nNu naar voorzieningen...", "OK");
+        // Pop-up tonen veranderd om ook de plek info te tonen als die er is
+        string plekInfo = _reservatieDataService.SelectedStaanplaats != null
+            ? $" op plek {_reservatieDataService.SelectedStaanplaats.id}"
+            : "";
+
+        await Application.Current.MainPage.DisplayAlert("Volgende stap", $"U heeft gekozen voor: {SelectedAccommodatie.Name}{plekInfo}. \nNu naar voorzieningen...", "OK");
     }
 
     [RelayCommand]
