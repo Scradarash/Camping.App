@@ -20,6 +20,10 @@ namespace Camping.App.ViewModels
         [ObservableProperty]
         private string? periodeTekst;
 
+        // ObservableProperty voor het tonen van gekozen staanplaats.
+        [ObservableProperty]
+        private string geselecteerdeStaanplaatsTekst = "Kies een plaats op de kaart";
+
         public ObservableCollection<Staanplaats> Staanplaatsen { get; } = new();
 
         [ObservableProperty]
@@ -41,6 +45,10 @@ namespace Camping.App.ViewModels
             Veld = geselecteerdeVeld;
             PeriodeTekst = "Nog geen datum geselecteerd";
 
+            // GeselecteerdeStaanplaats leegmaken
+            GeselecteerdeStaanplaats = null;
+            GeselecteerdeStaanplaatsTekst = "Kies een staanplaats op de kaart";
+
             // Als er al een periode is geselecteerd, dan wordt die hier getoond bovenaan
             if (_reservatieDataService.StartDate.HasValue && _reservatieDataService.EndDate.HasValue)
             {
@@ -59,14 +67,11 @@ namespace Camping.App.ViewModels
 
         [RelayCommand]
         // Klikken op een staanplaats
-        private async Task KiesStaanplaats(Staanplaats plek)
+        private void KiesStaanplaats(Staanplaats plek)
         {
             GeselecteerdeStaanplaats = plek;
-
-            await Application.Current.MainPage.DisplayAlert(
-                "Plek Geselecteerd",
-                $"Je hebt plek nummer {plek.id} ({plek.AccommodatieType}) geselecteerd.",
-                "OK");
+            // Geselecteerde staanplaats veranderen en tonen in de view
+            GeselecteerdeStaanplaatsTekst = $"Geselecteerde plaats: {plek.id} ({plek.AccommodatieType})";
         }
 
         [RelayCommand]
@@ -88,6 +93,16 @@ namespace Camping.App.ViewModels
                     var kalenderView = _serviceProvider.GetRequiredService<KalenderView>();
                     await Application.Current.MainPage.Navigation.PushModalAsync(kalenderView);
                 }
+                return;
+            }
+            
+            // Als iemand door wil gaan met reserveren voor een staanplaats is gekozen, blokkeren.
+            if (GeselecteerdeStaanplaats == null)
+            {
+                await Application.Current.MainPage.DisplayAlert(
+                    "Geen plaats gekozen",
+                    "Selecteer alstublieft een staanplaats op de kaart.",
+                    "OK");
                 return;
             }
 

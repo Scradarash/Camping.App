@@ -7,6 +7,9 @@ public partial class VeldDetailView : ContentPage
 {
     private readonly VeldDetailViewModel _viewModel;
 
+    // Houdt bij welke knop als laatste is aangeklikt voor de blauwe selectie
+    private Button? _laatstGeselecteerdeKnop;
+
     public VeldDetailView(VeldDetailViewModel viewModel)
     {
         InitializeComponent();
@@ -32,6 +35,9 @@ public partial class VeldDetailView : ContentPage
 
         // Als er geen plekken zijn, niks doen
         if (staanplaatsen.Count == 0) return;
+
+        // Reset de selectie variabele omdat we het grid opnieuw tekenen
+        _laatstGeselecteerdeKnop = null;
 
         // Overlay clearen en op de juiste grootte zetten
         PlekkenOverlay.Children.Clear();
@@ -84,6 +90,24 @@ public partial class VeldDetailView : ContentPage
                 CornerRadius = 8,
                 Command = _viewModel.KiesStaanplaatsCommand,
                 CommandParameter = staanplaats
+            };
+
+            // Geklikte button moet blauw worden, vorige weer groen.
+            btn.Clicked += (sender, args) =>
+            {
+                var geklikteKnop = (Button)sender;
+
+                // Als er al een knop geselecteerd was, maak die dan weer groen
+                if (_laatstGeselecteerdeKnop != null)
+                {
+                    _laatstGeselecteerdeKnop.Style = (Style)Application.Current.Resources["MapButtonStyle"];
+                }
+
+                // De nieuw geselecteerde knop blauw machen.
+                geklikteKnop.Style = (Style)Resources["SelectedMapButtonStyle"];
+
+                // Knop opslaan in _laatstGeselecteerdeKnop
+                _laatstGeselecteerdeKnop = geklikteKnop;
             };
 
             AbsoluteLayout.SetLayoutFlags(btn, AbsoluteLayoutFlags.None);
