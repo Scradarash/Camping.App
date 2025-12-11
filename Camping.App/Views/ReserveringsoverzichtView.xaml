@@ -4,7 +4,7 @@
              x:Class="Camping.App.Views.ReserveringsoverzichtView"
              Title="Nieuwe Reservering">
 
-    <Grid RowDefinitions="Auto, Auto, *, Auto" Padding="20" BackgroundColor="White">
+    <Grid RowDefinitions="Auto, Auto, Auto, *, Auto" Padding="20" BackgroundColor="White">
 
         <!-- Header Info -->
         <VerticalStackLayout Grid.Row="0" Spacing="5" Margin="0,0,0,20">
@@ -14,11 +14,18 @@
             <Label Text="{Binding PeriodDescription}" FontSize="16" TextColor="Gray"/>
         </VerticalStackLayout>
 
+        <!-- Invoer naam reserveringshouder -->
+        <VerticalStackLayout Grid.Row="1" Spacing="5" Margin="0,0,0,15">
+            <Label Text="Volledige naam reserveringshouder:" FontSize="16" TextColor="Black"/>
+            <Entry Text="{Binding Naam}" Placeholder="Bijvoorbeeld: Jacob Arie Romkes" TextColor="Black" FontSize="16" BackgroundColor="#f0f0f0"/>
+            <Label Text="{Binding NaamFoutmelding}" TextColor="Red" FontSize="14" IsVisible="{Binding IsNaamFoutZichtbaar}"/>
+        </VerticalStackLayout>
+
         <!-- Step Title -->
-        <Label Grid.Row="1" Text="Kies uw accommodatie:" FontSize="18" FontAttributes="Bold" TextColor="Black" Margin="0,0,0,10"/>
+        <Label Grid.Row="2" Text="Kies uw accommodatie:" FontSize="18" FontAttributes="Bold" TextColor="Black" Margin="0,0,0,10"/>
 
         <!-- Accommodation Selection -->
-        <CollectionView Grid.Row="2" ItemsSource="{Binding Accommodaties}" SelectionMode="Single" SelectedItem="{Binding SelectedAccommodatie}">
+        <CollectionView Grid.Row="3" ItemsSource="{Binding Accommodaties}" SelectionMode="Single" SelectedItem="{Binding SelectedAccommodatie}">
             <CollectionView.ItemTemplate>
                 <DataTemplate>
                     <Border Stroke="Gray" StrokeThickness="1" Margin="0,5" Padding="10" BackgroundColor="#F5F5F5">
@@ -51,14 +58,13 @@
         </CollectionView>
 
         <!-- Navigation Buttons -->
-        <Grid Grid.Row="3" ColumnDefinitions="*,*" ColumnSpacing="20" Margin="0,20,0,0">
+        <Grid Grid.Row="4" ColumnDefinitions="*,*" ColumnSpacing="20" Margin="0,20,0,0">
             <Button Grid.Column="0" Text="Terug" Command="{Binding GoBackCommand}" BackgroundColor="Gray"/>
             <Button Grid.Column="1"
             Text="Voltooi reservering"
             Command="{Binding BevestigAccommodatieCommand}"
             BackgroundColor="#0a5dc9"/>
         </Grid>
-
 
     </Grid>
 </ContentPage>
