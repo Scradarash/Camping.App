@@ -191,16 +191,12 @@
                 <Button Grid.Column="0" 
                         Text="Annuleer" 
                         Command="{Binding AnnuleerCommand}" 
-                        BackgroundColor="Gray" 
-                        TextColor="White" 
-                        CornerRadius="10"/>
+                        Style="{StaticResource ExitButtonStyle}"/>
 
                 <Button Grid.Column="1" 
                         Text="Reserveer" 
                         Command="{Binding ReserveerCommand}" 
-                        BackgroundColor="#0a5dc9" 
-                        TextColor="White" 
-                        CornerRadius="10"/>
+                        Style="{StaticResource ConfirmButtonStyle}"/>
             </Grid>
         </Grid>
     </Border>

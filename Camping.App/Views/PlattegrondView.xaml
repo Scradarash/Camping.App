@@ -2,43 +2,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Camping.App.Views.PlattegrondView">
 
-    <ContentPage.Resources>
-        <!-- Stijl voor de kalenderknop -->
-        <Style x:Key="KalenderButtonStyle" TargetType="Button">
-            <Setter Property="TextColor" Value="White"/>
-            <Setter Property="FontAttributes" Value="Bold"/>
-            <Setter Property="FontSize" Value="22"/>
-            <Setter Property="BorderColor" Value="Black"/>
-            <Setter Property="BorderWidth" Value="3"/>
-            <Setter Property="CornerRadius" Value="10"/>
-            <Setter Property="BackgroundColor" Value="#0a5dc9"/>
-            <Setter Property="VisualStateManager.VisualStateGroups">
-                <VisualStateGroupList>
-                    <VisualStateGroup x:Name="CommonStates">
-                        <VisualState x:Name="Normal">
-                            <VisualState.Setters>
-                                <Setter Property="BackgroundColor" Value="#0a5dc9" />
-                            </VisualState.Setters>
-                        </VisualState>
-                        <VisualState x:Name="PointerOver">
-                            <VisualState.Setters>
-                                <Setter Property="BackgroundColor" Value="#3c7fd6" />
-                            </VisualState.Setters>
-                        </VisualState>
-                    </VisualStateGroup>
-                </VisualStateGroupList>
-            </Setter>
-        </Style>
-
-        <!-- Hier stijl invoegen voor andere knoppen die uitsluitend op de plattefrond komen: -->
-    </ContentPage.Resources>
-
     <Grid HorizontalOptions="Center" VerticalOptions="Center">
         <!-- Plattegrond -->
         <Image x:Name="CampingPlattegrond"
                Source="camping_plattegrond.png"
-               Aspect="AspectFit"
-               InputTransparent="True" />
+               Aspect="AspectFit"/>
 
         <!-- De Container voor ALLE knoppen, hier staat dus de kalenderknop, afsluitknop en staandplaatsknoppen -->
         <!-- In de toekomst komen hier ook knoppen voor faciliteiten enzo -->

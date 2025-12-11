@@ -59,7 +59,7 @@ public partial class PlattegrondView : ContentPage
         var kalenderBtn = new Button
         {
             Text = "Kalender",
-            Style = (Style)Resources["KalenderButtonStyle"],
+            Style = (Style)Application.Current.Resources["ConfirmButtonStyle"],
             Command = _viewModel.OpenKalenderCommand
         };
 
