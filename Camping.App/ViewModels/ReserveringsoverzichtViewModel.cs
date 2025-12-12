@@ -46,6 +46,15 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
     [ObservableProperty]
     private bool isGeboortedatumFoutZichtbaar;
 
+    [ObservableProperty] 
+    private string emailadres;
+
+    [ObservableProperty] 
+    private string emailadresFoutmelding;
+
+    [ObservableProperty] 
+    private bool isEmailadresFoutZichtbaar;
+
     public ObservableCollection<Accommodatie> Accommodaties { get; } = new();
 
     public ReserveringsoverzichtViewModel(IReservatieDataService reservatieDataService, IAccommodatieService accommodatieService, IReserveringService reserveringService)
@@ -115,7 +124,7 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
     private async Task BevestigAccommodatie()
     {
         //Validatie en daadwerkelijk opslaan van de reservering
-        if (!HasValidNaam() || !HasValidGeboortedatum())
+        if (!HasValidNaam() || !HasValidGeboortedatum() || !HasValidEmailadres())
         {
             return;
         }
@@ -251,4 +260,33 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
         IsGeboortedatumFoutZichtbaar = false;
         return true;
     }
+
+    private bool HasValidEmailadres()
+    {
+        if (string.IsNullOrWhiteSpace(Emailadres))
+        {
+            EmailadresFoutmelding = "E-mailadres is verplicht.";
+            IsEmailadresFoutZichtbaar = true;
+            return false;
+        }
+
+        var pattern = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
+        if (!Regex.IsMatch(Emailadres, pattern, RegexOptions.IgnoreCase))
+        {
+            EmailadresFoutmelding = "E-mailadres structuur klopt niet.";
+            IsEmailadresFoutZichtbaar = true;
+            return false;
+        }
+
+        if (Regex.IsMatch(Emailadres, @"[^a-zA-Z0-9@\.\-_]", RegexOptions.IgnoreCase))
+        {
+            EmailadresFoutmelding = "E-mailadres bevat niet toegestane karakters.";
+            IsEmailadresFoutZichtbaar = true;
+            return false;
+        }
+
+        IsEmailadresFoutZichtbaar = false;
+        return true;
+    }
+
 }

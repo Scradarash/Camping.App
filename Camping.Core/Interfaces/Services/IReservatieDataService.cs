@@ -11,6 +11,7 @@ namespace Camping.Core.Interfaces.Services
         Accommodatie? SelectedAccommodatie { get; set; }
         string? Naam { get; set; }
         DateTime? Geboortedatum { get; set; }
+        string? Emailadres { get; set; }
         bool IsValidPeriod();
         string ValidateInput(DateTime? start, DateTime? end);
     }

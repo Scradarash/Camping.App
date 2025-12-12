@@ -15,7 +15,7 @@
             <Label Text="{Binding PeriodDescription}" FontSize="16" TextColor="Gray"/>
         </VerticalStackLayout>
 
-        <!-- Invoer naam en geboortedatum reserveringshouder -->
+        <!-- Invoer naam, geboortedatum en e-mailadres reserveringshouder -->
         <VerticalStackLayout Grid.Row="1" Spacing="5" Margin="0,0,0,15">
             <Label FontSize="16">
                 <Label.FormattedText>
@@ -44,6 +44,27 @@
                 MinimumDate="1900-01-01"
                 MaximumDate="{x:Static sys:DateTime.Today}" />
             <Label Text="{Binding GeboortedatumFoutmelding}" TextColor="Red" FontSize="14" IsVisible="{Binding IsGeboortedatumFoutZichtbaar}"/>
+
+            <Label FontSize="16">
+                <Label.FormattedText>
+                    <FormattedString>
+                        <Span Text="E-mailadres " TextColor="Black"/>
+                        <Span Text="(vereist)" TextColor="Red"/>
+                    </FormattedString>
+                </Label.FormattedText>
+            </Label>
+            <Entry 
+                Text="{Binding Emailadres}" 
+                Placeholder="bijvoorbeeld: jacobarieromkes@coolmail.com" 
+                TextColor="Black" 
+                FontSize="16" 
+                BackgroundColor="#f0f0f0"
+                Keyboard="Email" />
+            <Label 
+                Text="{Binding EmailadresFoutmelding}" 
+                TextColor="Red" 
+                FontSize="14" 
+                IsVisible="{Binding IsEmailadresFoutZichtbaar}"/>
         </VerticalStackLayout>
 
         <!-- Step Title -->
