@@ -5,111 +5,148 @@
              x:Class="Camping.App.Views.ReserveringsoverzichtView"
              Title="Nieuwe Reservering">
 
-    <Grid RowDefinitions="Auto, Auto, Auto, *, Auto" Padding="20" BackgroundColor="White">
+    <ScrollView>
+        <VerticalStackLayout Padding="20" BackgroundColor="White" Spacing="25">
 
-        <!-- Header Info -->
-        <VerticalStackLayout Grid.Row="0" Spacing="5" Margin="0,0,0,20">
-            <Label Text="Overzicht Reservering" FontSize="24" FontAttributes="Bold" TextColor="Black"/>
-            <Label Text="{Binding FieldName, StringFormat='Veld: {0}'}" FontSize="18" TextColor="#416722"/>
-            <Label Text="{Binding StaanplaatsNaam}" FontSize="16" TextColor="Black" />
-            <Label Text="{Binding PeriodDescription}" FontSize="16" TextColor="Gray"/>
+            <!-- Zone 1: Gegevens tot nu toe -->
+            <Frame BorderColor="LightGray" BackgroundColor="#fafafa" Padding="15" CornerRadius="10">
+                <VerticalStackLayout Spacing="5">
+                    <Label Text="Overzicht reserveringsgegevens" FontSize="22" FontAttributes="Bold" TextColor="Black" />
+                    <Label Text="{Binding FieldName, StringFormat='Veld: {0}'}" FontSize="18" TextColor="#416722"/>
+                    <Label Text="{Binding StaanplaatsNaam}" FontSize="16" TextColor="Black" />
+                    <Label Text="{Binding PeriodDescription}" FontSize="16" TextColor="Gray"/>
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Zone 2: Accommodatie kiezen -->
+            <Frame BorderColor="LightGray" BackgroundColor="#fafafa" Padding="15" CornerRadius="10">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Kies een accommodatie" FontSize="20" FontAttributes="Bold" TextColor="Black" />
+
+                    <CollectionView ItemsSource="{Binding Accommodaties}" SelectionMode="Single" SelectedItem="{Binding SelectedAccommodatie}">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Border Stroke="Gray" StrokeThickness="1" Margin="0,5" Padding="10" BackgroundColor="#F5F5F5">
+                                    <VisualStateManager.VisualStateGroups>
+                                        <VisualStateGroup Name="CommonStates">
+                                            <VisualState Name="Selected">
+                                                <VisualState.Setters>
+                                                    <Setter Property="BackgroundColor" Value="#cce5ff" />
+                                                    <Setter Property="Stroke" Value="#0a5dc9" />
+                                                </VisualState.Setters>
+                                            </VisualState>
+                                            <VisualState Name="Normal" />
+                                        </VisualStateGroup>
+                                    </VisualStateManager.VisualStateGroups>
+
+                                    <Grid ColumnDefinitions="*, Auto">
+                                        <Label Text="{Binding Name}" VerticalOptions="Center" TextColor="Black" FontSize="16"/>
+                                        <Label Text="✔" Grid.Column="1" TextColor="#0a5dc9" FontAttributes="Bold" IsVisible="False">
+                                            <Label.Triggers>
+                                                <DataTrigger TargetType="Label" Binding="{Binding Source={RelativeSource AncestorType={x:Type Grid}}, Path=Parent.Parent.IsSelected}" Value="True">
+                                                    <Setter Property="IsVisible" Value="True"/>
+                                                </DataTrigger>
+                                            </Label.Triggers>
+                                        </Label>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Zone 3: Invoer reserveringshouder -->
+            <Frame BorderColor="LightGray" BackgroundColor="#fafafa" Padding="15" CornerRadius="10">
+                <VerticalStackLayout Spacing="5">
+                    <Label Text="Invoeren gegevens reserveringshouder" FontSize="20" FontAttributes="Bold" TextColor="Black" Margin="0,0,0,10"/>
+
+                    <!-- Naam -->
+                    <Label FontSize="16">
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span Text="Volledige naam " TextColor="Black"/>
+                                <Span Text="(vereist)" TextColor="Red"/>
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
+                    <Entry Text="{Binding Naam}" Placeholder="Bijvoorbeeld: Jacob Arie Romkes" TextColor="Black" FontSize="16" BackgroundColor="#f0f0f0"/>
+                    <Label Text="{Binding NaamFoutmelding}" TextColor="Red" FontSize="14" IsVisible="{Binding IsNaamFoutZichtbaar}"/>
+
+                    <!-- Geboortedatum -->
+                    <Label FontSize="16">
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span Text="Geboortedatum " TextColor="Black"/>
+                                <Span Text="(vereist)" TextColor="Red"/>
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
+                    <DatePicker 
+                        Date="{Binding Geboortedatum}" 
+                        TextColor="Black" 
+                        FontSize="16" 
+                        BackgroundColor="#f0f0f0"
+                        MinimumDate="1900-01-01"
+                        MaximumDate="{x:Static sys:DateTime.Today}" />
+                    <Label Text="{Binding GeboortedatumFoutmelding}" TextColor="Red" FontSize="14" IsVisible="{Binding IsGeboortedatumFoutZichtbaar}"/>
+
+                    <!-- E-mailadres -->
+                    <Label FontSize="16">
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span Text="E-mailadres " TextColor="Black"/>
+                                <Span Text="(vereist)" TextColor="Red"/>
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
+                    <Entry 
+                        Text="{Binding Emailadres}" 
+                        Placeholder="bijvoorbeeld: jacobarieromkes@coolmail.com" 
+                        TextColor="Black" 
+                        FontSize="16" 
+                        BackgroundColor="#f0f0f0"
+                        Keyboard="Email" />
+                    <Label 
+                        Text="{Binding EmailadresFoutmelding}" 
+                        TextColor="Red" 
+                        FontSize="14" 
+                        IsVisible="{Binding IsEmailadresFoutZichtbaar}"/>
+
+                    <!-- Telefoonnummer -->
+                    <Label FontSize="16">
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span Text="Telefoonnummer " TextColor="Black"/>
+                                <Span Text="(vereist)" TextColor="Red"/>
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
+                    <Entry 
+                        Text="{Binding Telefoonnummer}" 
+                        Placeholder="0612345678" 
+                        TextColor="Black" 
+                        FontSize="16" 
+                        BackgroundColor="#f0f0f0"
+                        Keyboard="Telephone" />
+                    <Label 
+                        Text="{Binding TelefoonnummerFoutmelding}" 
+                        TextColor="Red" 
+                        FontSize="14" 
+                        IsVisible="{Binding IsTelefoonnummerFoutZichtbaar}"/>
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Navigatieknoppen -->
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="20">
+                <Button Grid.Column="0" Text="Terug" Command="{Binding GoBackCommand}" BackgroundColor="Gray"/>
+                <Button Grid.Column="1"
+                        Text="Voltooi reservering"
+                        Command="{Binding BevestigAccommodatieCommand}"
+                        BackgroundColor="#0a5dc9"
+                        TextColor="White"/>
+            </Grid>
+
         </VerticalStackLayout>
-
-        <!-- Invoer naam, geboortedatum en e-mailadres reserveringshouder -->
-        <VerticalStackLayout Grid.Row="1" Spacing="5" Margin="0,0,0,15">
-            <Label FontSize="16">
-                <Label.FormattedText>
-                    <FormattedString>
-                        <Span Text="Volledige naam reserveringshouder " TextColor="Black"/>
-                        <Span Text="(vereist)" TextColor="Red"/>
-                    </FormattedString>
-                </Label.FormattedText>
-            </Label>
-            <Entry Text="{Binding Naam}" Placeholder="Bijvoorbeeld: Jacob Arie Romkes" TextColor="Black" FontSize="16" BackgroundColor="#f0f0f0"/>
-            <Label Text="{Binding NaamFoutmelding}" TextColor="Red" FontSize="14" IsVisible="{Binding IsNaamFoutZichtbaar}"/>
-
-            <Label FontSize="16">
-                <Label.FormattedText>
-                    <FormattedString>
-                        <Span Text="Geboortedatum " TextColor="Black"/>
-                        <Span Text="(vereist)" TextColor="Red"/>
-                    </FormattedString>
-                </Label.FormattedText>
-            </Label>
-            <DatePicker 
-                Date="{Binding Geboortedatum}" 
-                TextColor="Black" 
-                FontSize="16" 
-                BackgroundColor="#f0f0f0"
-                MinimumDate="1900-01-01"
-                MaximumDate="{x:Static sys:DateTime.Today}" />
-            <Label Text="{Binding GeboortedatumFoutmelding}" TextColor="Red" FontSize="14" IsVisible="{Binding IsGeboortedatumFoutZichtbaar}"/>
-
-            <Label FontSize="16">
-                <Label.FormattedText>
-                    <FormattedString>
-                        <Span Text="E-mailadres " TextColor="Black"/>
-                        <Span Text="(vereist)" TextColor="Red"/>
-                    </FormattedString>
-                </Label.FormattedText>
-            </Label>
-            <Entry 
-                Text="{Binding Emailadres}" 
-                Placeholder="bijvoorbeeld: jacobarieromkes@coolmail.com" 
-                TextColor="Black" 
-                FontSize="16" 
-                BackgroundColor="#f0f0f0"
-                Keyboard="Email" />
-            <Label 
-                Text="{Binding EmailadresFoutmelding}" 
-                TextColor="Red" 
-                FontSize="14" 
-                IsVisible="{Binding IsEmailadresFoutZichtbaar}"/>
-        </VerticalStackLayout>
-
-        <!-- Step Title -->
-        <Label Grid.Row="2" Text="Kies uw accommodatie:" FontSize="18" FontAttributes="Bold" TextColor="Black" Margin="0,0,0,10"/>
-
-        <!-- Accommodation Selection -->
-        <CollectionView Grid.Row="3" ItemsSource="{Binding Accommodaties}" SelectionMode="Single" SelectedItem="{Binding SelectedAccommodatie}">
-            <CollectionView.ItemTemplate>
-                <DataTemplate>
-                    <Border Stroke="Gray" StrokeThickness="1" Margin="0,5" Padding="10" BackgroundColor="#F5F5F5">
-                        <VisualStateManager.VisualStateGroups>
-                            <VisualStateGroup Name="CommonStates">
-                                <VisualState Name="Selected">
-                                    <VisualState.Setters>
-                                        <Setter Property="BackgroundColor" Value="#cce5ff" />
-                                        <Setter Property="Stroke" Value="#0a5dc9" />
-                                    </VisualState.Setters>
-                                </VisualState>
-                                <VisualState Name="Normal" />
-                            </VisualStateGroup>
-                        </VisualStateManager.VisualStateGroups>
-
-                        <Grid ColumnDefinitions="*, Auto">
-                            <Label Text="{Binding Name}" VerticalOptions="Center" TextColor="Black" FontSize="16"/>
-                            <Label Text="✔" Grid.Column="1" TextColor="#0a5dc9" FontAttributes="Bold" IsVisible="False">
-                                <Label.Triggers>
-                                    <DataTrigger TargetType="Label" Binding="{Binding Source={RelativeSource AncestorType={x:Type Grid}}, Path=Parent.Parent.IsSelected}" Value="True">
-                                        <Setter Property="IsVisible" Value="True"/>
-                                    </DataTrigger>
-                                </Label.Triggers>
-                            </Label>
-                        </Grid>
-                    </Border>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
-
-        <!-- Navigation Buttons -->
-        <Grid Grid.Row="4" ColumnDefinitions="*,*" ColumnSpacing="20" Margin="0,20,0,0">
-            <Button Grid.Column="0" Text="Terug" Command="{Binding GoBackCommand}" BackgroundColor="Gray"/>
-            <Button Grid.Column="1"
-                    Text="Voltooi reservering"
-                    Command="{Binding BevestigAccommodatieCommand}"
-                    BackgroundColor="#0a5dc9"/>
-        </Grid>
-
-    </Grid>
+    </ScrollView>
 </ContentPage>

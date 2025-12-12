@@ -13,6 +13,7 @@ namespace Camping.Core.Services
         public string? Naam { get; set; }
         public DateTime? Geboortedatum { get; set; }
         public string? Emailadres { get; set; }
+        public string? Telefoonnummer { get; set; }
 
         //Nodig voor later controleren op correctheid datum
         public bool IsValidPeriod()
