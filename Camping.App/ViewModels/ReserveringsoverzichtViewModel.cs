@@ -190,6 +190,13 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
             return false;
         }
 
+        if (trimmed.Length > 25)
+        {
+            NaamFoutmelding = "Naam mag maximaal 25 tekens bevatten.";
+            IsNaamFoutZichtbaar = true;
+            return false;
+        }
+
         var regex = new Regex(@"^[a-zA-ZÀ-ÿ\s\-']+$");
 
         if (!regex.IsMatch(trimmed))
