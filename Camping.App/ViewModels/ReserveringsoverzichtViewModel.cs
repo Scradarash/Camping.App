@@ -46,14 +46,23 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
     [ObservableProperty]
     private bool isGeboortedatumFoutZichtbaar;
 
-    [ObservableProperty] 
+    [ObservableProperty]
     private string emailadres;
 
-    [ObservableProperty] 
+    [ObservableProperty]
     private string emailadresFoutmelding;
 
-    [ObservableProperty] 
+    [ObservableProperty]
     private bool isEmailadresFoutZichtbaar;
+
+    [ObservableProperty]
+    private string telefoonnummer;
+
+    [ObservableProperty]
+    private string telefoonnummerFoutmelding;
+
+    [ObservableProperty]
+    private bool isTelefoonnummerFoutZichtbaar;
 
     public ObservableCollection<Accommodatie> Accommodaties { get; } = new();
 
@@ -123,8 +132,12 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
     [RelayCommand]
     private async Task BevestigAccommodatie()
     {
-        //Validatie en daadwerkelijk opslaan van de reservering
-        if (!HasValidNaam() || !HasValidGeboortedatum() || !HasValidEmailadres())
+        var naamOk = HasValidNaam();
+        var geboortedatumOk = HasValidGeboortedatum();
+        var emailOk = HasValidEmailadres();
+        var telefoonOk = HasValidTelefoonnummer();
+
+        if (!naamOk || !geboortedatumOk || !emailOk || !telefoonOk)
         {
             return;
         }
@@ -155,11 +168,12 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
 
         try
         {
-            //Gekozen gegevens tijdelijk bewaren in data service
             _reservatieDataService.Naam = Naam;
+            _reservatieDataService.Geboortedatum = Geboortedatum;
+            _reservatieDataService.Emailadres = Emailadres;
+            _reservatieDataService.Telefoonnummer = Telefoonnummer;
             _reservatieDataService.SelectedAccommodatie = SelectedAccommodatie;
 
-            //Reservering opslaan via de ReservatieService
             _reserveringService.MaakReservering(
                 _reservatieDataService.StartDate.Value,
                 _reservatieDataService.EndDate.Value,
@@ -172,7 +186,6 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
                 "De reservering is succesvol opgeslagen.",
                 "OK");
 
-            //Na opslaan terug naar de PlattegrondView
             await Shell.Current.GoToAsync("//PlattegrondView");
         }
         catch (Exception ex)
@@ -289,4 +302,32 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
         return true;
     }
 
+    private bool HasValidTelefoonnummer()
+    {
+        if (string.IsNullOrWhiteSpace(Telefoonnummer))
+        {
+            TelefoonnummerFoutmelding = "Telefoonnummer is verplicht.";
+            IsTelefoonnummerFoutZichtbaar = true;
+            return false;
+        }
+
+        var digits = new string(Telefoonnummer.Where(char.IsDigit).ToArray());
+
+        if (digits.Length < 8 || digits.Length > 15)
+        {
+            TelefoonnummerFoutmelding = "Telefoonnummer moet tussen 8 en 15 cijfers bevatten.";
+            IsTelefoonnummerFoutZichtbaar = true;
+            return false;
+        }
+
+        if (!Regex.IsMatch(Telefoonnummer, "^[0-9 +]+$"))
+        {
+            TelefoonnummerFoutmelding = "Alleen cijfers, spaties en '+' zijn toegestaan.";
+            IsTelefoonnummerFoutZichtbaar = true;
+            return false;
+        }
+
+        IsTelefoonnummerFoutZichtbaar = false;
+        return true;
+    }
 }
