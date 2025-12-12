@@ -3,6 +3,7 @@ using Camping.Core.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
+using System.Text.RegularExpressions;
 
 namespace Camping.App.ViewModels;
 
@@ -12,7 +13,6 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
 
     // gebruiken de Service voor de logica (ipv de Repository)
     private readonly IAccommodatieService _accommodatieService;
-
     private readonly IReserveringService _reserveringService;
 
     [ObservableProperty]
@@ -28,13 +28,39 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
     [ObservableProperty]
     private Accommodatie selectedAccommodatie;
 
+    [ObservableProperty]
+    private string naam;
+
+    [ObservableProperty]
+    private string naamFoutmelding;
+
+    [ObservableProperty]
+    private bool isNaamFoutZichtbaar;
+
+    [ObservableProperty]
+    private DateTime? geboortedatum;
+
+    [ObservableProperty]
+    private string geboortedatumFoutmelding;
+
+    [ObservableProperty]
+    private bool isGeboortedatumFoutZichtbaar;
+
+    [ObservableProperty] 
+    private string emailadres;
+
+    [ObservableProperty] 
+    private string emailadresFoutmelding;
+
+    [ObservableProperty] 
+    private bool isEmailadresFoutZichtbaar;
+
     public ObservableCollection<Accommodatie> Accommodaties { get; } = new();
 
-    // De Service komt binnen via de constructor
     public ReserveringsoverzichtViewModel(IReservatieDataService reservatieDataService, IAccommodatieService accommodatieService, IReserveringService reserveringService)
     {
         _reservatieDataService = reservatieDataService;
-        _accommodatieService = accommodatieService; // Opslaan in de variabele
+        _accommodatieService = accommodatieService;
         _reserveringService = reserveringService;
 
         LoadData();
@@ -64,7 +90,6 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
             StaanplaatsNaam = "Geen specifieke plaats gekozen";
         }
 
-        // HIER GEBEURT HET FILTEREN
         Accommodaties.Clear();
 
         // We vragen aan de service: wat mag er staan op dit veld"
@@ -75,7 +100,6 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
             // In het reserveringsoverzicht alleen accommodaties tonen die overeenkomen met de gekozen staanplaats
             if (gekozenPlek != null)
             {
-                // Hier doen we de vergelijking op naam (case insensitive), beetje scuffed maar werkt voor nu
                 if (acc.Name.Contains(gekozenPlek.AccommodatieType, StringComparison.OrdinalIgnoreCase)
                     || gekozenPlek.AccommodatieType.Contains(acc.Name, StringComparison.OrdinalIgnoreCase))
                 {
@@ -84,23 +108,26 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
             }
             else
             {
-                // Als er geen specifieke plek is gekozen, voegen we alles toe wat op het veld mag, maar filteren we niet verder op staanplaats type
-                // Dit was hoe Jos het oorspronkelijk had
                 Accommodaties.Add(acc);
             }
         }
 
-        // Selecteer automatisch de eerste optie (handig voor de gebruiker)
         if (Accommodaties.Count > 0)
         {
             SelectedAccommodatie = Accommodaties[0];
         }
+
+        Naam = _reservatieDataService.Naam;
     }
 
     [RelayCommand]
     private async Task BevestigAccommodatie()
     {
         //Validatie en daadwerkelijk opslaan van de reservering
+        if (!HasValidNaam() || !HasValidGeboortedatum() || !HasValidEmailadres())
+        {
+            return;
+        }
 
         if (SelectedAccommodatie == null)
         {
@@ -128,7 +155,8 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
 
         try
         {
-            //Gekozen accommodatie tijdelijk bewaren in data service
+            //Gekozen gegevens tijdelijk bewaren in data service
+            _reservatieDataService.Naam = Naam;
             _reservatieDataService.SelectedAccommodatie = SelectedAccommodatie;
 
             //Reservering opslaan via de ReservatieService
@@ -161,4 +189,104 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
     {
         await Shell.Current.GoToAsync("..");
     }
+
+    private bool HasValidNaam()
+    {
+        if (string.IsNullOrWhiteSpace(Naam))
+        {
+            NaamFoutmelding = "Naam is verplicht.";
+            IsNaamFoutZichtbaar = true;
+            return false;
+        }
+
+        var trimmed = Naam.Trim();
+
+        if (trimmed.Length < 2)
+        {
+            NaamFoutmelding = "Naam moet minimaal 2 tekens bevatten.";
+            IsNaamFoutZichtbaar = true;
+            return false;
+        }
+
+        if (trimmed.Length > 25)
+        {
+            NaamFoutmelding = "Naam mag maximaal 25 tekens bevatten.";
+            IsNaamFoutZichtbaar = true;
+            return false;
+        }
+
+        var regex = new Regex(@"^[a-zA-ZÀ-ÿ\s\-']+$");
+
+        if (!regex.IsMatch(trimmed))
+        {
+            NaamFoutmelding = "Naam bevat ongeldige tekens.";
+            IsNaamFoutZichtbaar = true;
+            return false;
+        }
+
+        NaamFoutmelding = string.Empty;
+        IsNaamFoutZichtbaar = false;
+        return true;
+    }
+
+    private bool HasValidGeboortedatum()
+    {
+        if (Geboortedatum == null)
+        {
+            GeboortedatumFoutmelding = "Geboortedatum is verplicht.";
+            IsGeboortedatumFoutZichtbaar = true;
+            return false;
+        }
+
+        var vandaag = DateTime.Today;
+        var leeftijd = vandaag.Year - Geboortedatum.Value.Year;
+        if (Geboortedatum.Value.Date > vandaag.AddYears(-leeftijd)) leeftijd--;
+
+        if (leeftijd < 18)
+        {
+            GeboortedatumFoutmelding = "De hoofdboeker moet minimaal 18 jaar zijn.";
+            IsGeboortedatumFoutZichtbaar = true;
+            return false;
+        }
+
+        if (leeftijd > 120)
+        {
+            GeboortedatumFoutmelding = "Leeftijd boven 120 jaar is niet toegestaan.";
+            IsGeboortedatumFoutZichtbaar = true;
+            return false;
+        }
+
+        GeboortedatumFoutmelding = string.Empty;
+        IsGeboortedatumFoutZichtbaar = false;
+        return true;
+    }
+
+    private bool HasValidEmailadres()
+    {
+        if (string.IsNullOrWhiteSpace(Emailadres))
+        {
+            EmailadresFoutmelding = "E-mailadres is verplicht.";
+            IsEmailadresFoutZichtbaar = true;
+            return false;
+        }
+
+        var pattern = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
+        if (!Regex.IsMatch(Emailadres, pattern, RegexOptions.IgnoreCase))
+        {
+            EmailadresFoutmelding = "E-mailadres structuur klopt niet.";
+            IsEmailadresFoutZichtbaar = true;
+            return false;
+        }
+
+        if (Regex.IsMatch(Emailadres, @"[^a-zA-Z0-9@\.\-_]", RegexOptions.IgnoreCase))
+        {
+            EmailadresFoutmelding = "E-mailadres bevat niet toegestane karakters.";
+            IsEmailadresFoutZichtbaar = true;
+            return false;
+        }
+
+        IsEmailadresFoutZichtbaar = false;
+        return true;
+    }
+
 }
