@@ -3,6 +3,7 @@ using Camping.Core.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
+using System.Text.RegularExpressions;
 
 namespace Camping.App.ViewModels;
 
@@ -12,7 +13,6 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
 
     // gebruiken de Service voor de logica (ipv de Repository)
     private readonly IAccommodatieService _accommodatieService;
-
     private readonly IReserveringService _reserveringService;
 
     [ObservableProperty]
@@ -28,13 +28,21 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
     [ObservableProperty]
     private Accommodatie selectedAccommodatie;
 
+    [ObservableProperty]
+    private string naam;
+
+    [ObservableProperty]
+    private string naamFoutmelding;
+
+    [ObservableProperty]
+    private bool isNaamFoutZichtbaar;
+
     public ObservableCollection<Accommodatie> Accommodaties { get; } = new();
 
-    // De Service komt binnen via de constructor
     public ReserveringsoverzichtViewModel(IReservatieDataService reservatieDataService, IAccommodatieService accommodatieService, IReserveringService reserveringService)
     {
         _reservatieDataService = reservatieDataService;
-        _accommodatieService = accommodatieService; // Opslaan in de variabele
+        _accommodatieService = accommodatieService;
         _reserveringService = reserveringService;
 
         LoadData();
@@ -64,7 +72,6 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
             StaanplaatsNaam = "Geen specifieke plaats gekozen";
         }
 
-        // HIER GEBEURT HET FILTEREN
         Accommodaties.Clear();
 
         // We vragen aan de service: wat mag er staan op dit veld"
@@ -75,7 +82,6 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
             // In het reserveringsoverzicht alleen accommodaties tonen die overeenkomen met de gekozen staanplaats
             if (gekozenPlek != null)
             {
-                // Hier doen we de vergelijking op naam (case insensitive), beetje scuffed maar werkt voor nu
                 if (acc.Name.Contains(gekozenPlek.AccommodatieType, StringComparison.OrdinalIgnoreCase)
                     || gekozenPlek.AccommodatieType.Contains(acc.Name, StringComparison.OrdinalIgnoreCase))
                 {
@@ -84,23 +90,26 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
             }
             else
             {
-                // Als er geen specifieke plek is gekozen, voegen we alles toe wat op het veld mag, maar filteren we niet verder op staanplaats type
-                // Dit was hoe Jos het oorspronkelijk had
                 Accommodaties.Add(acc);
             }
         }
 
-        // Selecteer automatisch de eerste optie (handig voor de gebruiker)
         if (Accommodaties.Count > 0)
         {
             SelectedAccommodatie = Accommodaties[0];
         }
+
+        Naam = _reservatieDataService.Naam;
     }
 
     [RelayCommand]
     private async Task BevestigAccommodatie()
     {
         //Validatie en daadwerkelijk opslaan van de reservering
+        if (!HasValidNaam())
+        {
+            return;
+        }
 
         if (SelectedAccommodatie == null)
         {
@@ -129,6 +138,7 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
         try
         {
             //Gekozen accommodatie tijdelijk bewaren in data service
+            _reservatieDataService.Naam = Naam;
             _reservatieDataService.SelectedAccommodatie = SelectedAccommodatie;
 
             //Reservering opslaan via de ReservatieService
@@ -160,5 +170,44 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
     private async Task GoBack()
     {
         await Shell.Current.GoToAsync("..");
+    }
+
+    private bool HasValidNaam()
+    {
+        if (string.IsNullOrWhiteSpace(Naam))
+        {
+            NaamFoutmelding = "Naam is verplicht.";
+            IsNaamFoutZichtbaar = true;
+            return false;
+        }
+
+        var trimmed = Naam.Trim();
+
+        if (trimmed.Length < 2)
+        {
+            NaamFoutmelding = "Naam moet minimaal 2 tekens bevatten.";
+            IsNaamFoutZichtbaar = true;
+            return false;
+        }
+
+        if (trimmed.Length > 25)
+        {
+            NaamFoutmelding = "Naam mag maximaal 25 tekens bevatten.";
+            IsNaamFoutZichtbaar = true;
+            return false;
+        }
+
+        var regex = new Regex(@"^[a-zA-ZÀ-ÿ\s\-']+$");
+
+        if (!regex.IsMatch(trimmed))
+        {
+            NaamFoutmelding = "Naam bevat ongeldige tekens.";
+            IsNaamFoutZichtbaar = true;
+            return false;
+        }
+
+        NaamFoutmelding = string.Empty;
+        IsNaamFoutZichtbaar = false;
+        return true;
     }
 }
