@@ -16,7 +16,14 @@
 
         <!-- Invoer naam reserveringshouder -->
         <VerticalStackLayout Grid.Row="1" Spacing="5" Margin="0,0,0,15">
-            <Label Text="Volledige naam reserveringshouder:" FontSize="16" TextColor="Black"/>
+            <Label FontSize="16">
+                <Label.FormattedText>
+                    <FormattedString>
+                        <Span Text="Volledige naam reserveringshouder " TextColor="Black"/>
+                        <Span Text="(vereist)" TextColor="Red"/>
+                    </FormattedString>
+                </Label.FormattedText>
+            </Label>
             <Entry Text="{Binding Naam}" Placeholder="Bijvoorbeeld: Jacob Arie Romkes" TextColor="Black" FontSize="16" BackgroundColor="#f0f0f0"/>
             <Label Text="{Binding NaamFoutmelding}" TextColor="Red" FontSize="14" IsVisible="{Binding IsNaamFoutZichtbaar}"/>
         </VerticalStackLayout>

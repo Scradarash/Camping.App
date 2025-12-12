@@ -10,6 +10,8 @@ namespace Camping.App.ViewModels;
 public partial class ReserveringsoverzichtViewModel : ObservableObject
 {
     private readonly IReservatieDataService _reservatieDataService;
+
+    // gebruiken de Service voor de logica (ipv de Repository)
     private readonly IAccommodatieService _accommodatieService;
     private readonly IReserveringService _reserveringService;
 
@@ -19,6 +21,7 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
     [ObservableProperty]
     private string fieldName;
 
+    // Nieuwe property om de naam van de geselecteerde staanplaats weer te geven in de View
     [ObservableProperty]
     private string staanplaatsNaam;
 
@@ -47,6 +50,7 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
 
     private void LoadData()
     {
+        // Veiligheidscheck: als er geen veld is, stop dan (voorkomt crashes)
         if (_reservatieDataService.SelectedVeld == null || _reservatieDataService.StartDate == null)
         {
             return;
@@ -55,10 +59,12 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
         FieldName = _reservatieDataService.SelectedVeld.Name;
         PeriodDescription = $"{_reservatieDataService.StartDate:dd-MM-yyyy} tot {_reservatieDataService.EndDate:dd-MM-yyyy}";
 
+        // Gegevens ophalen van de geselecteerde staanplaats uit de service
         var gekozenPlek = _reservatieDataService.SelectedStaanplaats;
 
         if (gekozenPlek != null)
         {
+            // Als er een plek gekozen is, tonen we het nummer en type
             StaanplaatsNaam = $"Plaats: {gekozenPlek.id} ({gekozenPlek.AccommodatieType})";
         }
         else
@@ -67,10 +73,13 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
         }
 
         Accommodaties.Clear();
+
+        // We vragen aan de service: wat mag er staan op dit veld"
         var gefilterdeLijst = _accommodatieService.GetGeschikteAccommodaties(_reservatieDataService.SelectedVeld);
 
         foreach (var acc in gefilterdeLijst)
         {
+            // In het reserveringsoverzicht alleen accommodaties tonen die overeenkomen met de gekozen staanplaats
             if (gekozenPlek != null)
             {
                 if (acc.Name.Contains(gekozenPlek.AccommodatieType, StringComparison.OrdinalIgnoreCase)
@@ -96,6 +105,7 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
     [RelayCommand]
     private async Task BevestigAccommodatie()
     {
+        //Validatie en daadwerkelijk opslaan van de reservering
         if (!HasValidNaam())
         {
             return;
@@ -127,9 +137,11 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
 
         try
         {
+            //Gekozen accommodatie tijdelijk bewaren in data service
             _reservatieDataService.Naam = Naam;
             _reservatieDataService.SelectedAccommodatie = SelectedAccommodatie;
 
+            //Reservering opslaan via de ReservatieService
             _reserveringService.MaakReservering(
                 _reservatieDataService.StartDate.Value,
                 _reservatieDataService.EndDate.Value,
@@ -142,6 +154,7 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
                 "De reservering is succesvol opgeslagen.",
                 "OK");
 
+            //Na opslaan terug naar de PlattegrondView
             await Shell.Current.GoToAsync("//PlattegrondView");
         }
         catch (Exception ex)
