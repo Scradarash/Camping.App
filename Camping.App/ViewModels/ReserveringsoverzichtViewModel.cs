@@ -37,6 +37,15 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
     [ObservableProperty]
     private bool isNaamFoutZichtbaar;
 
+    [ObservableProperty]
+    private DateTime? geboortedatum;
+
+    [ObservableProperty]
+    private string geboortedatumFoutmelding;
+
+    [ObservableProperty]
+    private bool isGeboortedatumFoutZichtbaar;
+
     public ObservableCollection<Accommodatie> Accommodaties { get; } = new();
 
     public ReserveringsoverzichtViewModel(IReservatieDataService reservatieDataService, IAccommodatieService accommodatieService, IReserveringService reserveringService)
@@ -106,7 +115,7 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
     private async Task BevestigAccommodatie()
     {
         //Validatie en daadwerkelijk opslaan van de reservering
-        if (!HasValidNaam())
+        if (!HasValidNaam() || !HasValidGeboortedatum())
         {
             return;
         }
@@ -137,7 +146,7 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
 
         try
         {
-            //Gekozen accommodatie tijdelijk bewaren in data service
+            //Gekozen gegevens tijdelijk bewaren in data service
             _reservatieDataService.Naam = Naam;
             _reservatieDataService.SelectedAccommodatie = SelectedAccommodatie;
 
@@ -208,6 +217,38 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
 
         NaamFoutmelding = string.Empty;
         IsNaamFoutZichtbaar = false;
+        return true;
+    }
+
+    private bool HasValidGeboortedatum()
+    {
+        if (Geboortedatum == null)
+        {
+            GeboortedatumFoutmelding = "Geboortedatum is verplicht.";
+            IsGeboortedatumFoutZichtbaar = true;
+            return false;
+        }
+
+        var vandaag = DateTime.Today;
+        var leeftijd = vandaag.Year - Geboortedatum.Value.Year;
+        if (Geboortedatum.Value.Date > vandaag.AddYears(-leeftijd)) leeftijd--;
+
+        if (leeftijd < 18)
+        {
+            GeboortedatumFoutmelding = "De hoofdboeker moet minimaal 18 jaar zijn.";
+            IsGeboortedatumFoutZichtbaar = true;
+            return false;
+        }
+
+        if (leeftijd > 120)
+        {
+            GeboortedatumFoutmelding = "Leeftijd boven 120 jaar is niet toegestaan.";
+            IsGeboortedatumFoutZichtbaar = true;
+            return false;
+        }
+
+        GeboortedatumFoutmelding = string.Empty;
+        IsGeboortedatumFoutZichtbaar = false;
         return true;
     }
 }
