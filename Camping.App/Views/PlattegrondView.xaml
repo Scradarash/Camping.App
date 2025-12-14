@@ -2,17 +2,42 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Camping.App.Views.PlattegrondView">
 
-    <Grid HorizontalOptions="Center" VerticalOptions="Center">
-        <!-- Plattegrond -->
-        <Image x:Name="CampingPlattegrond"
-               Source="camping_plattegrond.png"
-               Aspect="AspectFit"/>
+    <!-- Grid maken waarin alle images geplaatst worden -->
+    <Grid HorizontalOptions="Fill" VerticalOptions="Fill">
 
-        <!-- De Container voor ALLE knoppen, hier staat dus de kalenderknop, afsluitknop en staandplaatsknoppen -->
-        <!-- In de toekomst komen hier ook knoppen voor faciliteiten enzo -->
-        <!-- Het is van groot belang dat deze onder de plattegrond komt te staan in de code, anders is de achtergrond wit (I tried) -->
-        <AbsoluteLayout x:Name="ButtonOverlayLayout"
-                        HorizontalOptions="Center"
-                        VerticalOptions="Center"/>
+        <!-- Achtergrond afbeelding zodat de achtergrond niet lelijk wit is -->
+        <Image Source="background.png" 
+               Aspect="AspectFill"
+               HorizontalOptions="Fill"
+               VerticalOptions="Fill"/>
+
+        <!-- Bordertje zodat de overgang van de kaart naar de achtergrond niet zo lelijk is -->
+        <Border x:Name="MapFrame"
+                Stroke="#8B4513"
+                StrokeThickness="10"
+                StrokeShape="RoundRectangle 15"
+                HorizontalOptions="Center"
+                VerticalOptions="Center">
+
+            <Border.Shadow>
+                <Shadow Brush="Black" Offset="10,10" Radius="20" Opacity="0.6"/>
+            </Border.Shadow>
+
+            <!-- Grid waarin de afbeelding staat en waar de knoppen overheen komen -->
+            <Grid>
+                <!-- Plattegrond -->
+                <!-- In de code behind wordt de border precies de grootte van de image, waardoor de image altijd past. Daarom nu AspectFill -->
+                <Image x:Name="CampingPlattegrond"
+                       Source="camping_plattegrond.png"
+                       Aspect="AspectFill"/>
+
+                <!-- De Container voor ALLE knoppen, hier staat dus de kalenderknop, afsluitknop en staandplaatsknoppen -->
+                <!-- In de toekomst komen hier ook knoppen voor faciliteiten enzo -->
+                <!-- Het is van groot belang dat deze onder de plattegrond komt te staan in de code, anders is de achtergrond wit (I tried) -->
+                <AbsoluteLayout x:Name="ButtonOverlayLayout"
+                                HorizontalOptions="Fill"
+                                VerticalOptions="Fill"/>
+            </Grid>
+        </Border>
     </Grid>
 </ContentPage>

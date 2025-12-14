@@ -63,10 +63,4 @@ public partial class PlattegrondViewModel : ObservableObject
 
         await Application.Current.MainPage.Navigation.PushModalAsync(kalenderView);
     }
-
-    [RelayCommand]
-    private void ExitApp()
-    {
-        System.Environment.Exit(0);
-    }
 }
