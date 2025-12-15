@@ -1,6 +1,7 @@
-using Camping.App.ViewModels;
-using Microsoft.Maui.Layouts;
 using System.Windows.Input;
+using Camping.App.ViewModels;
+using Camping.Core.Models;
+using Microsoft.Maui.Layouts;
 
 namespace Camping.App.Views;
 
@@ -104,9 +105,9 @@ public partial class PlattegrondView : ContentPage
     private void AddVeldButtons(double innerWidth, double innerHeight, double fontSize)
     {
         // De velden uit het ViewModel genereren
-        foreach (var veld in _viewModel.Velden)
+        foreach (Veld veld in _viewModel.Velden)
         {
-            var btn = CreateMapButton(
+            Button btn = CreateMapButton(
                 text: veld.Name,
                 styleKey: "MapButtonStyle",
                 command: _viewModel.SelectVeldCommand,
@@ -130,7 +131,7 @@ public partial class PlattegrondView : ContentPage
     private void AddKalenderButton(double innerWidth, double innerHeight, double fontSize)
     {
         // Kalender Knop
-        var kalenderBtn = CreateMapButton(
+        Button kalenderBtn = CreateMapButton(
             text: "Kalender",
             styleKey: "ConfirmButtonStyle",
             command: _viewModel.OpenKalenderCommand,
