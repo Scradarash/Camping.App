@@ -76,17 +76,19 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
     [ObservableProperty]
     private bool isWaterMogelijk;
 
-    // <--- NIEUW VOOR US7: De keuzes van de gebruiker (Checkboxes)
     // [NotifyPropertyChangedFor] zorgt dat de TotaalPrijsTekst automatisch update als je klikt!
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(TotaalPrijsTekst))]
     private bool kiestStroom;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(TotaalPrijsTekst))]
     private bool kiestWater;
 
-    // <--- NIEUW VOOR US7: Teksten voor in de View
-    public string StroomPrijsTekst => $"Stroom €{PRIJS_STROOM},-";
+    public string StroomPrijsTekst => $"Stroom €{PRIJS_STROOM},- per nacht";
     public string WaterPrijsTekst => $"Water €{PRIJS_WATER},-";
+
+    public string TotaalPrijsTekst => $"Totaalprijs: €{BerekenEindTotaal():F2}";
 
     public ObservableCollection<Accommodatie> Accommodaties { get; } = new();
 
@@ -165,6 +167,8 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
         }
 
         Naam = _reservatieDataService.Naam;
+
+        OnPropertyChanged(nameof(TotaalPrijsTekst));
     }
 
     private decimal BerekenEindTotaal()

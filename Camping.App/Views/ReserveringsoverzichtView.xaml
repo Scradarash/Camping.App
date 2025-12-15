@@ -8,12 +8,10 @@
     <ScrollView>
         <VerticalStackLayout Padding="20" BackgroundColor="White" Spacing="20">
 
-            <!-- AANGEPAST: De dubbele titel "Nieuwe Reservering" is hier verwijderd -->
-
             <!-- GRID MET 2 KOLOMMEN -->
             <Grid ColumnDefinitions="*,*" ColumnSpacing="20" RowDefinitions="Auto">
 
-                <!-- KOLOM 1: Gegevens Reserveringshouder (Ongewijzigd) -->
+                <!-- KOLOM 1: Gegevens Reserveringshouder -->
                 <Frame Grid.Column="0" BorderColor="LightGray" BackgroundColor="#fafafa" Padding="15" CornerRadius="10" VerticalOptions="Start">
                     <VerticalStackLayout Spacing="10">
                         <Label Text="Gegevens reserveringshouder" FontSize="20" FontAttributes="Bold" TextColor="Black" Margin="0,0,0,5"/>
@@ -28,7 +26,7 @@
                                     </FormattedString>
                                 </Label.FormattedText>
                             </Label>
-                            <Entry Text="{Binding Naam}" Placeholder="Bijv. Jan Jansen" TextColor="Black" BackgroundColor="#f0f0f0"/>
+                            <Entry Text="{Binding Naam}" Placeholder="Bijvoorbeeld: Jacob Arie Romkes" TextColor="Black" BackgroundColor="#f0f0f0"/>
                             <Label Text="{Binding NaamFoutmelding}" TextColor="Red" FontSize="12" IsVisible="{Binding IsNaamFoutZichtbaar}"/>
                         </VerticalStackLayout>
 
@@ -56,7 +54,7 @@
                                     </FormattedString>
                                 </Label.FormattedText>
                             </Label>
-                            <Entry Text="{Binding Emailadres}" Keyboard="Email" Placeholder="naam@email.nl" TextColor="Black" BackgroundColor="#f0f0f0"/>
+                            <Entry Text="{Binding Emailadres}" Keyboard="Email" Placeholder="bijvoorbeeld: jacobarieromkes@coolmail.com" TextColor="Black" BackgroundColor="#f0f0f0"/>
                             <Label Text="{Binding EmailadresFoutmelding}" TextColor="Red" FontSize="12" IsVisible="{Binding IsEmailadresFoutZichtbaar}"/>
                         </VerticalStackLayout>
 
@@ -76,7 +74,7 @@
                     </VerticalStackLayout>
                 </Frame>
 
-                <!-- KOLOM 2: Gegevens Reservering & US7 -->
+                <!-- KOLOM 2: Gegevens Reservering -->
                 <Frame Grid.Column="1" BorderColor="LightGray" BackgroundColor="#fafafa" Padding="15" CornerRadius="10" VerticalOptions="Start">
                     <VerticalStackLayout Spacing="10">
                         <Label Text="Gegevens reservering" FontSize="20" FontAttributes="Bold" TextColor="Black" Margin="0,0,0,5"/>
@@ -84,15 +82,14 @@
                         <!-- Veld & Plek Info -->
                         <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
                             <VerticalStackLayout>
-                                <!-- AANGEPAST: Tekst is nu "Veld:*" ipv "Keuze veld:*" -->
-                                <Label Text="Veld:*" TextColor="Black" FontAttributes="Bold"/>
+                                <Label Text="Veld:" TextColor="Black" FontAttributes="Bold"/>
                                 <Frame Padding="10" BackgroundColor="White" BorderColor="Gray" CornerRadius="5">
                                     <Label Text="{Binding FieldName}" TextColor="Black"/>
                                 </Frame>
                             </VerticalStackLayout>
+
                             <VerticalStackLayout Grid.Column="1">
-                                <!-- AANGEPAST: Tekst is nu "Plaats:*" ipv "Keuze plaats:*" -->
-                                <Label Text="Plaats:*" TextColor="Black" FontAttributes="Bold"/>
+                                <Label Text="Plaats:" TextColor="Black" FontAttributes="Bold"/>
                                 <Frame Padding="10" BackgroundColor="White" BorderColor="Gray" CornerRadius="5">
                                     <Label Text="{Binding StaanplaatsNaam}" TextColor="Black" LineBreakMode="TailTruncation"/>
                                 </Frame>
@@ -104,20 +101,48 @@
                         <BoxView HeightRequest="1" Color="LightGray" Margin="0,5"/>
 
                         <!-- Accommodatie Kiezen -->
-                        <Label Text="Keuze accommodatie:*" TextColor="Black" FontAttributes="Bold"/>
-                        <Frame Padding="0" BackgroundColor="#f0f0f0" BorderColor="Gray" CornerRadius="5" HasShadow="False">
-                            <Picker ItemsSource="{Binding Accommodaties}" 
-                                    ItemDisplayBinding="{Binding Name}" 
-                                    SelectedItem="{Binding SelectedAccommodatie}"
-                                    Title="Selecteer type"
-                                    TextColor="Black"
-                                    TitleColor="Gray"/>
-                        </Frame>
+                        <Label Text="Accommodatie:*" TextColor="Black" FontAttributes="Bold"/>
+
+                        <CollectionView ItemsSource="{Binding Accommodaties}" 
+                                        SelectionMode="Single" 
+                                        SelectedItem="{Binding SelectedAccommodatie}"
+                                        HeightRequest="200">
+                            <!-- Hoogte ingesteld zodat het in de stack past -->
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Stroke="Gray" StrokeThickness="1" Margin="0,5" Padding="10" BackgroundColor="White" StrokeShape="RoundRectangle 5">
+                                        <VisualStateManager.VisualStateGroups>
+                                            <VisualStateGroup Name="CommonStates">
+                                                <VisualState Name="Selected">
+                                                    <VisualState.Setters>
+                                                        <Setter Property="BackgroundColor" Value="#cce5ff" />
+                                                        <Setter Property="Stroke" Value="#0a5dc9" />
+                                                    </VisualState.Setters>
+                                                </VisualState>
+                                                <VisualState Name="Normal" />
+                                            </VisualStateGroup>
+                                        </VisualStateManager.VisualStateGroups>
+
+                                        <Grid ColumnDefinitions="*, Auto">
+                                            <Label Text="{Binding Name}" VerticalOptions="Center" TextColor="Black" FontSize="16"/>
+                                            <!-- Vinkje als geselecteerd -->
+                                            <Label Text="✔" Grid.Column="1" TextColor="#0a5dc9" FontAttributes="Bold" IsVisible="False">
+                                                <Label.Triggers>
+                                                    <DataTrigger TargetType="Label" Binding="{Binding Source={RelativeSource AncestorType={x:Type Grid}}, Path=Parent.Parent.IsSelected}" Value="True">
+                                                        <Setter Property="IsVisible" Value="True"/>
+                                                    </DataTrigger>
+                                                </Label.Triggers>
+                                            </Label>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
 
                         <BoxView HeightRequest="1" Color="LightGray" Margin="0,5"/>
 
                         <!-- VOORZIENINGEN SECTIE -->
-                        <Label Text="Keuze voorzieningen:" TextColor="Black" FontAttributes="Bold"/>
+                        <Label Text="Voorzieningen:" TextColor="Black" FontAttributes="Bold"/>
 
                         <!-- Stroom -->
                         <Frame Padding="10" BackgroundColor="White" BorderColor="LightGray" CornerRadius="5" IsVisible="{Binding IsStroomMogelijk}">
@@ -127,7 +152,6 @@
                                 <Label Text="{Binding StroomPrijsTekst}" VerticalOptions="Center" TextColor="Black"/>
                             </HorizontalStackLayout>
                         </Frame>
-                        <!-- Melding als Stroom niet kan (Verborgen ivm crash converter) -->
                         <Label Text="Geen stroom beschikbaar." TextColor="Gray" FontSize="12" IsVisible="False"/>
 
                         <!-- Water -->
@@ -143,6 +167,13 @@
                 </Frame>
 
             </Grid>
+
+            <!-- Totaalprijs label (dynamisch) -->
+            <Label Text="{Binding TotaalPrijsTekst}" 
+                   FontSize="24" 
+                   FontAttributes="Bold" 
+                   TextColor="Black"
+                   Margin="5,10,0,0"/>
 
             <!-- Knoppenbalk -->
             <Grid ColumnDefinitions="Auto, *" Margin="0,10,0,0">
