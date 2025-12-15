@@ -1,5 +1,6 @@
 ﻿using Camping.Core.Interfaces.Services;
 using Camping.Core.Models;
+using Camping.Core.Services; 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
@@ -15,13 +16,14 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
     private readonly IAccommodatieService _accommodatieService;
     private readonly IReserveringService _reserveringService;
 
+    private readonly ReserveringshouderValidatieService _validatieService;
+
     [ObservableProperty]
     private string periodDescription;
 
     [ObservableProperty]
     private string fieldName;
 
-    // Nieuwe property om de naam van de geselecteerde staanplaats weer te geven in de View
     [ObservableProperty]
     private string staanplaatsNaam;
 
@@ -66,18 +68,23 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
 
     public ObservableCollection<Accommodatie> Accommodaties { get; } = new();
 
-    public ReserveringsoverzichtViewModel(IReservatieDataService reservatieDataService, IAccommodatieService accommodatieService, IReserveringService reserveringService)
+    public ReserveringsoverzichtViewModel(
+        IReservatieDataService reservatieDataService,
+        IAccommodatieService accommodatieService,
+        IReserveringService reserveringService,
+        ReserveringshouderValidatieService validatieService)
     {
         _reservatieDataService = reservatieDataService;
         _accommodatieService = accommodatieService;
         _reserveringService = reserveringService;
+
+        _validatieService = validatieService;
 
         LoadData();
     }
 
     private void LoadData()
     {
-        // Veiligheidscheck: als er geen veld is, stop dan (voorkomt crashes)
         if (_reservatieDataService.SelectedVeld == null || _reservatieDataService.StartDate == null)
         {
             return;
@@ -86,12 +93,10 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
         FieldName = _reservatieDataService.SelectedVeld.Name;
         PeriodDescription = $"{_reservatieDataService.StartDate:dd-MM-yyyy} tot {_reservatieDataService.EndDate:dd-MM-yyyy}";
 
-        // Gegevens ophalen van de geselecteerde staanplaats uit de service
         var gekozenPlek = _reservatieDataService.SelectedStaanplaats;
 
         if (gekozenPlek != null)
         {
-            // Als er een plek gekozen is, tonen we het nummer en type
             StaanplaatsNaam = $"Plaats: {gekozenPlek.id} ({gekozenPlek.AccommodatieType})";
         }
         else
@@ -101,12 +106,10 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
 
         Accommodaties.Clear();
 
-        // We vragen aan de service: wat mag er staan op dit veld"
         var gefilterdeLijst = _accommodatieService.GetGeschikteAccommodaties(_reservatieDataService.SelectedVeld);
 
         foreach (var acc in gefilterdeLijst)
         {
-            // In het reserveringsoverzicht alleen accommodaties tonen die overeenkomen met de gekozen staanplaats
             if (gekozenPlek != null)
             {
                 if (acc.Name.Contains(gekozenPlek.AccommodatieType, StringComparison.OrdinalIgnoreCase)
@@ -205,34 +208,11 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
 
     private bool HasValidNaam()
     {
-        if (string.IsNullOrWhiteSpace(Naam))
+        var result = _validatieService.ValidateNaam(Naam);
+
+        if (!result.IsValid)
         {
-            NaamFoutmelding = "Naam is verplicht.";
-            IsNaamFoutZichtbaar = true;
-            return false;
-        }
-
-        var trimmed = Naam.Trim();
-
-        if (trimmed.Length < 2)
-        {
-            NaamFoutmelding = "Naam moet minimaal 2 tekens bevatten.";
-            IsNaamFoutZichtbaar = true;
-            return false;
-        }
-
-        if (trimmed.Length > 25)
-        {
-            NaamFoutmelding = "Naam mag maximaal 25 tekens bevatten.";
-            IsNaamFoutZichtbaar = true;
-            return false;
-        }
-
-        var regex = new Regex(@"^[a-zA-ZÀ-ÿ\s\-']+$");
-
-        if (!regex.IsMatch(trimmed))
-        {
-            NaamFoutmelding = "Naam bevat ongeldige tekens.";
+            NaamFoutmelding = result.Error;
             IsNaamFoutZichtbaar = true;
             return false;
         }
@@ -244,27 +224,11 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
 
     private bool HasValidGeboortedatum()
     {
-        if (Geboortedatum == null)
-        {
-            GeboortedatumFoutmelding = "Geboortedatum is verplicht.";
-            IsGeboortedatumFoutZichtbaar = true;
-            return false;
-        }
+        var result = _validatieService.ValidateGeboortedatum(Geboortedatum);
 
-        var vandaag = DateTime.Today;
-        var leeftijd = vandaag.Year - Geboortedatum.Value.Year;
-        if (Geboortedatum.Value.Date > vandaag.AddYears(-leeftijd)) leeftijd--;
-
-        if (leeftijd < 18)
+        if (!result.IsValid)
         {
-            GeboortedatumFoutmelding = "De hoofdboeker moet minimaal 18 jaar zijn.";
-            IsGeboortedatumFoutZichtbaar = true;
-            return false;
-        }
-
-        if (leeftijd > 120)
-        {
-            GeboortedatumFoutmelding = "Leeftijd boven 120 jaar is niet toegestaan.";
+            GeboortedatumFoutmelding = result.Error;
             IsGeboortedatumFoutZichtbaar = true;
             return false;
         }
@@ -276,24 +240,11 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
 
     private bool HasValidEmailadres()
     {
-        if (string.IsNullOrWhiteSpace(Emailadres))
-        {
-            EmailadresFoutmelding = "E-mailadres is verplicht.";
-            IsEmailadresFoutZichtbaar = true;
-            return false;
-        }
+        var result = _validatieService.ValidateEmailadres(Emailadres);
 
-        var pattern = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
-        if (!Regex.IsMatch(Emailadres, pattern, RegexOptions.IgnoreCase))
+        if (!result.IsValid)
         {
-            EmailadresFoutmelding = "E-mailadres structuur klopt niet.";
-            IsEmailadresFoutZichtbaar = true;
-            return false;
-        }
-
-        if (Regex.IsMatch(Emailadres, @"[^a-zA-Z0-9@\.\-_]", RegexOptions.IgnoreCase))
-        {
-            EmailadresFoutmelding = "E-mailadres bevat niet toegestane karakters.";
+            EmailadresFoutmelding = result.Error;
             IsEmailadresFoutZichtbaar = true;
             return false;
         }
@@ -304,25 +255,11 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
 
     private bool HasValidTelefoonnummer()
     {
-        if (string.IsNullOrWhiteSpace(Telefoonnummer))
-        {
-            TelefoonnummerFoutmelding = "Telefoonnummer is verplicht.";
-            IsTelefoonnummerFoutZichtbaar = true;
-            return false;
-        }
+        var result = _validatieService.ValidateTelefoonnummer(Telefoonnummer);
 
-        var digits = new string(Telefoonnummer.Where(char.IsDigit).ToArray());
-
-        if (digits.Length < 8 || digits.Length > 15)
+        if (!result.IsValid)
         {
-            TelefoonnummerFoutmelding = "Telefoonnummer moet tussen 8 en 15 cijfers bevatten.";
-            IsTelefoonnummerFoutZichtbaar = true;
-            return false;
-        }
-
-        if (!Regex.IsMatch(Telefoonnummer, "^[0-9 +]+$"))
-        {
-            TelefoonnummerFoutmelding = "Alleen cijfers, spaties en '+' zijn toegestaan.";
+            TelefoonnummerFoutmelding = result.Error;
             IsTelefoonnummerFoutZichtbaar = true;
             return false;
         }

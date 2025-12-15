@@ -37,6 +37,7 @@ namespace Camping.App
             builder.Services.AddSingleton<IReservatieDataService, ReservatieDataService>();
             builder.Services.AddSingleton<IAccommodatieService, AccommodatieService>();
             builder.Services.AddSingleton<IReserveringService, ReserveringService>();
+            builder.Services.AddSingleton<ReserveringshouderValidatieService>();
 
             //ViewModels
             builder.Services.AddTransient<PlattegrondViewModel>();
