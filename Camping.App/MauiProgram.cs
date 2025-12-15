@@ -66,7 +66,9 @@ namespace Camping.App
                         switch (appWindow.Presenter)
                         {
                             case Microsoft.UI.Windowing.OverlappedPresenter overlappedPresenter:
-                                overlappedPresenter.SetBorderAndTitleBar(false, false);
+                                // Gezien elementen prima mee scalen, is het forceren van full screen niet meer nodig.
+                                // Plaatsing nog wel een beetje whack als het scherm heel klein is, maar dat is een edge case.
+                                // overlappedPresenter.SetBorderAndTitleBar(false, false);
                                 overlappedPresenter.Maximize();
                                 break;
                         }

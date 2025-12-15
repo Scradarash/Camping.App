@@ -146,7 +146,7 @@ CREATE TABLE `reserveringen` (
   CONSTRAINT `fk_reservering_accommodatie` FOREIGN KEY (`accommodatie_type_id`) REFERENCES `accommodatie_types` (`id`),
   CONSTRAINT `reserveringen_ibfk_1` FOREIGN KEY (`staanplaats_id`) REFERENCES `staanplaatsen` (`id`),
   CONSTRAINT `reserveringen_ibfk_2` FOREIGN KEY (`reserveringhouder_id`) REFERENCES `gasten` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -155,6 +155,7 @@ CREATE TABLE `reserveringen` (
 
 LOCK TABLES `reserveringen` WRITE;
 /*!40000 ALTER TABLE `reserveringen` DISABLE KEYS */;
+INSERT INTO `reserveringen` VALUES (1,6,1,'2025-12-08','2025-12-09',0,0.00,1),(2,12,1,'2025-12-08','2025-12-09',0,0.00,1),(3,4,1,'2025-12-08','2025-12-09',0,0.00,1),(4,34,1,'2025-12-08','2025-12-09',0,0.00,2),(5,36,1,'2025-12-08','2025-12-09',0,0.00,2),(6,39,1,'2025-12-08','2025-12-15',0,0.00,4),(7,18,1,'2025-12-08','2025-12-15',0,0.00,1),(8,40,1,'2025-12-08','2025-12-15',0,0.00,4),(9,37,1,'2025-12-08','2025-12-15',0,0.00,3),(10,37,1,'2025-12-23','2025-12-30',0,0.00,3),(11,42,1,'2025-12-08','2025-12-29',0,0.00,2),(12,30,1,'2025-12-08','2025-12-29',0,0.00,2),(13,1,1,'2025-12-08','2025-12-29',0,0.00,1),(14,9,1,'2025-12-08','2025-12-22',0,0.00,1),(15,21,1,'2025-12-08','2025-12-09',0,0.00,2),(16,21,1,'2025-12-10','2025-12-13',0,0.00,3),(17,39,1,'2025-12-22','2025-12-29',0,0.00,4),(18,36,1,'2025-12-25','2025-12-31',0,0.00,2),(19,11,1,'2025-12-25','2025-12-31',0,0.00,1);
 /*!40000 ALTER TABLE `reserveringen` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -239,7 +240,7 @@ CREATE TABLE `velden` (
 
 LOCK TABLES `velden` WRITE;
 /*!40000 ALTER TABLE `velden` DISABLE KEYS */;
-INSERT INTO `velden` VALUES (1,'Groepsveld',0.08,0.13,0.232,0.213,'Een groot en gezellig veld, perfect voor groepen en families die dicht bij elkaar willen staan. Dicht bij de sanitaire voorzieningen.','groepsveld.png'),(2,'Trekkersveld',0.11,0.4457,0.195,0.181,'Speciaal ingericht voor wandelaars en fietsers met kleine tentjes. Auto\'s zijn hier niet toegestaan.','trekkersveld.png'),(3,'Winterveld',0.11,0.669,0.195,0.181,'Mooi veld dat geschikt is voor winterkamperen.','winterveld.png'),(4,'Staatseveld',0.5677,0.576,0.195,0.1952,'Een rustig gelegen veld aan de rand van het bos. Ideaal voor rustzoekers.','staatseveld.png'),(5,'Oranjeveld',0.37,0.59,0.145,0.254,'Het zonnigste veld van de camping, centraal gelegen nabij de speeltuin.','oranjeveld.png');
+INSERT INTO `velden` VALUES (1,'Groepsveld',0.088,0.13,0.232,0.213,'Een groot en gezellig veld, perfect voor groepen en families die dicht bij elkaar willen staan. Dicht bij de sanitaire voorzieningen.','groepsveld.png'),(2,'Trekkersveld',0.11,0.4457,0.195,0.181,'Speciaal ingericht voor wandelaars en fietsers met kleine tentjes. Auto\'s zijn hier niet toegestaan.','trekkersveld.png'),(3,'Winterveld',0.11,0.675,0.195,0.181,'Mooi veld dat geschikt is voor winterkamperen.','winterveld.png'),(4,'Staatseveld',0.5577,0.576,0.195,0.1952,'Een rustig gelegen veld aan de rand van het bos. Ideaal voor rustzoekers.','staatseveld.png'),(5,'Oranjeveld',0.37,0.59,0.145,0.254,'Het zonnigste veld van de camping, centraal gelegen nabij de speeltuin.','oranjeveld.png');
 /*!40000 ALTER TABLE `velden` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -276,4 +277,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-12-08 19:00:24
+-- Dump completed on 2025-12-14 23:56:15
