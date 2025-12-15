@@ -159,7 +159,7 @@
                         </HorizontalStackLayout>
 
                         <!-- Fallback tekst als stroom niet kan -->
-                        <Label Text="Geen stroom op deze plaats" TextColor="Gray" FontSize="12" IsVisible="{Binding IsStroomMogelijk, Converter={StaticResource InvertedBoolConverter}}"/>
+                        <Label Text="Geen stroom op deze plaats" TextColor="Gray" FontSize="12" IsVisible="False"/>
 
                         <!-- WATER -->
                         <HorizontalStackLayout IsVisible="{Binding IsWaterMogelijk}" Spacing="10" VerticalOptions="Center">
