@@ -18,7 +18,10 @@ namespace Camping.Core.Services
             DateTime eindDatum,
             Veld veld,
             Staanplaats staanplaats,
-            Accommodatie accommodatie)
+            Accommodatie accommodatie,
+            bool kiestStroom,  
+            bool kiestWater,    
+            decimal totaalPrijs)
         {
             if (veld == null) throw new ArgumentNullException(nameof(veld));
             if (staanplaats == null) throw new ArgumentNullException(nameof(staanplaats));

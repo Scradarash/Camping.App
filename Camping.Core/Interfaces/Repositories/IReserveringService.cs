@@ -9,6 +9,9 @@ namespace Camping.Core.Interfaces.Services
             DateTime eindDatum,
             Veld veld,
             Staanplaats staanplaats,
-            Accommodatie accommodatie);
+            Accommodatie accommodatie,
+            bool kiestStroom,  
+            bool kiestWater,    
+            decimal totaalPrijs);
     }
 }
