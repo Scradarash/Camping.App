@@ -1,5 +1,6 @@
 using Camping.App.ViewModels;
 using Microsoft.Maui.Layouts;
+using System.Windows.Input;
 
 namespace Camping.App.Views;
 
@@ -35,6 +36,36 @@ public partial class PlattegrondView : ContentPage
         // Als de breedte of de hoogte 0 is (app start net op), doen we niks
         if (pageWidth <= 0 || pageHeight <= 0) return;
 
+        // Berekenen van de afmetingen
+        Size renderSize = CalculateRenderSize(pageWidth, pageHeight);
+        double renderWidth = renderSize.Width;
+        double renderHeight = renderSize.Height;
+
+        // MapFrame is de border rondom de kaart, ding wordt zo genoemd in de XAML
+        // We geven hem hier de berekende afmetingen, en dat bepaald dus ook de grootte van de camping plattegrond
+        MapFrame.WidthRequest = renderWidth;
+        MapFrame.HeightRequest = renderHeight;
+
+        // De border wordt natuurlijk binnen de renderwidth/height getekend
+        // Dus de daadwerkelijk bruikbare ruimte de renderruimte min de border aan alle kanten
+        double innerWidth = renderWidth - (2 * BorderThickness);
+        double innerHeight = renderHeight - (2 * BorderThickness);
+
+        // scaleFactor berekenen door de innerWidth te delen door de originele kaartbreedte
+        double scaleFactor = innerWidth / OriginalMapWidth;
+
+        // 30 als basis font size nemen, en die vermenigvuldigen met de scaleFactor
+        double scaledFontSize = 30 * scaleFactor;
+
+        // Overlay leegmaken voor de nieuwe knoppen geplaatst worden
+        ButtonOverlayLayout.Children.Clear();
+
+        AddVeldButtons(innerWidth, innerHeight, scaledFontSize);
+        AddKalenderButton(innerWidth, innerHeight, scaledFontSize);
+    }
+
+    private Size CalculateRenderSize(double pageWidth, double pageHeight)
+    {
         // Bereken de ratio van de originele kaart (in dit gevaal 1920 / 1080 = 1.777...)
         double mapRatio = OriginalMapWidth / OriginalMapHeight;
 
@@ -46,7 +77,6 @@ public partial class PlattegrondView : ContentPage
 
         // Dan de daadwerkelijke beschikbare ratio door de beschikbare breedte door de beschikbare hoogte te delen
         double availableRatio = availableWidth / availableHeight;
-
 
         double renderWidth;
         double renderHeight;
@@ -68,41 +98,21 @@ public partial class PlattegrondView : ContentPage
             renderHeight = renderWidth / mapRatio;
         }
 
-        // MapFrame is de border rondom de kaart, ding wordt zo genoemd in de XAML
-        // We geven hem hier de berekende afmetingen, en dat bepaald dus ook de grootte van de camping plattegrond
-        MapFrame.WidthRequest = renderWidth;
-        MapFrame.HeightRequest = renderHeight;
+        return new Size(renderWidth, renderHeight);
+    }
 
-        // De border wordt natuurlijk binnen de renderwidth/height getekend
-        // Dus de daadwerkelijk bruikbare ruimte de renderruimte min de border aan alle kanten
-        double innerWidth = renderWidth - (2 * BorderThickness);
-        double innerHeight = renderHeight - (2 * BorderThickness);
-
-        // scaleFactor berekenen door de innerWidth te delen door de originele kaartbreedte
-        double scaleFactor = innerWidth / OriginalMapWidth;
-
-        // 30 als basis font size nemen, en die vermenigvuldigen met de scaleFactor
-        double scaledFontSize = 30 * scaleFactor;
-
-        // Overlay leegmaken voor de nieuwe knoppen geplaatst worden
-        ButtonOverlayLayout.Children.Clear();
-
+    private void AddVeldButtons(double innerWidth, double innerHeight, double fontSize)
+    {
         // De velden uit het ViewModel genereren
         foreach (var veld in _viewModel.Velden)
         {
-            var btn = new Button
-            {
-                Text = veld.Name,
-                Style = (Style)Application.Current.Resources["MapButtonStyle"],
-                Command = _viewModel.SelectVeldCommand,
-                CommandParameter = veld,
-                FontSize = scaledFontSize,
-                // Dus MAUI limiteert knoppen tot een minimum van 44px normaal gesproken
-                // Daarom moet dit eerst op 0 gezet worden, anders scalen ze niet helemaal down op kleine schermen
-                MinimumHeightRequest = 0,
-                MinimumWidthRequest = 0,
-                Padding = 0
-            };
+            var btn = CreateMapButton(
+                text: veld.Name,
+                styleKey: "MapButtonStyle",
+                command: _viewModel.SelectVeldCommand,
+                fontSize: fontSize,
+                commandParameter: veld
+            );
 
             // De positie wordt nu berekend op basis van de innerWidth/Height ipv de imagesize waar het eerst op gebaseerd was
             double x = veld.XPosition * innerWidth;
@@ -115,19 +125,17 @@ public partial class PlattegrondView : ContentPage
 
             ButtonOverlayLayout.Children.Add(btn);
         }
+    }
 
+    private void AddKalenderButton(double innerWidth, double innerHeight, double fontSize)
+    {
         // Kalender Knop
-        var kalenderBtn = new Button
-        {
-            Text = "Kalender",
-            Style = (Style)Application.Current.Resources["ConfirmButtonStyle"],
-            Command = _viewModel.OpenKalenderCommand,
-            FontSize = scaledFontSize,
-            // Ook hier de minimum requests op 0 zetten
-            MinimumHeightRequest = 0,
-            MinimumWidthRequest = 0,
-            Padding = 0
-        };
+        var kalenderBtn = CreateMapButton(
+            text: "Kalender",
+            styleKey: "ConfirmButtonStyle",
+            command: _viewModel.OpenKalenderCommand,
+            fontSize: fontSize
+        );
 
         // Positie verplaatst naar rechtsonder (waar voorheen de afsluitknop stond)
         double kalenderX = 0.852 * innerWidth;
@@ -137,6 +145,24 @@ public partial class PlattegrondView : ContentPage
 
         AbsoluteLayout.SetLayoutFlags(kalenderBtn, AbsoluteLayoutFlags.None);
         AbsoluteLayout.SetLayoutBounds(kalenderBtn, new Rect(kalenderX, kalenderY, kalenderW, kalenderH));
+
         ButtonOverlayLayout.Children.Add(kalenderBtn);
+    }
+
+    private Button CreateMapButton(string text, string styleKey, ICommand command, double fontSize, object? commandParameter = null)
+    {
+        return new Button
+        {
+            Text = text,
+            Style = (Style)Application.Current.Resources[styleKey],
+            Command = command,
+            CommandParameter = commandParameter,
+            FontSize = fontSize,
+            // Dus MAUI limiteert knoppen tot een minimum van 44px normaal gesproken
+            // Daarom moet dit eerst op 0 gezet worden, anders scalen ze niet helemaal down op kleine schermen
+            MinimumHeightRequest = 0,
+            MinimumWidthRequest = 0,
+            Padding = 0
+        };
     }
 }
