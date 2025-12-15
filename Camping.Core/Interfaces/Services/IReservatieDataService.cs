@@ -16,7 +16,7 @@ namespace Camping.Core.Interfaces.Services
         bool IsValidPeriod();
         string ValidateInput(DateTime? start, DateTime? end);
 
-        // <--- NIEUW VOOR US7: Tijdelijke opslag van keuzes in de Wizard
+        //Tijdelijke opslag van keuzes in de Wizard
         bool KiestStroom { get; set; }
         bool KiestWater { get; set; }
     }

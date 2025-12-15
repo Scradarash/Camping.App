@@ -123,8 +123,8 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
             IsWaterMogelijk = gekozenPlek.HeeftWater;
 
             // Resetten van keuzes (standaard uit)
-            KiestStroom = false;
-            KiestWater = false;
+            KiestStroom = _reservatieDataService.KiestStroom && IsStroomMogelijk;
+            KiestWater = _reservatieDataService.KiestWater && IsWaterMogelijk;
         }
         else
         {
@@ -132,6 +132,9 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
 
             IsStroomMogelijk = false;
             IsWaterMogelijk = false;
+
+            KiestStroom = false;
+            KiestWater = false;
         }
 
         Accommodaties.Clear();
