@@ -52,5 +52,56 @@ namespace Camping.Core.Data.Repositories
 
             return result;
         }
+
+        // Zoeken of gast al bestaat in de database en daarvan een object aanmaken voor de View
+        public async Task<Gast?> GetByEmailAsync(string email)
+        {
+            await using var connection = _db.CreateConnection();
+
+            var command = connection.CreateCommand();
+
+            command.CommandText = @"
+            SELECT id, naam, geboortedatum, email, telefoon
+            FROM gasten 
+            WHERE email = @email";
+
+            command.Parameters.AddWithValue("@email", email);
+
+            using var reader = await command.ExecuteReaderAsync();
+            if (!await reader.ReadAsync())
+            {
+                return null;    // Als er geen rij is gevonden in DB geef null terug
+            }
+
+            return new Gast
+            {
+                Id = reader.GetInt32("id"),
+                Naam = reader.GetString("naam"),
+                Geboortedatum = DateTime.(reader.GetDateTime("geboortedatum")),
+                Email = reader.GetString("email"),
+                Telefoon = reader.GetString("telefoon")
+            };
+        }
+
+        // Gast toevoegen aan database als de gast nog niet bestaat
+        public async Task<int> AddAsync(Gast gast)
+        {
+            await using var connection = _db.CreateConnection();
+            var command = connection.CreateCommand();
+
+            // Query voor opslaan data in DB, Selecteer laatste Id 
+            command.CommandText = @"
+                INSERT INTO gasten (naam, geboortedatum, email, telefoon)
+                VALUES (@naam, @geboortedatum, @email, @telefoon);
+                SELECT LAST_INSERT_ID();";
+
+            // Vul parameters met waardes van object in de query
+            command.Parameters.AddWithValue("@naam", gast.Naam);
+            command.Parameters.AddWithValue("@geboortedatm", gast.Geboortedatum);
+            command.Parameters.AddWithValue("@email", gast.Email);
+            command.Parameters.AddWithValue("@telefoon", gast.Telefoon);
+
+            return Convert.ToInt32(await command.ExecuteScalarAsync());
+        }
     }
 }
