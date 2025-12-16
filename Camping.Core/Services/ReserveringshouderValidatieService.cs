@@ -4,9 +4,9 @@ using System.Text.RegularExpressions;
 
 namespace Camping.Core.Services
 {
-    // UC5.1 – Validatie naam
     public class ReserveringshouderValidatieService
     {
+        // UC5.1 – Validatie naam
         public (bool IsValid, string Error) ValidateNaam(string naam)
         {
             if (string.IsNullOrWhiteSpace(naam))

@@ -25,6 +25,28 @@ namespace TestCore
             Assert.AreEqual("Naam is verplicht.", result.Error);
         }
 
+        // UC5.1 – Naam moet minimaal 2 tekens bevatten
+        [Test]
+        public void ValidateNaam_ReturnsError_WhenNaamIsTooShort()
+        {
+            var result = _service.ValidateNaam("A");
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual("Naam moet minimaal 2 tekens bevatten.", result.Error);
+        }
+
+        // UC5.1 – Naam mag maximaal 25 tekens bevatten
+        [Test]
+        public void ValidateNaam_ReturnsError_WhenNaamIsTooLong()
+        {
+            var langeNaam = new string('A', 26);
+
+            var result = _service.ValidateNaam(langeNaam);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual("Naam mag maximaal 25 tekens bevatten.", result.Error);
+        }
+
         // UC5.1 – Naam bevat ongeldige tekens
         [Test]
         public void ValidateNaam_ReturnsError_WhenNaamContainsInvalidCharacters()
@@ -57,6 +79,18 @@ namespace TestCore
             Assert.AreEqual("De hoofdboeker moet minimaal 18 jaar zijn.", result.Error);
         }
 
+        // UC5.2 – Leeftijd mag niet hoger zijn dan 120 jaar
+        [Test]
+        public void ValidateGeboortedatum_ReturnsError_WhenAgeIsAbove120()
+        {
+            var teOud = DateTime.Today.AddYears(-121);
+
+            var result = _service.ValidateGeboortedatum(teOud);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual("Leeftijd boven 120 jaar is niet toegestaan.", result.Error);
+        }
+
         // UC5.3 – Email verplicht
         [Test]
         public void ValidateEmail_ReturnsError_WhenEmpty()
@@ -77,6 +111,16 @@ namespace TestCore
             Assert.AreEqual("E-mailadres structuur klopt niet.", result.Error);
         }
 
+        // UC5.3 – E-mailadres bevat niet toegestane karakters
+        [Test]
+        public void ValidateEmail_ReturnsError_WhenEmailContainsInvalidCharacters()
+        {
+            var result = _service.ValidateEmailadres("test@te$st.nl");
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual("E-mailadres bevat niet toegestane karakters.", result.Error);
+        }
+
         // UC5.4 – Telefoon verplicht
         [Test]
         public void ValidateTelefoon_ReturnsError_WhenEmpty()
@@ -95,6 +139,16 @@ namespace TestCore
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual("Telefoonnummer moet tussen 8 en 15 cijfers bevatten.", result.Error);
+        }
+
+        // UC5.4 – Telefoonnummer bevat niet toegestane karakters
+        [Test]
+        public void ValidateTelefoon_ReturnsError_WhenContainsInvalidCharacters()
+        {
+            var result = _service.ValidateTelefoonnummer("06-12345678");
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual("Alleen cijfers, spaties en '+' zijn toegestaan.", result.Error);
         }
 
         // UC5 – Happy path
