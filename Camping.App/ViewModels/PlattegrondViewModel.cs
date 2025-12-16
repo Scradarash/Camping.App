@@ -25,8 +25,9 @@ public partial class PlattegrondViewModel : ObservableObject
     private void LoadAreas()
     {
         Velden.Clear();
-        var velden = _veldService.GetAll();
-        foreach (var v in velden)
+        // Aanname dat GetAll een IEnumerable of List teruggeeft
+        IEnumerable<Veld> velden = _veldService.GetAll();
+        foreach (Veld v in velden)
         {
             Velden.Add(v);
         }
@@ -38,7 +39,7 @@ public partial class PlattegrondViewModel : ObservableObject
         try
         {
             // 2. Haal de nieuwe Detail View op via Dependency Injection
-            var detailView = _serviceProvider.GetRequiredService<VeldDetailView>();
+            VeldDetailView detailView = _serviceProvider.GetRequiredService<VeldDetailView>();
 
             // 3. Initialiseer de ViewModel met het geklikte veld
             if (detailView.BindingContext is VeldDetailViewModel vm)
@@ -58,7 +59,7 @@ public partial class PlattegrondViewModel : ObservableObject
     [RelayCommand]
     private async Task OpenKalender()
     {
-        var kalenderView = _serviceProvider.GetRequiredService <Views.KalenderView>();
+        KalenderView kalenderView = _serviceProvider.GetRequiredService <Views.KalenderView>();
 
 
         await Application.Current.MainPage.Navigation.PushModalAsync(kalenderView);

@@ -15,19 +15,19 @@ namespace Camping.App.ViewModels
         private readonly IServiceProvider _serviceProvider;
 
         [ObservableProperty]
-        private Veld? veld;
+        private Veld? _veld;
 
         [ObservableProperty]
-        private string? periodeTekst;
+        private string? _periodText;
 
         // ObservableProperty voor het tonen van gekozen staanplaats.
         [ObservableProperty]
-        private string geselecteerdeStaanplaatsTekst = "Kies een plaats op de kaart";
+        private string _selectedStaanplaatsText = "Kies een plaats op de kaart";
 
         public ObservableCollection<Staanplaats> Staanplaatsen { get; } = new();
 
         [ObservableProperty]
-        private Staanplaats? geselecteerdeStaanplaats;
+        private Staanplaats? _selectedStaanplaats;
 
         public VeldDetailViewModel(
             IReservatieDataService reservatieDataService,
@@ -43,27 +43,32 @@ namespace Camping.App.ViewModels
         {
             // Veldinfo moet inzichtelijk zijn, ook als er geen datum is geselecteerd
             Veld = geselecteerdeVeld;
-            PeriodeTekst = "Nog geen datum geselecteerd";
+            PeriodText = "Nog geen datum geselecteerd";
 
             // GeselecteerdeStaanplaats leegmaken
-            GeselecteerdeStaanplaats = null;
-            GeselecteerdeStaanplaatsTekst = "Kies een staanplaats op de kaart";
+            SelectedStaanplaats = null;
+            SelectedStaanplaatsText = "Kies een staanplaats op de kaart";
 
             // Als er al een periode is geselecteerd, dan wordt die hier getoond bovenaan
             if (_reservatieDataService.StartDate.HasValue && _reservatieDataService.EndDate.HasValue)
             {
-                PeriodeTekst = $"{_reservatieDataService.StartDate:dd-MM-yyyy} - {_reservatieDataService.EndDate:dd-MM-yyyy}";
+                PeriodText = $"{_reservatieDataService.StartDate:dd-MM-yyyy} - {_reservatieDataService.EndDate:dd-MM-yyyy}";
             }
 
+            LoadStaanplaatsen();
+        }
+
+        private void LoadStaanplaatsen()
+        {
             Staanplaatsen.Clear();
             // Haal alle staanplaatsen op voor dit veld
-            var plekken = _staanplaatsRepository.GetByVeldId(
+            IEnumerable<Staanplaats> plekken = _staanplaatsRepository.GetByVeldId(
                 Veld.id,
                 _reservatieDataService.StartDate,
                 _reservatieDataService.EndDate
             );
 
-            foreach (var plek in plekken)
+            foreach (Staanplaats plek in plekken)
             {
                 Staanplaatsen.Add(plek);
             }
@@ -71,17 +76,53 @@ namespace Camping.App.ViewModels
 
         [RelayCommand]
         //Klikken op een staanplaats
-        private async Task KiesStaanplaats(Staanplaats plek)
+        private void SelectStaanplaats(Staanplaats plek)
         {
-            GeselecteerdeStaanplaats = plek;
+            SelectedStaanplaats = plek;
             _reservatieDataService.SelectedStaanplaats = plek;
-            GeselecteerdeStaanplaatsTekst = $"Geselecteerde plaats: {plek.id}";
+            SelectedStaanplaatsText = $"Geselecteerde plaats: {plek.id}";
         }
 
         [RelayCommand]
-        private async Task Reserveer()
+        private async Task Reserve()
         {
-            // Pas bij reserveren de checks uitvoeren, zodat de gebruiker eerst de veldinfo kan bekijken
+            try
+            {
+                // Pas bij reserveren de checks uitvoeren, zodat de gebruiker eerst de veldinfo kan bekijken
+                if (!await ValidatePeriod())
+                    return;
+
+                // Als iemand door wil gaan met reserveren voor een staanplaats is gekozen, blokkeren.
+                if (SelectedStaanplaats == null)
+                {
+                    await Application.Current.MainPage.DisplayAlert(
+                        "Geen plaats gekozen",
+                        "Selecteer alstublieft een staanplaats op de kaart.",
+                        "OK");
+                    return;
+                }
+
+                // Dan, als alles ok is, het veld opslaan en doorgaan naar overzicht
+                _reservatieDataService.SelectedVeld = Veld;
+                _reservatieDataService.SelectedStaanplaats = SelectedStaanplaats;
+
+                await Application.Current.MainPage.Navigation.PopModalAsync();
+                await Shell.Current.GoToAsync(nameof(ReserveringsoverzichtView));
+            }
+            catch (Exception ex)
+            {
+                await Application.Current.MainPage.DisplayAlert("Fout", ex.Message, "OK");
+            }
+        }
+
+        [RelayCommand]
+        private async Task Cancel()
+        {
+            await Application.Current.MainPage.Navigation.PopModalAsync();
+        }
+
+        private async Task<bool> ValidatePeriod()
+        {
             if (!_reservatieDataService.StartDate.HasValue || !_reservatieDataService.EndDate.HasValue)
             {
                 // Als er geen periode is geselecteerd, toon een melding en geef optie om kalender te openen
@@ -93,42 +134,26 @@ namespace Camping.App.ViewModels
                 if (!openKalender)
                 {
                     // ALS de gebruiker op "Open Kalender" klikt, open dan de Kalender View en sluit deze View
-                    await Application.Current.MainPage.Navigation.PopModalAsync();
-                    var kalenderView = _serviceProvider.GetRequiredService<KalenderView>();
-                    await Application.Current.MainPage.Navigation.PushModalAsync(kalenderView);
+                    await OpenCalendar();
                 }
-                return;
-            }
-            
-            // Als iemand door wil gaan met reserveren voor een staanplaats is gekozen, blokkeren.
-            if (GeselecteerdeStaanplaats == null)
-            {
-                await Application.Current.MainPage.DisplayAlert(
-                    "Geen plaats gekozen",
-                    "Selecteer alstublieft een staanplaats op de kaart.",
-                    "OK");
-                return;
+                return false;
             }
 
             // Wel nog ff periode checken op geldigheid, ook al zou dit al in de Kalender gebeurd moeten zijn
             if (!_reservatieDataService.IsValidPeriod())
             {
                 await Application.Current.MainPage.DisplayAlert("Ongeldig", "De geselecteerde periode is niet geldig.", "OK");
-                return;
+                return false;
             }
 
-            // Dan, als alles ok is, het veld opslaan en doorgaan naar overzicht
-            _reservatieDataService.SelectedVeld = Veld;
-            _reservatieDataService.SelectedStaanplaats = GeselecteerdeStaanplaats;
-
-            await Application.Current.MainPage.Navigation.PopModalAsync();
-            await Shell.Current.GoToAsync(nameof(ReserveringsoverzichtView));
+            return true;
         }
 
-        [RelayCommand]
-        private async Task Annuleer()
+        private async Task OpenCalendar()
         {
             await Application.Current.MainPage.Navigation.PopModalAsync();
+            KalenderView kalenderView = _serviceProvider.GetRequiredService<KalenderView>();
+            await Application.Current.MainPage.Navigation.PushModalAsync(kalenderView);
         }
     }
 }

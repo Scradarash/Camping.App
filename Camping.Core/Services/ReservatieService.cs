@@ -28,7 +28,10 @@ namespace Camping.Core.Services
             DateTime eindDatum,
             Veld veld,
             Staanplaats staanplaats,
-            Accommodatie accommodatie)
+            Accommodatie accommodatie,
+            bool kiestStroom,  
+            bool kiestWater,    
+            decimal totaalPrijs)
         {
             if (string.IsNullOrWhiteSpace(_data.Emailadres) || string.IsNullOrWhiteSpace(_data.Naam) ||
                 !_data.Geboortedatum.HasValue || string.IsNullOrWhiteSpace(_data.Telefoonnummer))

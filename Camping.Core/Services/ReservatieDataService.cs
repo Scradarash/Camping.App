@@ -14,6 +14,8 @@ namespace Camping.Core.Services
         public DateTime? Geboortedatum { get; set; }
         public string? Emailadres { get; set; }
         public string? Telefoonnummer { get; set; }
+        public bool KiestStroom { get; set; }
+        public bool KiestWater { get; set; }
 
         //Nodig voor later controleren op correctheid datum
         public bool IsValidPeriod()
