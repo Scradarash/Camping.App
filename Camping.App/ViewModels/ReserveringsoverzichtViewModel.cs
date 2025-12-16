@@ -15,6 +15,11 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
     private readonly IAccommodatieService _accommodatieService;
     private readonly IReserveringService _reserveringService;
 
+    // Prijzen definities (hardcoded voor nu, kan later uit DB/Service)
+    private const decimal PRIJS_BASIS_PER_NACHT = 20.00m;
+    private const decimal PRIJS_STROOM = 4.99m;
+    private const decimal PRIJS_WATER = 0.00m;
+
     [ObservableProperty]
     private string periodDescription;
 
@@ -64,6 +69,27 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
     [ObservableProperty]
     private bool isTelefoonnummerFoutZichtbaar;
 
+    //Properties om te bepalen of checkbox zichtbaar is
+    [ObservableProperty]
+    private bool isStroomMogelijk;
+
+    [ObservableProperty]
+    private bool isWaterMogelijk;
+
+    // [NotifyPropertyChangedFor] zorgt dat de TotaalPrijsTekst automatisch update als je klikt!
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(TotaalPrijsTekst))]
+    private bool kiestStroom;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(TotaalPrijsTekst))]
+    private bool kiestWater;
+
+    public string StroomPrijsTekst => $"Stroom €{PRIJS_STROOM},- per nacht";
+    public string WaterPrijsTekst => $"Water €{PRIJS_WATER},-";
+
+    public string TotaalPrijsTekst => $"Totaalprijs: €{BerekenEindTotaal():F2}";
+
     public ObservableCollection<Accommodatie> Accommodaties { get; } = new();
 
     public ReserveringsoverzichtViewModel(IReservatieDataService reservatieDataService, IAccommodatieService accommodatieService, IReserveringService reserveringService)
@@ -93,10 +119,24 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
         {
             // Als er een plek gekozen is, tonen we het nummer en type
             StaanplaatsNaam = $"Plaats: {gekozenPlek.id} ({gekozenPlek.AccommodatieType})";
+
+            // Checken wat de plek daadwerkelijk heeft (uit DB data)
+            IsStroomMogelijk = gekozenPlek.HeeftStroom;
+            IsWaterMogelijk = gekozenPlek.HeeftWater;
+
+            // Resetten van keuzes (standaard uit)
+            KiestStroom = _reservatieDataService.KiestStroom && IsStroomMogelijk;
+            KiestWater = _reservatieDataService.KiestWater && IsWaterMogelijk;
         }
         else
         {
             StaanplaatsNaam = "Geen specifieke plaats gekozen";
+
+            IsStroomMogelijk = false;
+            IsWaterMogelijk = false;
+
+            KiestStroom = false;
+            KiestWater = false;
         }
 
         Accommodaties.Clear();
@@ -127,6 +167,32 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
         }
 
         Naam = _reservatieDataService.Naam;
+
+        OnPropertyChanged(nameof(TotaalPrijsTekst));
+    }
+
+    private decimal BerekenEindTotaal()
+    {
+        if (_reservatieDataService.StartDate == null || _reservatieDataService.EndDate == null)
+            return 0.00m;
+
+        int nachten = (_reservatieDataService.EndDate.Value - _reservatieDataService.StartDate.Value).Days;
+        if (nachten < 1) nachten = 1;
+
+        decimal totaal = nachten * PRIJS_BASIS_PER_NACHT;
+
+        // <--- Logica: Tel alleen op als aangevinkt EN mogelijk
+        if (KiestStroom && IsStroomMogelijk)
+        {
+            totaal += (nachten * PRIJS_STROOM);
+        }
+
+        if (KiestWater && IsWaterMogelijk)
+        {
+            totaal += (nachten * PRIJS_WATER);
+        }
+
+        return totaal;
     }
 
     [RelayCommand]
@@ -174,12 +240,20 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
             _reservatieDataService.Telefoonnummer = Telefoonnummer;
             _reservatieDataService.SelectedAccommodatie = SelectedAccommodatie;
 
+            _reservatieDataService.KiestStroom = KiestStroom;
+            _reservatieDataService.KiestWater = KiestWater;
+
+            decimal definitievePrijs = BerekenEindTotaal();
+
             _reserveringService.MaakReservering(
                 _reservatieDataService.StartDate.Value,
                 _reservatieDataService.EndDate.Value,
                 _reservatieDataService.SelectedVeld,
                 _reservatieDataService.SelectedStaanplaats,
-                SelectedAccommodatie);
+                SelectedAccommodatie,
+                kiestStroom,
+                KiestWater,
+                definitievePrijs);
 
             await Application.Current.MainPage.DisplayAlert(
                 "Reservering voltooid",

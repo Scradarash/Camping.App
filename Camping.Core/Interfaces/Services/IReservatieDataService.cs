@@ -15,5 +15,9 @@ namespace Camping.Core.Interfaces.Services
         string? Telefoonnummer { get; set; }
         bool IsValidPeriod();
         string ValidateInput(DateTime? start, DateTime? end);
+
+        //Tijdelijke opslag van keuzes in de Wizard
+        bool KiestStroom { get; set; }
+        bool KiestWater { get; set; }
     }
 }
