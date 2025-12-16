@@ -23,7 +23,6 @@ namespace Camping.Core.Data.Repositories
             using var command = connection.CreateCommand();
 
             // Prijs voor nu nog niet meegenomen, gasten en totaalprijs worden later toegevoegd.
-            // Voor nu alle prijzen op 0.00 zetten en reserveringhouder op id=1
             command.CommandText = @"
                 INSERT INTO reserveringen
                     (aankomstdatum, vertrekdatum, staanplaats_id, accommodatie_type_id, reserveringhouder_id, totaal_prijs)
