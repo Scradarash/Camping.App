@@ -77,7 +77,7 @@ namespace Camping.Core.Data.Repositories
             {
                 Id = reader.GetInt32("id"),
                 Naam = reader.GetString("naam"),
-                Geboortedatum = DateTime.(reader.GetDateTime("geboortedatum")),
+                Geboortedatum = DateOnly.FromDateTime(reader.GetDateTime("geboortedatum")),
                 Email = reader.GetString("email"),
                 Telefoon = reader.GetString("telefoon")
             };
