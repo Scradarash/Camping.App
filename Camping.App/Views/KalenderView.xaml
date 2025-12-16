@@ -14,7 +14,7 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        
+
         <!-- Titel -->
         <Label Text="Kies uw verblijf" 
                FontAttributes="Bold" 
@@ -32,15 +32,27 @@
                              MaximumDate="{Binding MaxDate}"
                              SelectionChanged="OnSelectionChanged" />
 
-        <!-- Afsluitknop -->
-        <Button Text="Opslaan &amp; Sluiten" 
-                Clicked="CloseButton_Clicked"
-                Style="{StaticResource ExitButtonStyle}" 
-                Grid.Row="2"
-                Margin="0,15,0,0"
-                FontSize="16"                
-                HeightRequest="45"
-                WidthRequest="180"
-                HorizontalOptions="Center" />
+        <!-- Knoppen Sectie: opgesplitst in annuleren en opslaan -->
+        <Grid Grid.Row="2" 
+              ColumnDefinitions="*,*" 
+              ColumnSpacing="10" 
+              Margin="0,15,0,0">
+
+            <!-- Annuleer knop: Sluit zonder op te slaan -->
+            <Button Grid.Column="0"
+                    Text="Annuleren" 
+                    Clicked="OnCancelClicked"
+                    Style="{StaticResource ExitButtonStyle}" 
+                    FontSize="16"                
+                    HeightRequest="45" />
+
+            <!-- Opslaan knop: Valideert en slaat op -->
+            <Button Grid.Column="1"
+                    Text="Opslaan" 
+                    Clicked="OnSaveClicked"
+                    Style="{StaticResource ConfirmButtonStyle}" 
+                    FontSize="16"                
+                    HeightRequest="45" />
+        </Grid>
     </Grid>
 </ContentPage>

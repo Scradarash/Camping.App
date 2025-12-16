@@ -1,12 +1,13 @@
 ﻿using Camping.App.ViewModels;
 using Camping.App.Views;
-using Camping.Core.Data.Repositories;
 using Camping.Core.Data.Helpers;
+using Camping.Core.Data.Repositories;
 using Camping.Core.Interfaces.Repositories;
 using Camping.Core.Interfaces.Services;
 using Camping.Core.Services;
 using Microsoft.Extensions.Logging;
 using Microsoft.Maui.LifecycleEvents;
+using Syncfusion.Licensing;
 using Syncfusion.Maui.Core.Hosting;
 
 namespace Camping.App
@@ -15,6 +16,7 @@ namespace Camping.App
     {
         public static MauiApp CreateMauiApp()
         {
+            SyncfusionLicenseProvider.RegisterLicense("NDE1NzY5N0AzMjM3MmUzMDJlMzBiYU5vV3Q0SENLMjROcjR3dnJQVnNVa2dtd0FtQnh0R1hpdFovQllKZ2hzPQ==;NDE1NzY5OEAzMjM3MmUzMDJlMzBtNkR2c1pWanAxbkF2Q1hUMW5rSTNsZkJrVUFlVC83TUJhS3RISkRXUXNFPQ==;Mgo+DSMBPh8sVXJzS0d+WFlPd11dXmJWd1p/THNYflR1fV9DaUwxOX1dQl9mSHxSc0RiXHdfcXdcT2NXU0M=;ORg4AjUWIQA/Gnt2UlhhQlVMfV5AQmBIYVp/TGpJfl96cVxMZVVBJAtUQF1hTH9Rd0BiWHpWcXVRR2VcWkZx;NDE1NzcwMUAzMjM3MmUzMDJlMzBablg5M0Rrc3gzdFVpbUlLUDU0a09aOVA1N3FXUU1YSDdXeXdMd1p4UzRnPQ==;NDE1NzcwMkAzMjM3MmUzMDJlMzBTTVhWMm5WZy9pTHpySjRrdmpOVkovUzVTdHZEWlFBdDhDVnFIRWtLbVNnPQ==;Mgo+DSMBMAY9C3t2UlhhQlVMfV5AQmBIYVp/TGpJfl96cVxMZVVBJAtUQF1hTH9Rd0BiWHpWcXVQRGRUWkZx;NDE1NzcwNEAzMjM3MmUzMDJlMzBLZy9BT3ZHRXZ1QkhYNXorb2Fta1lNVHhaT1pZNWhqUWczZm1yc0lZQXVvPQ==;NDE1NzcwNUAzMjM3MmUzMDJlMzBNOEpxdUN0UGRPMEVseEcyRjdINURZVnJ1ZjJ6Zlc5Mnh1RzZCcFRQc2pVPQ==;NDE1NzcwNkAzMjM3MmUzMDJlMzBablg5M0Rrc3gzdFVpbUlLUDU0a09aOVA1N3FXUU1YSDdXeXdMd1p4UzRnPQ==");
             var builder = MauiApp.CreateBuilder();
 
             builder
@@ -31,6 +33,7 @@ namespace Camping.App
             builder.Services.AddSingleton<IStaanplaatsRepository, StaanplaatsRepository>();
             builder.Services.AddSingleton<IAccommodatieRepository, AccommodatieRepository>();
             builder.Services.AddSingleton<IReserveringRepository, ReserveringRepository>();
+            builder.Services.AddSingleton<IGastRepository, MySqlGastRepository>();
 
             //Services
             builder.Services.AddSingleton<IVeldService, VeldService>();

@@ -14,30 +14,30 @@ namespace Camping.Core.Data.Repositories
             _db = db;
         }
 
-        public void Add(Reservering reservering)
+        public async Task AddAsync(Reservering reservering, int reserveringhouderId)
         {
-            // Connectie maken via de helper in plaats van direct in de repository
+            // Connectie object aanmaken
             using var connection = _db.CreateConnection();
-            connection.Open();
+            await connection.OpenAsync();
 
             using var command = connection.CreateCommand();
 
             // Prijs voor nu nog niet meegenomen, gasten en totaalprijs worden later toegevoegd.
-            // Voor nu alle prijzen op 0.00 zetten en reserveringhouder op id=1
             command.CommandText = @"
                 INSERT INTO reserveringen
                     (aankomstdatum, vertrekdatum, staanplaats_id, accommodatie_type_id, reserveringhouder_id, totaal_prijs)
                 VALUES
-                    (@start, @end, @staanplaatsId, @accommodatieId, 1, 0.00);";
+                    (@start, @end, @staanplaatsId, @accommodatieId, @houderId, 0.00);";
 
             command.Parameters.Add("@start", MySqlDbType.Date).Value = reservering.StartDatum;
             command.Parameters.Add("@end", MySqlDbType.Date).Value = reservering.EindDatum;
             command.Parameters.Add("@staanplaatsId", MySqlDbType.Int32).Value = reservering.StaanplaatsId;
             command.Parameters.Add("@accommodatieId", MySqlDbType.Int32).Value = reservering.AccommodatieId;
+            command.Parameters.Add("@houderId", MySqlDbType.Int32).Value = reserveringhouderId;
 
-            command.ExecuteNonQuery();
+            await command.ExecuteNonQueryAsync();    
 
-            // Het ID van de nieuwe reservering opslaan in het object
+            // Applicatie houd bij welke Id de DB heeft toegekend en slaat het op in het object.
             reservering.Id = (int)command.LastInsertedId;
         }
     }
