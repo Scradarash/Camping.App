@@ -4,7 +4,7 @@ namespace Camping.Core.Interfaces.Services
 {
     public interface IReserveringService
     {
-        void MaakReservering(
+        Task MaakReserveringAsync(
             DateTime startDatum,
             DateTime eindDatum,
             Veld veld,

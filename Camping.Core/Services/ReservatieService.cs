@@ -6,14 +6,24 @@ namespace Camping.Core.Services
 {
     public class ReserveringService : IReserveringService
     {
-        private readonly IReserveringRepository _repository;
+        private readonly IGastRepository _gastRepository;
+        private readonly IReserveringRepository _reserveringRepository;
+        private readonly IReservatieDataService _data;
 
-        public ReserveringService(IReserveringRepository repository)
+        public ReserveringService(
+            IGastRepository gastRepository,
+            IReserveringRepository reserveringRepository,
+            IReservatieDataService reservatieDataService
+            )
         {
-            _repository = repository;
+            _gastRepository = gastRepository;
+            _reserveringRepository = reserveringRepository;
+            _data = reservatieDataService;
         }
 
-        public void MaakReservering(
+        // 'gast id' koppelen aan 'reserveringshouder id'.
+        // De gast die de reservering maakt is de reserveringshouder
+        public async Task MaakReserveringAsync(
             DateTime startDatum,
             DateTime eindDatum,
             Veld veld,
@@ -23,11 +33,36 @@ namespace Camping.Core.Services
             bool kiestWater,    
             decimal totaalPrijs)
         {
-            if (veld == null) throw new ArgumentNullException(nameof(veld));
-            if (staanplaats == null) throw new ArgumentNullException(nameof(staanplaats));
-            if (accommodatie == null) throw new ArgumentNullException(nameof(accommodatie));
+            if (string.IsNullOrWhiteSpace(_data.Emailadres) || string.IsNullOrWhiteSpace(_data.Naam) ||
+                !_data.Geboortedatum.HasValue || string.IsNullOrWhiteSpace(_data.Telefoonnummer))
+            {
+                throw new InvalidOperationException("De gastgegevens van de reserveringshouder zijn nog niet compleet.");
+            }
 
-            var reservering = new Reservering
+            var email = _data.Emailadres.Trim();
+            var bestaandeGast = await _gastRepository.GetByEmailAsync(email);
+
+            // Controleren of gast al bestaat en anders maak een nieuw Gast object aan.
+            int reserveringhouderId;
+            if (bestaandeGast != null)
+            {
+                reserveringhouderId = bestaandeGast.Id;
+            }
+            else
+            {
+                var nieuweGast = new Gast
+                {
+                    Naam = _data.Naam.Trim(),
+                    Geboortedatum = DateOnly.FromDateTime(_data.Geboortedatum.Value),
+                    Email = email,
+                    Telefoon = _data.Telefoonnummer.Trim()
+                };
+
+                reserveringhouderId = await _gastRepository.AddAsync(nieuweGast);
+            }
+
+
+            var nieuweReservering = new Reservering
             {
                 StartDatum = startDatum,
                 EindDatum = eindDatum,
@@ -36,7 +71,8 @@ namespace Camping.Core.Services
                 AccommodatieId = accommodatie.Id
             };
 
-            _repository.Add(reservering);
+            // Reservering met bijhorende gast toevoegen aan reserveringRepository
+            await _reserveringRepository.AddAsync(nieuweReservering, reserveringhouderId);
         }
     }
 }

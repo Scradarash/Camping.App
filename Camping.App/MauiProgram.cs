@@ -33,6 +33,7 @@ namespace Camping.App
             builder.Services.AddSingleton<IStaanplaatsRepository, StaanplaatsRepository>();
             builder.Services.AddSingleton<IAccommodatieRepository, AccommodatieRepository>();
             builder.Services.AddSingleton<IReserveringRepository, ReserveringRepository>();
+            builder.Services.AddSingleton<IGastRepository, MySqlGastRepository>();
 
             //Services
             builder.Services.AddSingleton<IVeldService, VeldService>();

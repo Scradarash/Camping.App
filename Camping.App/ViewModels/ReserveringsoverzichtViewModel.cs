@@ -240,12 +240,7 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
             _reservatieDataService.Telefoonnummer = Telefoonnummer;
             _reservatieDataService.SelectedAccommodatie = SelectedAccommodatie;
 
-            _reservatieDataService.KiestStroom = KiestStroom;
-            _reservatieDataService.KiestWater = KiestWater;
-
-            decimal definitievePrijs = BerekenEindTotaal();
-
-            _reserveringService.MaakReservering(
+            await _reserveringService.MaakReserveringAsync(
                 _reservatieDataService.StartDate.Value,
                 _reservatieDataService.EndDate.Value,
                 _reservatieDataService.SelectedVeld,
