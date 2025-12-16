@@ -99,16 +99,20 @@ public partial class VeldDetailView : ContentPage
         double buttonWidth = (cellWidth - (2 * margin));
         double buttonHeight = (cellHeight - (2 * margin));
 
+        // Image source bepalen op basis van AccommodatieType
+        string imageSource = GetStaanplaatsImageSource(staanplaats);
+
         Button btn = new Button
         {
-            // Voorlopig tonen we gewoon het ID van de plek
-            Text = staanplaats.id.ToString(),
+            ImageSource = imageSource,
             Padding = 0,
             CornerRadius = 8,
-            // Command geüpdatet naar de Engelse naam uit de ViewModel refactoring
             Command = _viewModel.SelectStaanplaatsCommand,
             CommandParameter = staanplaats
         };
+
+        // Tooltip om staanplaats id te tonen
+        ToolTipProperties.SetText(btn, $"Staanplaats {staanplaats.id}");
 
         ApplyButtonStyle(btn, staanplaats);
 
@@ -118,6 +122,25 @@ public partial class VeldDetailView : ContentPage
         AbsoluteLayout.SetLayoutBounds(btn, new Rect(x, y, buttonWidth, buttonHeight));
 
         return btn;
+    }
+
+    private string GetStaanplaatsImageSource(Staanplaats staanplaats)
+    {
+        // Controleren op null voor de zekerheid
+        if (string.IsNullOrWhiteSpace(staanplaats.AccommodatieType))
+            return "tent.png"; // tent image als fallback
+
+        string type = staanplaats.AccommodatieType.ToLowerInvariant();
+
+        if (type.Contains("chalet"))
+            return "chalet.png";
+
+        // Op alle plekken waar een caravan kan staan, kan ook een camper staan, dus die in 1 check verwerken
+        if (type.Contains("caravan") || type.Contains("camper"))
+            return "caravan_camper.png";
+
+        // Als er geen match is, standaard tent afbeelding gebruiken
+        return "tent.png";
     }
 
     private void ApplyButtonStyle(Button btn, Staanplaats staanplaats)
