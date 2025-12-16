@@ -57,7 +57,7 @@ namespace Camping.Core.Data.Repositories
         public async Task<Gast?> GetByEmailAsync(string email)
         {
             await using var connection = _db.CreateConnection();
-
+            await connection.OpenAsync();
             var command = connection.CreateCommand();
 
             command.CommandText = @"
@@ -87,6 +87,7 @@ namespace Camping.Core.Data.Repositories
         public async Task<int> AddAsync(Gast gast)
         {
             await using var connection = _db.CreateConnection();
+            await connection.OpenAsync();
             var command = connection.CreateCommand();
 
             // Query voor opslaan data in DB, Selecteer laatste Id 
@@ -97,7 +98,7 @@ namespace Camping.Core.Data.Repositories
 
             // Vul parameters met waardes van object in de query
             command.Parameters.AddWithValue("@naam", gast.Naam);
-            command.Parameters.AddWithValue("@geboortedatm", gast.Geboortedatum);
+            command.Parameters.AddWithValue("@geboortedatum", gast.Geboortedatum);
             command.Parameters.AddWithValue("@email", gast.Email);
             command.Parameters.AddWithValue("@telefoon", gast.Telefoon);
 
