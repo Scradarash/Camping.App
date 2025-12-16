@@ -15,7 +15,7 @@ namespace TestCore
             _service = new ReserveringshouderValidatieService();
         }
 
-        // UC5.1 – Naam verplicht
+        // UC5.1 - TC5-13 – Naam verplicht
         [Test]
         public void ValidateNaam_ReturnsError_WhenNaamIsEmpty()
         {
@@ -25,7 +25,7 @@ namespace TestCore
             Assert.AreEqual("Naam is verplicht.", result.Error);
         }
 
-        // UC5.1 – Naam moet minimaal 2 tekens bevatten
+        // UC5.1 - TC5-14 – Naam moet minimaal 2 tekens bevatten
         [Test]
         public void ValidateNaam_ReturnsError_WhenNaamIsTooShort()
         {
@@ -35,7 +35,7 @@ namespace TestCore
             Assert.AreEqual("Naam moet minimaal 2 tekens bevatten.", result.Error);
         }
 
-        // UC5.1 – Naam mag maximaal 25 tekens bevatten
+        // UC5.1 - TC5-15 – Naam mag maximaal 25 tekens bevatten
         [Test]
         public void ValidateNaam_ReturnsError_WhenNaamIsTooLong()
         {
@@ -47,7 +47,7 @@ namespace TestCore
             Assert.AreEqual("Naam mag maximaal 25 tekens bevatten.", result.Error);
         }
 
-        // UC5.1 – Naam bevat ongeldige tekens
+        // UC5.1 - TC5-16 – Naam bevat ongeldige tekens
         [Test]
         public void ValidateNaam_ReturnsError_WhenNaamContainsInvalidCharacters()
         {
@@ -57,7 +57,7 @@ namespace TestCore
             Assert.AreEqual("Naam bevat ongeldige tekens.", result.Error);
         }
 
-        // UC5.2 – Geboortedatum verplicht
+        // UC5.2 - TC5-17 – Geboortedatum verplicht
         [Test]
         public void ValidateGeboortedatum_ReturnsError_WhenNull()
         {
@@ -67,7 +67,7 @@ namespace TestCore
             Assert.AreEqual("Geboortedatum is verplicht.", result.Error);
         }
 
-        // UC5.2 – Leeftijd minimaal 18
+        // UC5.2 - TC5-18 – Leeftijd minimaal 18
         [Test]
         public void ValidateGeboortedatum_ReturnsError_WhenUnder18()
         {
@@ -79,7 +79,7 @@ namespace TestCore
             Assert.AreEqual("De hoofdboeker moet minimaal 18 jaar zijn.", result.Error);
         }
 
-        // UC5.2 – Leeftijd mag niet hoger zijn dan 120 jaar
+        // UC5.2 - TC5-19 – Leeftijd mag niet hoger zijn dan 120 jaar
         [Test]
         public void ValidateGeboortedatum_ReturnsError_WhenAgeIsAbove120()
         {
@@ -91,7 +91,7 @@ namespace TestCore
             Assert.AreEqual("Leeftijd boven 120 jaar is niet toegestaan.", result.Error);
         }
 
-        // UC5.3 – Email verplicht
+        // UC5.3 - TC5-20 – Email verplicht
         [Test]
         public void ValidateEmail_ReturnsError_WhenEmpty()
         {
@@ -101,7 +101,7 @@ namespace TestCore
             Assert.AreEqual("E-mailadres is verplicht.", result.Error);
         }
 
-        // UC5.3 – Email formaat
+        // UC5.3 - TC5-21 – Email formaat
         [Test]
         public void ValidateEmail_ReturnsError_WhenInvalidFormat()
         {
@@ -111,7 +111,7 @@ namespace TestCore
             Assert.AreEqual("E-mailadres structuur klopt niet.", result.Error);
         }
 
-        // UC5.3 – E-mailadres bevat niet toegestane karakters
+        // UC5.3 - TC5-22 – E-mailadres bevat niet toegestane karakters
         [Test]
         public void ValidateEmail_ReturnsError_WhenEmailContainsInvalidCharacters()
         {
@@ -121,7 +121,7 @@ namespace TestCore
             Assert.AreEqual("E-mailadres bevat niet toegestane karakters.", result.Error);
         }
 
-        // UC5.4 – Telefoon verplicht
+        // UC5.4 - TC5-23 – Telefoon verplicht
         [Test]
         public void ValidateTelefoon_ReturnsError_WhenEmpty()
         {
@@ -131,17 +131,7 @@ namespace TestCore
             Assert.AreEqual("Telefoonnummer is verplicht.", result.Error);
         }
 
-        // UC5.4 – Telefoon lengte
-        [Test]
-        public void ValidateTelefoon_ReturnsError_WhenTooShort()
-        {
-            var result = _service.ValidateTelefoonnummer("123");
-
-            Assert.IsFalse(result.IsValid);
-            Assert.AreEqual("Telefoonnummer moet tussen 8 en 15 cijfers bevatten.", result.Error);
-        }
-
-        // UC5.4 – Telefoonnummer bevat niet toegestane karakters
+        // UC5.4 - TC5-24 – Telefoonnummer bevat niet toegestane karakters
         [Test]
         public void ValidateTelefoon_ReturnsError_WhenContainsInvalidCharacters()
         {
@@ -151,7 +141,17 @@ namespace TestCore
             Assert.AreEqual("Alleen cijfers, spaties en '+' zijn toegestaan.", result.Error);
         }
 
-        // UC5 – Happy path
+        // UC5.4 - TC5-25 – Telefoon lengte
+        [Test]
+        public void ValidateTelefoon_ReturnsError_WhenTooShort()
+        {
+            var result = _service.ValidateTelefoonnummer("123");
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual("Telefoonnummer moet tussen 8 en 15 cijfers bevatten.", result.Error);
+        }
+
+        // UC5 - TC5-26 – Happy path
         [Test]
         public void Validate_AllFieldsValid_ReturnsValid()
         {
