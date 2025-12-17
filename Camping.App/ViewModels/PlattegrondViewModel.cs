@@ -10,13 +10,21 @@ namespace Camping.App.ViewModels;
 public partial class PlattegrondViewModel : ObservableObject
 {
     private readonly IVeldService _veldService;
+    private readonly IFaciliteitService _faciliteitService;
     private readonly IReservatieDataService _reservatieDataService;
     private readonly IServiceProvider _serviceProvider;
-    public ObservableCollection<Veld> Velden { get; } = new();
 
-    public PlattegrondViewModel(IVeldService veldService, IReservatieDataService reservatieService, IServiceProvider serviceProvider)
+    public ObservableCollection<Veld> Velden { get; } = new();
+    public ObservableCollection<Faciliteit> Faciliteiten { get; } = new();
+
+    public PlattegrondViewModel(
+        IVeldService veldService,
+        IFaciliteitService faciliteitService,
+        IReservatieDataService reservatieService,
+        IServiceProvider serviceProvider)
     {
         _veldService = veldService;
+        _faciliteitService = faciliteitService;
         _reservatieDataService = reservatieService;
         _serviceProvider = serviceProvider;
         LoadAreas();
@@ -25,11 +33,17 @@ public partial class PlattegrondViewModel : ObservableObject
     private void LoadAreas()
     {
         Velden.Clear();
-        // Aanname dat GetAll een IEnumerable of List teruggeeft
         IEnumerable<Veld> velden = _veldService.GetAll();
-        foreach (Veld v in velden)
+        foreach (Veld veld in velden)
         {
-            Velden.Add(v);
+            Velden.Add(veld);
+        }
+
+        Faciliteiten.Clear();
+        IEnumerable<Faciliteit> faciliteiten = _faciliteitService.GetFaciliteiten();
+        foreach (Faciliteit faciliteit in faciliteiten)
+        {
+            Faciliteiten.Add(faciliteit);
         }
     }
 
@@ -60,8 +74,16 @@ public partial class PlattegrondViewModel : ObservableObject
     private async Task OpenKalender()
     {
         KalenderView kalenderView = _serviceProvider.GetRequiredService <Views.KalenderView>();
-
-
         await Application.Current.MainPage.Navigation.PushModalAsync(kalenderView);
+    }
+
+    [RelayCommand]
+    private async Task ShowFaciliteitInfo(Faciliteit faciliteit)
+    {
+        // Simpele popup met info
+        await Application.Current.MainPage.DisplayAlert(
+            faciliteit.Name,
+            faciliteit.Description,
+            "Sluiten");
     }
 }

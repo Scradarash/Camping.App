@@ -2,6 +2,7 @@ using System.Windows.Input;
 using Camping.App.ViewModels;
 using Camping.Core.Models;
 using Microsoft.Maui.Layouts;
+using CommunityToolkit.Mvvm.Input;
 
 namespace Camping.App.Views;
 
@@ -62,6 +63,7 @@ public partial class PlattegrondView : ContentPage
         ButtonOverlayLayout.Children.Clear();
 
         AddVeldButtons(innerWidth, innerHeight, scaledFontSize);
+        AddFaciliteitButtons(innerWidth, innerHeight);
         AddKalenderButton(innerWidth, innerHeight, scaledFontSize);
     }
 
@@ -128,6 +130,29 @@ public partial class PlattegrondView : ContentPage
         }
     }
 
+    private void AddFaciliteitButtons(double innerWidth, double innerHeight)
+    {
+        // De faciliteiten uit het ViewModel genereren
+        foreach (Faciliteit faciliteit in _viewModel.Faciliteiten)
+        {
+            Button btn = CreateImageButton(
+                imageSource: faciliteit.ImageName,
+                command: _viewModel.ShowFaciliteitInfoCommand,
+                commandParameter: faciliteit
+            );
+
+            double xposition = faciliteit.XPosition * innerWidth;
+            double yposition = faciliteit.YPosition * innerHeight;
+            double width = faciliteit.Width * innerWidth;
+            double height = faciliteit.Height * innerHeight;
+
+            AbsoluteLayout.SetLayoutFlags(btn, AbsoluteLayoutFlags.None);
+            AbsoluteLayout.SetLayoutBounds(btn, new Rect(xposition, yposition, width, height));
+
+            ButtonOverlayLayout.Children.Add(btn);
+        }
+    }
+
     private void AddKalenderButton(double innerWidth, double innerHeight, double fontSize)
     {
         // Kalender Knop
@@ -165,5 +190,37 @@ public partial class PlattegrondView : ContentPage
             MinimumWidthRequest = 0,
             Padding = 0
         };
+    }
+
+    private Button CreateImageButton(string imageSource, ICommand command, object? commandParameter = null)
+    {
+        Button btn = new Button
+        {
+            ImageSource = imageSource,
+            Style = (Style)Resources["FaciliteitButtonStyle"],
+            MinimumHeightRequest = 0,
+            MinimumWidthRequest = 0,
+        };
+
+        btn.Clicked += async (s, e) =>
+        {
+            // Groter worden bij klik
+            await btn.ScaleTo(1.15, 100, Easing.SpringOut);
+
+            // Command uitvoeren en wachten tot popup sluit
+            if (command is IAsyncRelayCommand asyncCommand)
+            {
+                await asyncCommand.ExecuteAsync(commandParameter);
+            }
+            else
+            {
+                command.Execute(commandParameter);
+            }
+
+            // Terugschalen als popup weg is
+            await btn.ScaleTo(1.0, 100, Easing.SpringIn);
+        };
+
+        return btn;
     }
 }
