@@ -35,7 +35,6 @@ namespace Camping.App
             builder.Services.AddSingleton<IAccommodatieRepository, AccommodatieRepository>();
             builder.Services.AddSingleton<IReserveringRepository, ReserveringRepository>();
             builder.Services.AddSingleton<IGastRepository, MySqlGastRepository>();
-            // Toegevoegd: Faciliteiten
             builder.Services.AddSingleton<IFaciliteitRepository, FaciliteitRepository>();
 
             //Services
@@ -44,7 +43,6 @@ namespace Camping.App
             builder.Services.AddSingleton<IAccommodatieService, AccommodatieService>();
             builder.Services.AddSingleton<IReserveringService, ReserveringService>();
             builder.Services.AddSingleton<ReserveringshouderValidatieService>();
-            // Toegevoegd: Faciliteiten
             builder.Services.AddSingleton<IFaciliteitService, FaciliteitService>();
 
             //ViewModels
