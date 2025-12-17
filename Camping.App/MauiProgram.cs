@@ -28,12 +28,15 @@ namespace Camping.App
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
             builder.Services.AddSingleton<DbConnection>();
+
             //Repositories
             builder.Services.AddSingleton<IVeldRepository, VeldRepository>();
             builder.Services.AddSingleton<IStaanplaatsRepository, StaanplaatsRepository>();
             builder.Services.AddSingleton<IAccommodatieRepository, AccommodatieRepository>();
             builder.Services.AddSingleton<IReserveringRepository, ReserveringRepository>();
             builder.Services.AddSingleton<IGastRepository, MySqlGastRepository>();
+            // Toegevoegd: Faciliteiten
+            builder.Services.AddSingleton<IFaciliteitRepository, FaciliteitRepository>();
 
             //Services
             builder.Services.AddSingleton<IVeldService, VeldService>();
@@ -41,6 +44,8 @@ namespace Camping.App
             builder.Services.AddSingleton<IAccommodatieService, AccommodatieService>();
             builder.Services.AddSingleton<IReserveringService, ReserveringService>();
             builder.Services.AddSingleton<ReserveringshouderValidatieService>();
+            // Toegevoegd: Faciliteiten
+            builder.Services.AddSingleton<IFaciliteitService, FaciliteitService>();
 
             //ViewModels
             builder.Services.AddTransient<PlattegrondViewModel>();
@@ -52,7 +57,7 @@ namespace Camping.App
             builder.Services.AddTransient<PlattegrondView>();
             builder.Services.AddTransient<ReserveringsoverzichtView>();
             builder.Services.AddTransient<KalenderView>();
-            builder.Services.AddTransient <VeldDetailView>();
+            builder.Services.AddTransient<VeldDetailView>();
 
 
 #if WINDOWS
