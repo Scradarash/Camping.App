@@ -114,10 +114,11 @@
 
                 <!-- Linker kolom nu de afbeelding van het veld. -->
                 <Grid Grid.Column="0" RowDefinitions="Auto, *">
-                    <Label Text="Kies een plaats op de kaart:" 
+                  <Label Text="Kies een plaats op de kaart:" 
                            FontAttributes="Bold" 
                            Margin="0,0,0,5" 
-                           TextColor="Gray"/>
+                           TextColor="Gray"
+                           IsVisible="{Binding IsReserveEnabled}"/>
 
                     <!-- Afbeelding van veld, met knoppen voor staanplaatsen -->
                     <Border Grid.Row="1" Stroke="Black" StrokeThickness="1">
@@ -194,9 +195,26 @@
                         Style="{StaticResource ExitButtonStyle}"/>
 
                 <Button Grid.Column="1" 
-                        Text="Reserveer" 
+                        Text="{Binding ReserveButtonText}" 
                         Command="{Binding ReserveCommand}" 
-                        Style="{StaticResource ConfirmButtonStyle}"/>
+                        IsEnabled="{Binding IsReserveEnabled}"
+                        Style="{StaticResource ConfirmButtonStyle}">
+
+                    <Button.Triggers>
+                        <!-- Check binding IsReserveEnabled, als die false is (wat bij het groepsveld t geval is), dan wordt de knop grijs -->
+                        <DataTrigger TargetType="Button" Binding="{Binding IsReserveEnabled}" Value="False">
+                            <Setter Property="Style" Value="{x:Null}" />
+                            <Setter Property="BackgroundColor" Value="#E0E0E0" />
+                            <Setter Property="TextColor" Value="#555555" />
+                            <Setter Property="BorderColor" Value="#BDBDBD" />
+                            <Setter Property="BorderWidth" Value="2" />
+                            <Setter Property="CornerRadius" Value="10" />
+                            <Setter Property="FontAttributes" Value="Bold" />
+                            <Setter Property="FontSize" Value="21" />
+                            <Setter Property="Opacity" Value="1.0" />
+                        </DataTrigger>
+                    </Button.Triggers>
+                </Button>
             </Grid>
         </Grid>
     </Border>
