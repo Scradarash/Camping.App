@@ -32,6 +32,7 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
     private string staanplaatsNaam;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(TotaalPrijsTekst))]
     private Accommodatie selectedAccommodatie;
 
     [ObservableProperty]
@@ -149,6 +150,18 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
 
         foreach (var acc in gefilterdeLijst)
         {
+            // tijdelijke hardcoded prijzen van de accommodaties
+            if (acc.Name.Equals("Tent", StringComparison.OrdinalIgnoreCase))
+                acc.Prijs = 2.99m;
+            else if (acc.Name.Equals("Caravan", StringComparison.OrdinalIgnoreCase))
+                acc.Prijs = 6.99m;
+            else if (acc.Name.Equals("Camper", StringComparison.OrdinalIgnoreCase))
+                acc.Prijs = 7.99m;
+            else if (acc.Name.Equals("Chalet", StringComparison.OrdinalIgnoreCase))
+                acc.Prijs = 49.99m;
+            else
+                acc.Prijs = 0.00m;
+
             if (gekozenPlek != null)
             {
                 if (acc.Name.Contains(gekozenPlek.AccommodatieType, StringComparison.OrdinalIgnoreCase)
@@ -192,6 +205,12 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
         if (KiestWater && IsWaterMogelijk)
         {
             totaal += (nachten * PRIJS_WATER);
+        }
+
+        // Accommodatieprijs
+        if (SelectedAccommodatie != null)
+        {
+            totaal += (nachten * SelectedAccommodatie.Prijs);
         }
 
         return totaal;
