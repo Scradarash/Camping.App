@@ -87,8 +87,8 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
     [NotifyPropertyChangedFor(nameof(TotaalPrijsTekst))]
     private bool kiestWater;
 
-    public string StroomPrijsTekst => $"Stroom €{PRIJS_STROOM},- per nacht";
-    public string WaterPrijsTekst => $"Water €{PRIJS_WATER},-";
+    public string StroomPrijsTekst => $"€{PRIJS_STROOM},- per nacht";
+    public string WaterPrijsTekst => $"€{PRIJS_WATER},- per nacht";
 
     public string TotaalPrijsTekst => $"Totaalprijs: €{BerekenEindTotaal():F2}";
 
