@@ -1,10 +1,9 @@
 ﻿using Camping.Core.Interfaces.Services;
 using Camping.Core.Models;
-using Camping.Core.Services; 
+using Camping.Core.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
-using System.Text.RegularExpressions;
 
 namespace Camping.App.ViewModels;
 
@@ -17,10 +16,7 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
     private readonly IReserveringService _reserveringService;
 
     private readonly ReserveringshouderValidatieService _validatieService;
-    // Prijzen definities (hardcoded voor nu, kan later uit DB/Service)
-    private const decimal PRIJS_BASIS_PER_NACHT = 20.00m;
-    private const decimal PRIJS_STROOM = 4.99m;
-    private const decimal PRIJS_WATER = 0.00m;
+    private readonly PrijsBerekenService _prijsBerekenService;
 
     [ObservableProperty]
     private string periodDescription;
@@ -32,7 +28,6 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
     private string staanplaatsNaam;
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(TotaalPrijsTekst))]
     private Accommodatie selectedAccommodatie;
 
     [ObservableProperty]
@@ -78,54 +73,79 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
     [ObservableProperty]
     private bool isWaterMogelijk;
 
-    // [NotifyPropertyChangedFor] zorgt dat de TotaalPrijsTekst automatisch update als je klikt!
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(TotaalPrijsTekst))]
     private bool kiestStroom;
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(TotaalPrijsTekst))]
     private bool kiestWater;
 
-    public string StroomPrijsTekst => $"€{PRIJS_STROOM},- per nacht";
-    public string WaterPrijsTekst => $"€{PRIJS_WATER},- per nacht";
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(TotaalPrijsTekst))]
+    private decimal totaalPrijs;
 
-    public string TotaalPrijsTekst => $"Totaalprijs: €{BerekenEindTotaal():F2}";
+    public string StroomPrijsTekst => $"€{_prijsBerekenService.StroomPrijsPerNacht:F2},- per nacht";
+    public string WaterPrijsTekst => $"€{_prijsBerekenService.WaterPrijsPerNacht:F2},- per nacht";
+    public string TotaalPrijsTekst => $"Totaalprijs: €{TotaalPrijs:F2}";
 
     public ObservableCollection<Accommodatie> Accommodaties { get; } = new();
+    public ObservableCollection<PrijsInfo> PrijsInfo { get; } = new();
 
     public ReserveringsoverzichtViewModel(
         IReservatieDataService reservatieDataService,
         IAccommodatieService accommodatieService,
         IReserveringService reserveringService,
-        ReserveringshouderValidatieService validatieService)
+        ReserveringshouderValidatieService validatieService,
+        PrijsBerekenService prijsBerekenService)
     {
         _reservatieDataService = reservatieDataService;
         _accommodatieService = accommodatieService;
         _reserveringService = reserveringService;
-
         _validatieService = validatieService;
+        _prijsBerekenService = prijsBerekenService;
 
         LoadData();
     }
 
     private void LoadData()
     {
-        if (_reservatieDataService.SelectedVeld == null || _reservatieDataService.StartDate == null)
-        {
+        if (!HasMinimumContext())
             return;
-        }
 
-        FieldName = _reservatieDataService.SelectedVeld.Name;
+        LoadContextHeader();
+        LoadStaanplaatsInfo();
+        LoadAccommodaties();
+        LoadReserveringshouderDefaults();
+
+        RecalculatePrijs();
+    }
+
+    private bool HasMinimumContext()
+    {
+        // Zonder deze info kan de pagina niet netjes vullen.
+        if (_reservatieDataService.SelectedVeld == null)
+            return false;
+
+        if (_reservatieDataService.StartDate == null || _reservatieDataService.EndDate == null)
+            return false;
+
+        return true;
+    }
+
+    private void LoadContextHeader()
+    {
+        FieldName = _reservatieDataService.SelectedVeld!.Name;
         PeriodDescription = $"{_reservatieDataService.StartDate:dd-MM-yyyy} tot {_reservatieDataService.EndDate:dd-MM-yyyy}";
+    }
 
+    private void LoadStaanplaatsInfo()
+    {
         var gekozenPlek = _reservatieDataService.SelectedStaanplaats;
 
         if (gekozenPlek != null)
         {
             StaanplaatsNaam = $"Plaats: {gekozenPlek.id} ({gekozenPlek.AccommodatieType})";
 
-            // Checken wat de plek daadwerkelijk heeft (uit DB data)
+            // Checken wat de plek daadwerkelijk heeft (uit DB data / of later uit uitbreiding)
             IsStroomMogelijk = gekozenPlek.HeeftStroom;
             IsWaterMogelijk = gekozenPlek.HeeftWater;
 
@@ -143,77 +163,95 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
             KiestStroom = false;
             KiestWater = false;
         }
+    }
 
+    private void LoadAccommodaties()
+    {
         Accommodaties.Clear();
 
-        var gefilterdeLijst = _accommodatieService.GetGeschikteAccommodaties(_reservatieDataService.SelectedVeld);
+        var veld = _reservatieDataService.SelectedVeld!;
+        var gekozenPlek = _reservatieDataService.SelectedStaanplaats;
 
-        foreach (var acc in gefilterdeLijst)
+        // DB-gedreven geschikte accommodaties voor dit veld.
+        var geschikte = _accommodatieService.GetGeschikteAccommodaties(veld);
+
+        foreach (var acc in FilterOpStaanplaatsTypes(geschikte, gekozenPlek))
         {
-            // tijdelijke hardcoded prijzen van de accommodaties
-            if (acc.Name.Equals("Tent", StringComparison.OrdinalIgnoreCase))
-                acc.Prijs = 2.99m;
-            else if (acc.Name.Equals("Caravan", StringComparison.OrdinalIgnoreCase))
-                acc.Prijs = 6.99m;
-            else if (acc.Name.Equals("Camper", StringComparison.OrdinalIgnoreCase))
-                acc.Prijs = 7.99m;
-            else if (acc.Name.Equals("Chalet", StringComparison.OrdinalIgnoreCase))
-                acc.Prijs = 49.99m;
-            else
-                acc.Prijs = 0.00m;
-
-            if (gekozenPlek != null)
-            {
-                if (acc.Name.Contains(gekozenPlek.AccommodatieType, StringComparison.OrdinalIgnoreCase)
-                    || gekozenPlek.AccommodatieType.Contains(acc.Name, StringComparison.OrdinalIgnoreCase))
-                {
-                    Accommodaties.Add(acc);
-                }
-            }
-            else
-            {
-                Accommodaties.Add(acc);
-            }
+            Accommodaties.Add(acc);
         }
 
         if (Accommodaties.Count > 0)
         {
             SelectedAccommodatie = Accommodaties[0];
         }
-
-        Naam = _reservatieDataService.Naam;
-
-        OnPropertyChanged(nameof(TotaalPrijsTekst));
     }
 
-    private decimal BerekenEindTotaal()
+    private IEnumerable<Accommodatie> FilterOpStaanplaatsTypes(IEnumerable<Accommodatie> accommodaties, Staanplaats? plek)
     {
+        // Als er geen plek is gekozen, dan is veld-filtering genoeg.
+        if (plek == null || string.IsNullOrWhiteSpace(plek.AccommodatieType))
+            return accommodaties;
+
+        // plek.AccommodatieType is iets als: "Tent, Caravan"
+        // Filter: alleen accommodaties die in die string voorkomen.
+        return accommodaties.Where(a =>
+            plek.AccommodatieType.Contains(a.Name, StringComparison.OrdinalIgnoreCase));
+    }
+
+    private void LoadReserveringshouderDefaults()
+    {
+        Naam = _reservatieDataService.Naam;
+        Geboortedatum = _reservatieDataService.Geboortedatum;
+        Emailadres = _reservatieDataService.Emailadres;
+        Telefoonnummer = _reservatieDataService.Telefoonnummer;
+    }
+
+    private void RecalculatePrijs()
+    {
+        PrijsInfo.Clear();
+
         if (_reservatieDataService.StartDate == null || _reservatieDataService.EndDate == null)
-            return 0.00m;
-
-        int nachten = (_reservatieDataService.EndDate.Value - _reservatieDataService.StartDate.Value).Days;
-        if (nachten < 1) nachten = 1;
-
-        decimal totaal = nachten * PRIJS_BASIS_PER_NACHT;
-
-        // <--- Logica: Tel alleen op als aangevinkt EN mogelijk
-        if (KiestStroom && IsStroomMogelijk)
         {
-            totaal += (nachten * PRIJS_STROOM);
+            TotaalPrijs = 0m;
+            return;
         }
 
-        if (KiestWater && IsWaterMogelijk)
-        {
-            totaal += (nachten * PRIJS_WATER);
-        }
+        var plek = _reservatieDataService.SelectedStaanplaats;
 
-        // Accommodatieprijs
-        if (SelectedAccommodatie != null)
-        {
-            totaal += (nachten * SelectedAccommodatie.Prijs);
-        }
+        // Als er nog geen plek is, kunnen we nog geen echte staanplaatsprijs tonen.
+        decimal staanplaatsPrijs = plek?.Prijs ?? 0m;
 
-        return totaal;
+        decimal accommodatiePrijs = SelectedAccommodatie?.Prijs ?? 0m;
+
+        var (totaal, regels) = _prijsBerekenService.Bereken(
+            _reservatieDataService.StartDate.Value,
+            _reservatieDataService.EndDate.Value,
+            staanplaatsPrijs,
+            accommodatiePrijs,
+            KiestStroom,
+            IsStroomMogelijk,
+            KiestWater,
+            IsWaterMogelijk);
+
+        foreach (var regel in regels)
+            PrijsInfo.Add(regel);
+
+        TotaalPrijs = totaal;
+    }
+
+    partial void OnSelectedAccommodatieChanged(Accommodatie value)
+    {
+        RecalculatePrijs();
+    }
+
+    partial void OnKiestStroomChanged(bool value)
+    {
+        RecalculatePrijs();
+    }
+
+    partial void OnKiestWaterChanged(bool value)
+    {
+        RecalculatePrijs();
     }
 
     [RelayCommand]
@@ -255,16 +293,10 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
 
         try
         {
-            _reservatieDataService.Naam = Naam;
-            _reservatieDataService.Geboortedatum = Geboortedatum;
-            _reservatieDataService.Emailadres = Emailadres;
-            _reservatieDataService.Telefoonnummer = Telefoonnummer;
-            _reservatieDataService.SelectedAccommodatie = SelectedAccommodatie;
+            PersistWizardData();
 
-            _reservatieDataService.KiestStroom = KiestStroom;
-            _reservatieDataService.KiestWater = KiestWater;
-
-            decimal definitievePrijs = BerekenEindTotaal();
+            // Zorg dat de prijs actueel is vlak voor opslaan
+            RecalculatePrijs();
 
             await _reserveringService.MaakReserveringAsync(
                 _reservatieDataService.StartDate.Value,
@@ -272,9 +304,9 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
                 _reservatieDataService.SelectedVeld,
                 _reservatieDataService.SelectedStaanplaats,
                 SelectedAccommodatie,
-                kiestStroom,
+                KiestStroom,
                 KiestWater,
-                definitievePrijs);
+                TotaalPrijs);
 
             await Application.Current.MainPage.DisplayAlert(
                 "Reservering voltooid",
@@ -290,6 +322,17 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
                 $"Er ging iets mis bij het opslaan van de reservering:\n{ex.Message}",
                 "OK");
         }
+    }
+
+    private void PersistWizardData()
+    {
+        _reservatieDataService.Naam = Naam;
+        _reservatieDataService.Geboortedatum = Geboortedatum;
+        _reservatieDataService.Emailadres = Emailadres;
+        _reservatieDataService.Telefoonnummer = Telefoonnummer;
+        _reservatieDataService.SelectedAccommodatie = SelectedAccommodatie;
+        _reservatieDataService.KiestStroom = KiestStroom;
+        _reservatieDataService.KiestWater = KiestWater;
     }
 
     [RelayCommand]

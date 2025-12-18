@@ -15,36 +15,11 @@ namespace Camping.Core.Services
 
         public IEnumerable<Accommodatie> GetGeschikteAccommodaties(Veld veld)
         {
-            var alleAccommodaties = _repository.GetAll();
-            var geschikteLijst = new List<Accommodatie>();
-
             // Veiligheidscheck
-            if (veld == null) return geschikteLijst;
+            if (veld == null) return Enumerable.Empty<Accommodatie>();
 
-            foreach (var acc in alleAccommodaties)
-            {
-                bool toevoegen = false;
-
-                if (veld.Name.Contains("Trekkersveld"))
-                {
-                    if (acc.Name == "Tent") toevoegen = true;
-                }
-                else if (veld.Name.Contains("Chaletveld"))
-                {
-                    if (acc.Name == "Chalet") toevoegen = true;
-                }
-                else
-                {
-                    toevoegen = true;
-                }
-
-                if (toevoegen)
-                {
-                    geschikteLijst.Add(acc);
-                }
-            }
-
-            return geschikteLijst;
+            // DB-gedreven: wat er daadwerkelijk op de staanplaatsen in dit veld is toegestaan.
+            return _repository.GetByVeldId(veld.id);
         }
     }
 }

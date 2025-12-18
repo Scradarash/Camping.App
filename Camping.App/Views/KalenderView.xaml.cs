@@ -1,5 +1,4 @@
 using Syncfusion.Maui.Calendar;
-using Camping.Core.Interfaces.Services;
 using Camping.App.ViewModels;
 
 namespace Camping.App.Views;

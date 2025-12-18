@@ -22,19 +22,28 @@ namespace Camping.Core.Services
         {
             return StartDate != null && EndDate != null && EndDate > StartDate;
         }
+
         public string ValidateInput(DateTime? start, DateTime? end)
         {
             // Check of de datums zijn ingevuld
             if (start == null || end == null)
                 return "Selecteer alstublieft een start- en einddatum.";
 
+            DateTime startDate = start.Value.Date;
+            DateTime endDate = end.Value.Date;
+
+            // Check of er niet in het verleden geboekt wordt
+            if (startDate < DateTime.Today)
+                return "De aankomstdatum kan niet in het verleden liggen.";
+
             // Check of de einddatum na de startdatum ligt
-            if (end <= start)
+            if (endDate <= startDate)
                 return "De vertrekdatum moet na de aankomstdatum liggen.";
 
-            // Check of de datums binnen het huidige kalenderjaar liggen
-            if (start.Value.Year != DateTime.Now.Year || end.Value.Year != DateTime.Now.Year)
-                return "Reserveren is alleen mogelijk binnen het huidige kalenderjaar.";
+            // KalenderViewModel laat boeken t/m einde van volgend jaar, dus validatie moet hiermee matchen.
+            DateTime maxDate = new DateTime(DateTime.Today.Year + 1, 12, 31);
+            if (endDate > maxDate)
+                return $"Reserveren is mogelijk tot en met {maxDate:dd-MM-yyyy}.";
 
             // Als alle checks slagen, empty string, dus geen foutmelding
             return string.Empty;
