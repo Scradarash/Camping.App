@@ -1,4 +1,5 @@
-﻿using Camping.Core.Interfaces.Services;
+﻿using Camping.App.Views;
+using Camping.Core.Interfaces.Services;
 using Camping.Core.Models;
 using Camping.Core.Services; 
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -52,7 +53,7 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
 
     [ObservableProperty]
     private bool isGeboortedatumFoutZichtbaar;
-
+    
     [ObservableProperty]
     private string emailadres;
 
@@ -358,5 +359,11 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
 
         IsTelefoonnummerFoutZichtbaar = false;
         return true;
+    }
+
+    [RelayCommand]
+    private async Task ToevoegenGast()
+    {
+        await Shell.Current.GoToAsync(nameof(ToevoegenGastView));
     }
 }

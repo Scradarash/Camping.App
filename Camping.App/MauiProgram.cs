@@ -44,18 +44,23 @@ namespace Camping.App
             builder.Services.AddSingleton<IReserveringService, ReserveringService>();
             builder.Services.AddSingleton<ReserveringshouderValidatieService>();
             builder.Services.AddSingleton<IFaciliteitService, FaciliteitService>();
+            builder.Services.AddSingleton<ToevoegenGastService>();
 
             //ViewModels
             builder.Services.AddTransient<PlattegrondViewModel>();
             builder.Services.AddTransient<ReserveringsoverzichtViewModel>();
             builder.Services.AddTransient<KalenderViewModel>();
             builder.Services.AddTransient<VeldDetailViewModel>();
+            builder.Services.AddTransient<ToevoegenGastViewModel>();
+
 
             //Views
             builder.Services.AddTransient<PlattegrondView>();
             builder.Services.AddTransient<ReserveringsoverzichtView>();
             builder.Services.AddTransient<KalenderView>();
             builder.Services.AddTransient<VeldDetailView>();
+            builder.Services.AddTransient<ToevoegenGastView>();
+
 
 
 #if WINDOWS
