@@ -15,8 +15,8 @@ public partial class PlattegrondView : ContentPage
     private const double OriginalMapWidth = 1920;
     private const double OriginalMapHeight = 1080;
 
-    // De dikte van de rand. Deze moet gelijk staan aan die in de XAML (StrokeThickness)
-    private const double BorderThickness = 10;
+    // De dikte van de rand
+    public double BorderThickness { get; } = 10;
 
     public PlattegrondView(PlattegrondViewModel viewModel)
     {
