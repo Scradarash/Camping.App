@@ -17,8 +17,8 @@ namespace Camping.App.ViewModels
 
             // Minimum datum ingesteld op vandaag dus er kan niet in het verleden geboekt worden (door binding in view met kalender)
             MinDate = DateTime.Now.Date;
-            // En de maximum datum instellen op het einde van het huidige jaar
-            MaxDate = new DateTime(DateTime.Now.Year, 12, 31);
+            // En de maximum datum instellen op het einde van het volgende jaar
+            MaxDate = new DateTime(DateTime.Now.Year + 1, 12, 31);
         }
 
         // Properties voor de kalender restricties
