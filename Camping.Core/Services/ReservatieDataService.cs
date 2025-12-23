@@ -32,18 +32,18 @@ namespace Camping.Core.Services
             DateTime startDate = start.Value.Date;
             DateTime endDate = end.Value.Date;
 
-            // Check of er niet in het verleden geboekt wordt
-            if (startDate < DateTime.Today)
-                return "De aankomstdatum kan niet in het verleden liggen.";
-
             // Check of de einddatum na de startdatum ligt
             if (endDate <= startDate)
                 return "De vertrekdatum moet na de aankomstdatum liggen.";
 
-            // KalenderViewModel laat boeken t/m einde van volgend jaar, dus validatie moet hiermee matchen.
-            DateTime maxDate = new DateTime(DateTime.Today.Year + 1, 12, 31);
-            if (endDate > maxDate)
-                return $"Reserveren is mogelijk tot en met {maxDate:dd-MM-yyyy}.";
+            // Check of er niet in het verleden geboekt wordt
+            if (startDate.Year < DateTime.Today.Year)
+                return "Reserveren is alleen mogelijk binnen het huidige kalenderjaar.";
+
+            // KalenderViewModel laat boeken t/m einde van het huidige jaar, dus validatie moet hiermee matchen.
+            int currentYear = DateTime.Today.Year;
+            if (startDate.Year != currentYear || endDate.Year != currentYear)
+                return "Reserveren is alleen mogelijk binnen het huidige kalenderjaar.";
 
             // Als alle checks slagen, empty string, dus geen foutmelding
             return string.Empty;
