@@ -6,45 +6,21 @@ namespace Camping.Core.Services
 {
     public class AccommodatieService : IAccommodatieService
     {
-        private readonly IAccommodatieRepository _repository;
+        private readonly IAccommodatieRepository _accommodatieRepository;
 
-        public AccommodatieService(IAccommodatieRepository repository)
+        public AccommodatieService(IAccommodatieRepository accommodatieRepository)
         {
-            _repository = repository;
+            _accommodatieRepository = accommodatieRepository;
         }
 
         public IEnumerable<Accommodatie> GetGeschikteAccommodaties(Veld veld)
         {
-            var alleAccommodaties = _repository.GetAll();
-            var geschikteLijst = new List<Accommodatie>();
+            return _accommodatieRepository.GetByVeldId(veld.id);
+        }
 
-            // Veiligheidscheck
-            if (veld == null) return geschikteLijst;
-
-            foreach (var acc in alleAccommodaties)
-            {
-                bool toevoegen = false;
-
-                if (veld.Name.Contains("Trekkersveld"))
-                {
-                    if (acc.Name == "Tent") toevoegen = true;
-                }
-                else if (veld.Name.Contains("Chaletveld"))
-                {
-                    if (acc.Name == "Chalet") toevoegen = true;
-                }
-                else
-                {
-                    toevoegen = true;
-                }
-
-                if (toevoegen)
-                {
-                    geschikteLijst.Add(acc);
-                }
-            }
-
-            return geschikteLijst;
+        public IEnumerable<Accommodatie> GetGeschikteAccommodatiesVoorStaanplaats(int staanplaatsId)
+        {
+            return _accommodatieRepository.GetByStaanplaatsId(staanplaatsId);
         }
     }
 }
