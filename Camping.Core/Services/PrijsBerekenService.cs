@@ -7,7 +7,7 @@ namespace Camping.Core.Services
     {
         private readonly IVoorzieningRepository _voorzieningRepository;
 
-        // Cache zodat je niet steeds opnieuw de database moet hitten tijdens binding/refresh in de UI
+        //Tijdelijk opslag zodat niet elke keer opnieuw in de database moet kijken voor prijs recalculeren
         private decimal? _stroomPrijsCache;
         private decimal? _waterPrijsCache;
 
@@ -16,7 +16,6 @@ namespace Camping.Core.Services
             _voorzieningRepository = voorzieningRepository;
         }
 
-        // Prijzen definities (nu uit DB)
         public decimal StroomPrijsPerNacht => _stroomPrijsCache ??= GetVoorzieningPrijsOfDefault("Stroom");
         public decimal WaterPrijsPerNacht => _waterPrijsCache ??= GetVoorzieningPrijsOfDefault("Water");
 
@@ -24,14 +23,15 @@ namespace Camping.Core.Services
         {
             Voorziening? v = _voorzieningRepository.GetByNaam(naam);
 
-            // Fallback om crashes te voorkomen als de DB rij ontbreekt
-            // (bijv. in een lege database of fout in seed data).
+            //Als voorziening prijs niet aanwezig is in DB, 0.00 van maken
             return v?.Prijs ?? 0.00m;
         }
 
         public int BerekenNachten(DateTime start, DateTime end)
         {
             int nachten = (end.Date - start.Date).Days;
+            //Handig voor trekkersveld later, zet aantal nachten automatisch op 1 als de aantal kleiner is dan 1
+            //Kan ook op andere manier opgelost worden en kan misschien later weg, 
             if (nachten < 1) nachten = 1;
             return nachten;
         }
@@ -49,6 +49,8 @@ namespace Camping.Core.Services
             int nachten = BerekenNachten(start, end);
 
             var regels = new List<PrijsInfo>();
+
+            //Bepalen formaat per regel bij prijsinfo
 
             decimal staanplaatsTotaal = nachten * staanplaatsPrijsPerNacht;
             regels.Add(new PrijsInfo
@@ -84,6 +86,7 @@ namespace Camping.Core.Services
                 });
             }
 
+            //Totaalprijs berekenen
             decimal totaal = regels.Sum(r => r.Bedrag);
             return (totaal, regels);
         }

@@ -9,27 +9,32 @@ namespace Camping.App.ViewModels;
 
 public partial class ReserveringsoverzichtViewModel : ObservableObject
 {
+    //Voor het onthouden van alle eerdere keuzes (reserveringsperiode, veld, staanplaats)
     private readonly IReservatieDataService _reservatieDataService;
 
-    // gebruiken de Service voor de logica (ipv de Repository)
     private readonly IAccommodatieService _accommodatieService;
     private readonly IReserveringService _reserveringService;
 
+    //Services voor validatie gegevens en prijsberekening
     private readonly ReserveringshouderValidatieService _validatieService;
     private readonly PrijsBerekenService _prijsBerekenService;
 
+    //Voor header met periode tekst en veldnaam
     [ObservableProperty]
     private string periodDescription;
 
     [ObservableProperty]
     private string fieldName;
 
+    //Voor geselecteerde staanplaats info tonen
     [ObservableProperty]
-    private string staanplaatsNaam;
+    private string staanplaatsInfo;
 
+    //Geselecteerde accommodatie bijhouden
     [ObservableProperty]
-    private Accommodatie selectedAccommodatie;
+    private Accommodatie? selectedAccommodatie;
 
+    //Invoer reserveringshouder naam
     [ObservableProperty]
     private string naam;
 
@@ -39,6 +44,7 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
     [ObservableProperty]
     private bool isNaamFoutZichtbaar;
 
+    //Invoer reserveringshouder geboortedatum
     [ObservableProperty]
     private DateTime? geboortedatum;
 
@@ -48,6 +54,7 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
     [ObservableProperty]
     private bool isGeboortedatumFoutZichtbaar;
 
+    //Invoer reserveringshouder email
     [ObservableProperty]
     private string emailadres;
 
@@ -57,6 +64,7 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
     [ObservableProperty]
     private bool isEmailadresFoutZichtbaar;
 
+    //Invoer reserveringshouder telefoon
     [ObservableProperty]
     private string telefoonnummer;
 
@@ -66,28 +74,35 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
     [ObservableProperty]
     private bool isTelefoonnummerFoutZichtbaar;
 
-    //Properties om te bepalen of checkbox zichtbaar is
+    //Voor later bepalen of voorzieningen checkboxes beschikbaar zijn voor de staanplaats of verborgen moeten worden
     [ObservableProperty]
     private bool isStroomMogelijk;
 
     [ObservableProperty]
     private bool isWaterMogelijk;
 
+    //Geselecteerde voorzieningen
     [ObservableProperty]
     private bool kiestStroom;
 
     [ObservableProperty]
     private bool kiestWater;
 
+    //Totaalprijs wordt herberekend bij keuzes doordat NotifyPropertyChangedFor de prijs tekst ook verandert
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(TotaalPrijsTekst))]
     private decimal totaalPrijs;
 
-    public string StroomPrijsTekst => $"€{_prijsBerekenService.StroomPrijsPerNacht:F2},- per nacht";
-    public string WaterPrijsTekst => $"€{_prijsBerekenService.WaterPrijsPerNacht:F2},- per nacht";
+    //Teksten die in de UI getoond worden bij de voorzieningen en totaalprijs
+    public decimal StroomPrijsPerNacht => _prijsBerekenService.StroomPrijsPerNacht;
+    public decimal WaterPrijsPerNacht => _prijsBerekenService.WaterPrijsPerNacht;
+
     public string TotaalPrijsTekst => $"Totaalprijs: €{TotaalPrijs:F2}";
 
+    //Lijst met mogelijke accommodaties
     public ObservableCollection<Accommodatie> Accommodaties { get; } = new();
+
+    //Lijst van de prijsregels (staanplaats, accommodatie,a voorzieningen)
     public ObservableCollection<PrijsInfo> PrijsInfo { get; } = new();
 
     public ReserveringsoverzichtViewModel(
@@ -108,9 +123,6 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
 
     private void LoadData()
     {
-        if (!HasMinimumContext())
-            return;
-
         LoadContextHeader();
         LoadStaanplaatsInfo();
         LoadAccommodaties();
@@ -119,113 +131,107 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
         RecalculatePrijs();
     }
 
-    private bool HasMinimumContext()
-    {
-        // Zonder deze info kan de pagina niet netjes vullen.
-        if (_reservatieDataService.SelectedVeld == null)
-            return false;
-
-        if (_reservatieDataService.StartDate == null || _reservatieDataService.EndDate == null)
-            return false;
-
-        return true;
-    }
-
     private void LoadContextHeader()
     {
+        //Header met veldnaam en reserveringsperiode tekst
         FieldName = _reservatieDataService.SelectedVeld!.Name;
-        PeriodDescription = $"{_reservatieDataService.StartDate:dd-MM-yyyy} tot {_reservatieDataService.EndDate:dd-MM-yyyy}";
+
+        DateTime start = _reservatieDataService.StartDate!.Value;
+        DateTime end = _reservatieDataService.EndDate!.Value;
+
+        PeriodDescription = $"{start:dd-MM-yyyy} tot {end:dd-MM-yyyy}";
     }
 
     private void LoadStaanplaatsInfo()
     {
-        var gekozenPlek = _reservatieDataService.SelectedStaanplaats;
-
-        if (gekozenPlek != null)
-        {
-            StaanplaatsNaam = $"Plaats: {gekozenPlek.id} ({gekozenPlek.AccommodatieType})";
-
-            // Checken wat de plek daadwerkelijk heeft (uit DB data / of later uit uitbreiding)
-            IsStroomMogelijk = gekozenPlek.HeeftStroom;
-            IsWaterMogelijk = gekozenPlek.HeeftWater;
-
-            // Resetten van keuzes (standaard uit)
-            KiestStroom = _reservatieDataService.KiestStroom && IsStroomMogelijk;
-            KiestWater = _reservatieDataService.KiestWater && IsWaterMogelijk;
-        }
-        else
-        {
-            StaanplaatsNaam = "Geen specifieke plaats gekozen";
-
-            IsStroomMogelijk = false;
-            IsWaterMogelijk = false;
-
-            KiestStroom = false;
-            KiestWater = false;
-        }
+        SetStaanplaatsInfoText();
+        SetVoorzieningBeschikbaarheid();
+        RestoreVoorzieningKeuzes();
     }
+
+    private void SetStaanplaatsInfoText()
+    {
+        var gekozenStaanplaats = _reservatieDataService.SelectedStaanplaats!;
+        StaanplaatsInfo = $"Plaats: {gekozenStaanplaats.id} ({gekozenStaanplaats.AccommodatieType})";
+    }
+
+    private void SetVoorzieningBeschikbaarheid()
+    {
+        var gekozenStaanplaats = _reservatieDataService.SelectedStaanplaats!;
+        IsStroomMogelijk = gekozenStaanplaats.HeeftStroom;
+        IsWaterMogelijk = gekozenStaanplaats.HeeftWater;
+    }
+
+    private void RestoreVoorzieningKeuzes()
+    {
+        // Alleen terugzetten als het ook echt mogelijk is op deze plek
+        KiestStroom = _reservatieDataService.KiestStroom && IsStroomMogelijk;
+        KiestWater = _reservatieDataService.KiestWater && IsWaterMogelijk;
+    }
+
 
     private void LoadAccommodaties()
     {
-        Accommodaties.Clear();
+        var staanplaatsId = GetSelectedStaanplaatsId();
+        var geschikteAccommodaties = GetGeschikteAccommodaties(staanplaatsId);
 
-        var veld = _reservatieDataService.SelectedVeld!;
-        var gekozenPlek = _reservatieDataService.SelectedStaanplaats;
-
-        // DB-gedreven geschikte accommodaties voor dit veld.
-        var geschikte = _accommodatieService.GetGeschikteAccommodaties(veld);
-
-        foreach (var acc in FilterOpStaanplaatsTypes(geschikte, gekozenPlek))
-        {
-            Accommodaties.Add(acc);
-        }
-
-        if (Accommodaties.Count > 0)
-        {
-            SelectedAccommodatie = Accommodaties[0];
-        }
+        FillAccommodaties(geschikteAccommodaties);
+        RestoreSelectedAccommodatie();
     }
 
-    private IEnumerable<Accommodatie> FilterOpStaanplaatsTypes(IEnumerable<Accommodatie> accommodaties, Staanplaats? plek)
+    private int GetSelectedStaanplaatsId()
     {
-        // Als er geen plek is gekozen, dan is veld-filtering genoeg.
-        if (plek == null || string.IsNullOrWhiteSpace(plek.AccommodatieType))
-            return accommodaties;
-
-        // plek.AccommodatieType is iets als: "Tent, Caravan"
-        // Filter: alleen accommodaties die in die string voorkomen.
-        return accommodaties.Where(a =>
-            plek.AccommodatieType.Contains(a.Name, StringComparison.OrdinalIgnoreCase));
+        return _reservatieDataService.SelectedStaanplaats!.id;
     }
+
+    private IEnumerable<Accommodatie> GetGeschikteAccommodaties(int staanplaatsId)
+    {
+        return _accommodatieService.GetGeschikteAccommodatiesVoorStaanplaats(staanplaatsId);
+    }
+
+    private void FillAccommodaties(IEnumerable<Accommodatie> accommodaties)
+    {
+        Accommodaties.Clear();
+        foreach (var acc in accommodaties)
+            Accommodaties.Add(acc);
+    }
+
+    private void RestoreSelectedAccommodatie()
+    {
+        //Bewaar eerdere keuze door gebruiker (bij terug navigeren)
+        var eerdereKeuze = _reservatieDataService.SelectedAccommodatie;
+
+        SelectedAccommodatie = eerdereKeuze != null
+            ? Accommodaties.FirstOrDefault(a => a.Id == eerdereKeuze.Id)
+            : null;
+    }
+
 
     private void LoadReserveringshouderDefaults()
     {
+        //Gegevens bewaren in de velden (als gebruiker terug/vooruit navigeert tijdens reserveren of foutmelding ziet)
         Naam = _reservatieDataService.Naam;
         Geboortedatum = _reservatieDataService.Geboortedatum;
         Emailadres = _reservatieDataService.Emailadres;
         Telefoonnummer = _reservatieDataService.Telefoonnummer;
     }
 
-    private void RecalculatePrijs()
+    private void RecalculatePrijs() //TODO Splitsen omdat dit nu 4 dingen doet, context ophalen, input voor berekening samenstellen, berekening uitvoeren en UI updaten
     {
-        PrijsInfo.Clear();
+        DateTime start = _reservatieDataService.StartDate!.Value;
+        DateTime end = _reservatieDataService.EndDate!.Value;
 
-        if (_reservatieDataService.StartDate == null || _reservatieDataService.EndDate == null)
-        {
-            TotaalPrijs = 0m;
-            return;
-        }
+        var staanplaats = _reservatieDataService.SelectedStaanplaats!;
 
-        var plek = _reservatieDataService.SelectedStaanplaats;
+        decimal staanplaatsPrijs = staanplaats.Prijs;
 
-        // Als er nog geen plek is, kunnen we nog geen echte staanplaatsprijs tonen.
-        decimal staanplaatsPrijs = plek?.Prijs ?? 0m;
-
+        //Accommodatie prijs (automatisch op 0 want accommodatie is nog niet geselecteerd)
         decimal accommodatiePrijs = SelectedAccommodatie?.Prijs ?? 0m;
 
+        //Bereken totaal + regels prijs
         var (totaal, regels) = _prijsBerekenService.Bereken(
-            _reservatieDataService.StartDate.Value,
-            _reservatieDataService.EndDate.Value,
+            start,
+            end,
             staanplaatsPrijs,
             accommodatiePrijs,
             KiestStroom,
@@ -233,99 +239,107 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
             KiestWater,
             IsWaterMogelijk);
 
+        //Prijs lijst per regel bijwerken
+        PrijsInfo.Clear();
         foreach (var regel in regels)
             PrijsInfo.Add(regel);
 
+        //Totaalprijs bijwerken
         TotaalPrijs = totaal;
     }
 
-    partial void OnSelectedAccommodatieChanged(Accommodatie value)
-    {
-        RecalculatePrijs();
-    }
+    //Als gebruiker een andere accommodatie kiest, wordt de prijs opnieuw berekenen
+    partial void OnSelectedAccommodatieChanged(Accommodatie? value) => RecalculatePrijs();
 
-    partial void OnKiestStroomChanged(bool value)
-    {
-        RecalculatePrijs();
-    }
-
-    partial void OnKiestWaterChanged(bool value)
-    {
-        RecalculatePrijs();
-    }
+    //Als gebruiker stroom/water selecteert/deselecteert, wordt de prijs opnieuw berekenen
+    partial void OnKiestStroomChanged(bool value) => RecalculatePrijs();
+    partial void OnKiestWaterChanged(bool value) => RecalculatePrijs();
 
     [RelayCommand]
-    private async Task BevestigAccommodatie()
+    private async Task VoltooiReservering()
     {
-        var naamOk = HasValidNaam();
-        var geboortedatumOk = HasValidGeboortedatum();
-        var emailOk = HasValidEmailadres();
-        var telefoonOk = HasValidTelefoonnummer();
-
-        if (!naamOk || !geboortedatumOk || !emailOk || !telefoonOk)
-        {
+        if (!ValidateReserveringshouderInput())
             return;
-        }
 
-        if (SelectedAccommodatie == null)
+        if (SelectedAccommodatie is null)
         {
-            await Application.Current.MainPage.DisplayAlert("Fout", "Kies een accommodatie type.", "OK");
-            return;
-        }
-
-        if (!_reservatieDataService.StartDate.HasValue || !_reservatieDataService.EndDate.HasValue)
-        {
-            await Application.Current.MainPage.DisplayAlert("Fout", "Er is nog geen periode geselecteerd.", "OK");
-            return;
-        }
-
-        if (_reservatieDataService.SelectedVeld == null)
-        {
-            await Application.Current.MainPage.DisplayAlert("Fout", "Er is geen veld geselecteerd.", "OK");
-            return;
-        }
-
-        if (_reservatieDataService.SelectedStaanplaats == null)
-        {
-            await Application.Current.MainPage.DisplayAlert("Fout", "Er is geen staanplaats geselecteerd.", "OK");
+            await Application.Current.MainPage.DisplayAlert(
+                "Accommodatie vereist",
+                "Kies eerst een accommodatie type voordat je verder gaat.",
+                "OK");
             return;
         }
 
         try
         {
-            PersistWizardData();
+            PrepareReservering();
 
-            // Zorg dat de prijs actueel is vlak voor opslaan
-            RecalculatePrijs();
-
-            await _reserveringService.MaakReserveringAsync(
-                _reservatieDataService.StartDate.Value,
-                _reservatieDataService.EndDate.Value,
-                _reservatieDataService.SelectedVeld,
-                _reservatieDataService.SelectedStaanplaats,
-                SelectedAccommodatie,
-                KiestStroom,
-                KiestWater,
-                TotaalPrijs);
-
-            await Application.Current.MainPage.DisplayAlert(
-                "Reservering voltooid",
-                "De reservering is succesvol opgeslagen.",
-                "OK");
-
-            await Shell.Current.GoToAsync("//PlattegrondView");
+            await SaveReserveringAndFinishAsync();
         }
         catch (Exception ex)
         {
-            await Application.Current.MainPage.DisplayAlert(
-                "Fout bij opslaan",
-                $"Er ging iets mis bij het opslaan van de reservering:\n{ex.Message}",
-                "OK");
+            await ShowSaveErrorAsync(ex);
         }
     }
 
-    private void PersistWizardData()
+    private bool ValidateReserveringshouderInput()
     {
+        bool naamOk = HasValidNaam();
+        bool geboortedatumOk = HasValidGeboortedatum();
+        bool emailOk = HasValidEmailadres();
+        bool telefoonOk = HasValidTelefoonnummer();
+
+        return naamOk && geboortedatumOk && emailOk && telefoonOk;
+    }
+
+    private void PrepareReservering()
+    {
+        SaveWizardData();
+
+        RecalculatePrijs();
+    }
+
+    private async Task SaveReserveringAndFinishAsync() //TODO Kan nog gesplitst worden in reservering maken en navigatie + foutmelding methodes apart (hoeft niet want is al best clean)
+    {
+        //Reservering maken
+        await _reserveringService.MaakReserveringAsync(
+            _reservatieDataService.StartDate!.Value,
+            _reservatieDataService.EndDate!.Value,
+            _reservatieDataService.SelectedVeld!,
+            _reservatieDataService.SelectedStaanplaats!,
+            SelectedAccommodatie!,
+            KiestStroom,
+            KiestWater,
+            TotaalPrijs);
+
+        //Feedback naar gebruiker
+        await SuccessMessageReservatie();
+
+        //Navigatie terug naar plattegrond
+        await Shell.Current.GoToAsync("//PlattegrondView");
+    }
+
+    private static async Task SuccessMessageReservatie()
+    {
+        await Application.Current.MainPage.DisplayAlert(
+            "Reservering voltooid",
+            "De reservering is succesvol opgeslagen.",
+            "OK");
+    }
+
+
+    private Task ShowSaveErrorAsync(Exception ex)
+    {
+        return Application.Current.MainPage.DisplayAlert(
+            "Fout bij opslaan",
+            $"Er ging iets mis bij het opslaan van de reservering:\n{ex.Message}",
+            "OK");
+    }
+
+
+    private void SaveWizardData()
+    {
+        //Eerdere keuzes tijdenlijk bewaren in de ReservatieDataService
         _reservatieDataService.Naam = Naam;
         _reservatieDataService.Geboortedatum = Geboortedatum;
         _reservatieDataService.Emailadres = Emailadres;
@@ -384,6 +398,7 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
             return false;
         }
 
+        EmailadresFoutmelding = string.Empty;
         IsEmailadresFoutZichtbaar = false;
         return true;
     }
@@ -399,6 +414,7 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
             return false;
         }
 
+        TelefoonnummerFoutmelding = string.Empty;
         IsTelefoonnummerFoutZichtbaar = false;
         return true;
     }

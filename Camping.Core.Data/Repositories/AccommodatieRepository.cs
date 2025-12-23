@@ -33,6 +33,19 @@ public class AccommodatieRepository : IAccommodatieRepository
         return _db.Query(sql, cmd => cmd.Parameters.AddWithValue("@veldId", veldId), Map);
     }
 
+    public IEnumerable<Accommodatie> GetByStaanplaatsId(int staanplaatsId)
+    {
+        const string sql = @"
+            SELECT DISTINCT a.id, a.naam, a.prijs
+            FROM accommodatie_types a
+            INNER JOIN staanplaats_accommodatietypes sa 
+                ON sa.accommodatie_type_id = a.id
+            WHERE sa.staanplaats_id = @staanplaatsId
+            ORDER BY a.id;";
+
+        return _db.Query(sql, cmd => cmd.Parameters.AddWithValue("@staanplaatsId", staanplaatsId), Map);
+    }
+
     private static Accommodatie Map(MySqlDataReader reader)
     {
         return new Accommodatie

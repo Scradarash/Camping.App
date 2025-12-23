@@ -62,25 +62,25 @@ namespace Camping.App.ViewModels
         {
             Staanplaatsen.Clear();
             // Haal alle staanplaatsen op voor dit veld
-            IEnumerable<Staanplaats> plekken = _staanplaatsRepository.GetByVeldId(
+            IEnumerable<Staanplaats> staanplaatsen = _staanplaatsRepository.GetByVeldId(
                 Veld.id,
                 _reservatieDataService.StartDate,
                 _reservatieDataService.EndDate
             );
 
-            foreach (Staanplaats plek in plekken)
+            foreach (Staanplaats staanplaats in staanplaatsen)
             {
-                Staanplaatsen.Add(plek);
+                Staanplaatsen.Add(staanplaats);
             }
         }
 
         [RelayCommand]
         //Klikken op een staanplaats
-        private void SelectStaanplaats(Staanplaats plek)
+        private void SelectStaanplaats(Staanplaats staanplaats)
         {
-            SelectedStaanplaats = plek;
-            _reservatieDataService.SelectedStaanplaats = plek;
-            SelectedStaanplaatsText = $"Geselecteerde plaats: {plek.id}";
+            SelectedStaanplaats = staanplaats;
+            _reservatieDataService.SelectedStaanplaats = staanplaats;
+            SelectedStaanplaatsText = $"Geselecteerde plaats: {staanplaats.id}";
         }
 
         [RelayCommand]

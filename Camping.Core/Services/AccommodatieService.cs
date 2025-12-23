@@ -6,20 +6,21 @@ namespace Camping.Core.Services
 {
     public class AccommodatieService : IAccommodatieService
     {
-        private readonly IAccommodatieRepository _repository;
+        private readonly IAccommodatieRepository _accommodatieRepository;
 
-        public AccommodatieService(IAccommodatieRepository repository)
+        public AccommodatieService(IAccommodatieRepository accommodatieRepository)
         {
-            _repository = repository;
+            _accommodatieRepository = accommodatieRepository;
         }
 
         public IEnumerable<Accommodatie> GetGeschikteAccommodaties(Veld veld)
         {
-            // Veiligheidscheck
-            if (veld == null) return Enumerable.Empty<Accommodatie>();
+            return _accommodatieRepository.GetByVeldId(veld.id);
+        }
 
-            // DB-gedreven: wat er daadwerkelijk op de staanplaatsen in dit veld is toegestaan.
-            return _repository.GetByVeldId(veld.id);
+        public IEnumerable<Accommodatie> GetGeschikteAccommodatiesVoorStaanplaats(int staanplaatsId)
+        {
+            return _accommodatieRepository.GetByStaanplaatsId(staanplaatsId);
         }
     }
 }

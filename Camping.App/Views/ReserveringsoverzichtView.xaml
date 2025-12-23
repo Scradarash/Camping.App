@@ -115,7 +115,7 @@
                                 <VerticalStackLayout Grid.Row="0" Grid.Column="1">
                                     <Label Text="Plaats:" TextColor="Black" FontAttributes="Bold" />
                                     <Frame Padding="10" BackgroundColor="White" BorderColor="Gray" CornerRadius="5">
-                                        <Label Text="{Binding StaanplaatsNaam}" TextColor="Black" LineBreakMode="TailTruncation" />
+                                        <Label Text="{Binding StaanplaatsInfo}" TextColor="Black" LineBreakMode="TailTruncation" />
                                     </Frame>
                                 </VerticalStackLayout>
 
@@ -143,7 +143,7 @@
 
                             <CollectionView ItemsSource="{Binding Accommodaties}"
                                             SelectionMode="Single"
-                                            SelectedItem="{Binding SelectedAccommodatie}">
+                                            SelectedItem="{Binding SelectedAccommodatie, Mode=TwoWay}">
 
                                 <CollectionView.ItemsLayout>
                                     <LinearItemsLayout Orientation="Vertical" ItemSpacing="4" />
@@ -178,7 +178,7 @@
                                                        FontSize="16" />
 
                                                 <!-- Prijs -->
-                                                <Label Text="{Binding PrijsTekst}"
+                                                <Label Text="{Binding Prijs, StringFormat='€{0:F2},- per nacht'}"
                                                        Grid.Column="1"
                                                        VerticalOptions="Center"
                                                        TextColor="Gray"
@@ -233,7 +233,7 @@
 
                                     <!-- Prijs -->
                                     <Label Grid.Column="2"
-                                           Text="{Binding StroomPrijsTekst}"
+                                           Text="{Binding StroomPrijsPerNacht, StringFormat='€{0:F2},- per nacht'}"
                                            VerticalOptions="Center"
                                            TextColor="Gray"
                                            FontSize="14" />
@@ -265,7 +265,7 @@
 
                                     <!-- Prijs -->
                                     <Label Grid.Column="2"
-                                           Text="{Binding WaterPrijsTekst}"
+                                           Text="{Binding WaterPrijsPerNacht, StringFormat='€{0:F2},- per nacht'}"
                                            VerticalOptions="Center"
                                            TextColor="Gray"
                                            FontSize="14" />
@@ -300,7 +300,7 @@
                                                TextColor="Black"
                                                FontSize="14" />
 
-                                        <Label Text="{Binding BedragTekst}"
+                                        <Label Text="{Binding Bedrag, StringFormat='€{0:F2}'}"
                                                Grid.Column="1"
                                                TextColor="Gray"
                                                FontAttributes="Bold"
@@ -312,7 +312,7 @@
 
                         <BoxView HeightRequest="1" Color="LightGray" Margin="0,5" />
 
-                        <Label Text="{Binding TotaalPrijsTekst}"
+                        <Label Text="{Binding TotaalPrijs, StringFormat='Totaalprijs: €{0:F2}'}"
                                FontSize="24"
                                FontAttributes="Bold"
                                TextColor="Black"
@@ -332,7 +332,7 @@
 
                     <Button Grid.Column="1"
                             Text="Voltooi reservering"
-                            Command="{Binding BevestigAccommodatieCommand}"
+                            Command="{Binding VoltooiReserveringCommand}"
                             BackgroundColor="#0a5dc9"
                             TextColor="White"
                             FontAttributes="Bold"
