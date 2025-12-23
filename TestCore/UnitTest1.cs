@@ -3,9 +3,8 @@ using Camping.Core.Services; // Zorg dat deze namespace klopt met waar je Servic
 using System;
 
 namespace TestCore
-
-// Een hoop unittests voor de validatie logica in ReservatieDataService
 {
+    // Een hoop unittests voor de validatie logica in ReservatieDataService
     public class ReservatieValidatieTests
     {
         private ReservatieDataService _service;
