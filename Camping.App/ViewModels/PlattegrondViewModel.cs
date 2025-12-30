@@ -52,16 +52,16 @@ public partial class PlattegrondViewModel : ObservableObject
     {
         try
         {
-            // 2. Haal de nieuwe Detail View op via Dependency Injection
+            //Haal de nieuwe Detail View op
             VeldDetailView detailView = _serviceProvider.GetRequiredService<VeldDetailView>();
 
-            // 3. Initialiseer de ViewModel met het geklikte veld
+            //Initialiseer de ViewModel met het geklikte veld
             if (detailView.BindingContext is VeldDetailViewModel vm)
             {
                 vm.Initialize(veld);
             }
 
-            // 4. Open als Modal (Popup)
+            //Open als Modal (Popup)
             await Application.Current.MainPage.Navigation.PushModalAsync(detailView);
         }
         catch (Exception ex)
