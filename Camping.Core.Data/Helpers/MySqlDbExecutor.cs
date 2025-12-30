@@ -11,6 +11,7 @@ namespace Camping.Core.Data.Helpers
             _db = db;
         }
 
+        //Deze methode returnt alle rijen van een tabel, bijvoorbeeld voorzieningen, staanplaatsen, velden of accommodaties
         public IEnumerable<T> Query<T>(
             string sql,
             Action<MySqlCommand>? parameterize,
@@ -34,6 +35,9 @@ namespace Camping.Core.Data.Helpers
             return result;
         }
 
+        //Deze methode returnt alleen één of 0 rijen. Dit is bijvoorbeeld handig voor
+        //GetByEmail of GetByNaam, waar de code alleen één rij verwacht, dus het is onnodig om elke keer alle rijen in te lezen
+
         public T? QuerySingleOrDefault<T>(
             string sql,
             Action<MySqlCommand>? parameterize,
@@ -55,39 +59,9 @@ namespace Camping.Core.Data.Helpers
 
             return map(reader);
         }
-
-        public int Execute(
-            string sql,
-            Action<MySqlCommand>? parameterize)
-        {
-            using var connection = _db.CreateConnection();
-            connection.Open();
-
-            using var command = connection.CreateCommand();
-            command.CommandText = sql;
-            parameterize?.Invoke(command);
-
-            return command.ExecuteNonQuery();
-        }
-
-        public T ExecuteScalar<T>(
-            string sql,
-            Action<MySqlCommand>? parameterize)
-        {
-            using var connection = _db.CreateConnection();
-            connection.Open();
-
-            using var command = connection.CreateCommand();
-            command.CommandText = sql;
-            parameterize?.Invoke(command);
-
-            object? value = command.ExecuteScalar();
-            if (value is null || value is DBNull)
-                return default!;
-
-            return (T)Convert.ChangeType(value, typeof(T));
-        }
-
+        
+        //Zelfde methode als Query hierboven, maar met Async. Dit wordt gebruikt bij UI gerelateerd DB interacties
+        //Hierdoor hoeft de UI niet te wachten en kan het zonder stotteren zich aanpassen
         public async Task<List<T>> QueryAsync<T>(
             string sql,
             Action<MySqlCommand>? parameterize,
@@ -111,6 +85,8 @@ namespace Camping.Core.Data.Helpers
             return result;
         }
 
+        //Zelfde methode als QuerySingleOrDefault hierboven, maar met Async. Dit wordt gebruikt bij UI gerelateerd DB interacties
+        //Hierdoor hoeft de UI niet te wachten en kan het zonder stotteren zich aanpassen
         public async Task<T?> QuerySingleOrDefaultAsync<T>(
             string sql,
             Action<MySqlCommand>? parameterize,
@@ -133,20 +109,7 @@ namespace Camping.Core.Data.Helpers
             return map(reader);
         }
 
-        public async Task<int> ExecuteAsync(
-            string sql,
-            Action<MySqlCommand>? parameterize)
-        {
-            await using var connection = _db.CreateConnection();
-            await connection.OpenAsync();
-
-            await using var command = connection.CreateCommand();
-            command.CommandText = sql;
-            parameterize?.Invoke(command);
-
-            return await command.ExecuteNonQueryAsync();
-        }
-
+       
         public async Task<T> ExecuteScalarAsync<T>(
             string sql,
             Action<MySqlCommand>? parameterize)
