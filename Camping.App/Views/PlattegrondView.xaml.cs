@@ -123,7 +123,6 @@ public partial class PlattegrondView : ContentPage
             double w = veld.Width * innerWidth;
             double h = veld.Height * innerHeight;
 
-            AbsoluteLayout.SetLayoutFlags(btn, AbsoluteLayoutFlags.None);
             AbsoluteLayout.SetLayoutBounds(btn, new Rect(x, y, w, h));
 
             ButtonOverlayLayout.Children.Add(btn);
@@ -146,7 +145,6 @@ public partial class PlattegrondView : ContentPage
             double width = faciliteit.Width * innerWidth;
             double height = faciliteit.Height * innerHeight;
 
-            AbsoluteLayout.SetLayoutFlags(btn, AbsoluteLayoutFlags.None);
             AbsoluteLayout.SetLayoutBounds(btn, new Rect(xposition, yposition, width, height));
 
             ButtonOverlayLayout.Children.Add(btn);
@@ -169,7 +167,6 @@ public partial class PlattegrondView : ContentPage
         double kalenderW = 0.098 * innerWidth;
         double kalenderH = 0.08 * innerHeight;
 
-        AbsoluteLayout.SetLayoutFlags(kalenderBtn, AbsoluteLayoutFlags.None);
         AbsoluteLayout.SetLayoutBounds(kalenderBtn, new Rect(kalenderX, kalenderY, kalenderW, kalenderH));
 
         ButtonOverlayLayout.Children.Add(kalenderBtn);
