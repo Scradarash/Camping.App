@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:Camping.App.ViewModels"
@@ -7,10 +8,10 @@
 
     <Grid HorizontalOptions="Fill" VerticalOptions="Fill">
         <!-- Achtergrond afbeelding -->
-        <Image Source="background.png" 
+        <Image Source="background.png"
                Aspect="AspectFill"
                HorizontalOptions="Fill"
-               VerticalOptions="Fill"/>
+               VerticalOptions="Fill" />
 
         <ScrollView>
             <VerticalStackLayout Padding="20" Spacing="20">
@@ -24,8 +25,8 @@
                             <Label FontSize="20" FontAttributes="Bold" Margin="0,0,0,5">
                                 <Label.FormattedText>
                                     <FormattedString>
-                                        <Span Text="Gegevens reserveringshouder " TextColor="Black"/>
-                                        <Span Text="(vereist)" TextColor="Red"/>
+                                        <Span Text="Gegevens reserveringshouder " TextColor="Black" />
+                                        <Span Text="(vereist)" TextColor="Red" />
                                     </FormattedString>
                                 </Label.FormattedText>
                             </Label>
@@ -35,12 +36,12 @@
                                 <Label FontSize="16">
                                     <Label.FormattedText>
                                         <FormattedString>
-                                            <Span Text="Volledige naam " TextColor="Black"/>
+                                            <Span Text="Volledige naam " TextColor="Black" />
                                         </FormattedString>
                                     </Label.FormattedText>
                                 </Label>
-                                <Entry Text="{Binding Naam}" Placeholder="Bijvoorbeeld: Jacob Arie Romkes" TextColor="Black" BackgroundColor="#f0f0f0"/>
-                                <Label Text="{Binding NaamFoutmelding}" TextColor="Red" FontSize="12" IsVisible="{Binding IsNaamFoutZichtbaar}"/>
+                                <Entry Text="{Binding Naam}" Placeholder="Bijvoorbeeld: Jacob Arie Romkes" TextColor="Black" BackgroundColor="#f0f0f0" />
+                                <Label Text="{Binding NaamFoutmelding}" TextColor="Red" FontSize="12" IsVisible="{Binding IsNaamFoutZichtbaar}" />
                             </VerticalStackLayout>
 
                             <!-- Geboortedatum -->
@@ -48,12 +49,12 @@
                                 <Label FontSize="16">
                                     <Label.FormattedText>
                                         <FormattedString>
-                                            <Span Text="Geboortedatum " TextColor="Black"/>
+                                            <Span Text="Geboortedatum " TextColor="Black" />
                                         </FormattedString>
                                     </Label.FormattedText>
                                 </Label>
-                                <DatePicker Date="{Binding Geboortedatum}" TextColor="Black" BackgroundColor="#f0f0f0" MaximumDate="{x:Static sys:DateTime.Today}"/>
-                                <Label Text="{Binding GeboortedatumFoutmelding}" TextColor="Red" FontSize="12" IsVisible="{Binding IsGeboortedatumFoutZichtbaar}"/>
+                                <DatePicker Date="{Binding Geboortedatum}" TextColor="Black" BackgroundColor="#f0f0f0" MaximumDate="{x:Static sys:DateTime.Today}" />
+                                <Label Text="{Binding GeboortedatumFoutmelding}" TextColor="Red" FontSize="12" IsVisible="{Binding IsGeboortedatumFoutZichtbaar}" />
                             </VerticalStackLayout>
 
                             <!-- Email -->
@@ -61,12 +62,12 @@
                                 <Label FontSize="16">
                                     <Label.FormattedText>
                                         <FormattedString>
-                                            <Span Text="E-mailadres " TextColor="Black"/>
+                                            <Span Text="E-mailadres " TextColor="Black" />
                                         </FormattedString>
                                     </Label.FormattedText>
                                 </Label>
-                                <Entry Text="{Binding Emailadres}" Keyboard="Email" Placeholder="bijvoorbeeld: jacobarieromkes@coolmail.com" TextColor="Black" BackgroundColor="#f0f0f0"/>
-                                <Label Text="{Binding EmailadresFoutmelding}" TextColor="Red" FontSize="12" IsVisible="{Binding IsEmailadresFoutZichtbaar}"/>
+                                <Entry Text="{Binding Emailadres}" Keyboard="Email" Placeholder="bijvoorbeeld: jacobarieromkes@coolmail.com" TextColor="Black" BackgroundColor="#f0f0f0" />
+                                <Label Text="{Binding EmailadresFoutmelding}" TextColor="Red" FontSize="12" IsVisible="{Binding IsEmailadresFoutZichtbaar}" />
                             </VerticalStackLayout>
 
                             <!-- Telefoon -->
@@ -74,12 +75,12 @@
                                 <Label FontSize="16">
                                     <Label.FormattedText>
                                         <FormattedString>
-                                            <Span Text="Telefoonnummer " TextColor="Black"/>
+                                            <Span Text="Telefoonnummer " TextColor="Black" />
                                         </FormattedString>
                                     </Label.FormattedText>
                                 </Label>
-                                <Entry Text="{Binding Telefoonnummer}" Keyboard="Telephone" Placeholder="0612345678" TextColor="Black" BackgroundColor="#f0f0f0"/>
-                                <Label Text="{Binding TelefoonnummerFoutmelding}" TextColor="Red" FontSize="12" IsVisible="{Binding IsTelefoonnummerFoutZichtbaar}"/>
+                                <Entry Text="{Binding Telefoonnummer}" Keyboard="Telephone" Placeholder="0612345678" TextColor="Black" BackgroundColor="#f0f0f0" />
+                                <Label Text="{Binding TelefoonnummerFoutmelding}" TextColor="Red" FontSize="12" IsVisible="{Binding IsTelefoonnummerFoutZichtbaar}" />
                             </VerticalStackLayout>
                         </VerticalStackLayout>
                     </Frame>
@@ -87,225 +88,256 @@
                     <!-- KOLOM 2: Gegevens Reservering -->
                     <Frame Grid.Column="1" BorderColor="LightGray" BackgroundColor="#fafafa" Padding="15" CornerRadius="10" VerticalOptions="Start">
                         <VerticalStackLayout Spacing="10">
-                            
+
                             <Label FontSize="20" FontAttributes="Bold" Margin="0,0,0,5">
                                 <Label.FormattedText>
                                     <FormattedString>
-                                        <Span Text="Gegevens reservering " TextColor="Black"/>
+                                        <Span Text="Gegevens reservering " TextColor="Black" />
                                     </FormattedString>
                                 </Label.FormattedText>
                             </Label>
-                            
+
                             <!-- Veld, Plaats en Periode -->
                             <Grid ColumnDefinitions="*,*"
-                              RowDefinitions="Auto,Auto"
-                              ColumnSpacing="10"
-                              RowSpacing="10">
+                                  RowDefinitions="Auto,Auto"
+                                  ColumnSpacing="10"
+                                  RowSpacing="10">
 
                                 <!-- Veld -->
                                 <VerticalStackLayout Grid.Row="0" Grid.Column="0">
-                                    <Label Text="Veld:" TextColor="Black" FontAttributes="Bold"/>
+                                    <Label Text="Veld:" TextColor="Black" FontAttributes="Bold" />
                                     <Frame Padding="10" BackgroundColor="White" BorderColor="Gray" CornerRadius="5">
-                                        <Label Text="{Binding FieldName}" TextColor="Black"/>
+                                        <Label Text="{Binding FieldName}" TextColor="Black" />
                                     </Frame>
                                 </VerticalStackLayout>
 
                                 <!-- Plaats -->
                                 <VerticalStackLayout Grid.Row="0" Grid.Column="1">
-                                    <Label Text="Plaats:" TextColor="Black" FontAttributes="Bold"/>
+                                    <Label Text="Plaats:" TextColor="Black" FontAttributes="Bold" />
                                     <Frame Padding="10" BackgroundColor="White" BorderColor="Gray" CornerRadius="5">
-                                        <Label Text="{Binding StaanplaatsNaam}" TextColor="Black" LineBreakMode="TailTruncation"/>
+                                        <Label Text="{Binding StaanplaatsInfo}" TextColor="Black" LineBreakMode="TailTruncation" />
                                     </Frame>
                                 </VerticalStackLayout>
 
                                 <!-- Periode -->
                                 <VerticalStackLayout Grid.Row="1" Grid.ColumnSpan="2">
-                                    <Label Text="Periode:" TextColor="Black" FontAttributes="Bold"/>
+                                    <Label Text="Periode:" TextColor="Black" FontAttributes="Bold" />
                                     <Frame Padding="10" BackgroundColor="White" BorderColor="Gray" CornerRadius="5">
-                                        <Label Text="{Binding PeriodDescription}" TextColor="Gray" FontAttributes="Italic"/>
+                                        <Label Text="{Binding PeriodDescription}" TextColor="Gray" FontAttributes="Italic" />
                                     </Frame>
                                 </VerticalStackLayout>
 
                             </Grid>
 
-
-                            <BoxView HeightRequest="1" Color="LightGray" Margin="0,5"/>
+                            <BoxView HeightRequest="1" Color="LightGray" Margin="0,5" />
 
                             <!-- Accommodatie Kiezen -->
                             <Label FontSize="20" FontAttributes="Bold" Margin="0,0,0,5">
                                 <Label.FormattedText>
                                     <FormattedString>
-                                        <Span Text="Accommodatie " TextColor="Black"/>
-                                        <Span Text="(vereist)" TextColor="Red"/>
+                                        <Span Text="Accommodatie " TextColor="Black" />
+                                        <Span Text="(vereist)" TextColor="Red" />
                                     </FormattedString>
                                 </Label.FormattedText>
                             </Label>
 
-                            <CollectionView ItemsSource="{Binding Accommodaties}" 
-                                            SelectionMode="Single" 
-                                            SelectedItem="{Binding SelectedAccommodatie}">
+                            <CollectionView ItemsSource="{Binding Accommodaties}"
+                                            SelectionMode="Single"
+                                            SelectedItem="{Binding SelectedAccommodatie, Mode=TwoWay}">
 
                                 <CollectionView.ItemsLayout>
                                     <LinearItemsLayout Orientation="Vertical" ItemSpacing="4" />
                                 </CollectionView.ItemsLayout>
 
-                                <!-- Hoogte ingesteld zodat het in de stack past -->
                                 <CollectionView.ItemTemplate>
                                     <DataTemplate>
                                         <Border Stroke="Gray" StrokeThickness="1" Margin="2" Padding="10" BackgroundColor="White" StrokeShape="RoundRectangle 5">
                                             <VisualStateManager.VisualStateGroups>
                                                 <VisualStateGroup Name="CommonStates">
+                                                    <VisualState Name="Normal">
+                                                        <VisualState.Setters>
+                                                            <Setter TargetName="SelectedCheck" Property="IsVisible" Value="False" />
+                                                        </VisualState.Setters>
+                                                    </VisualState>
+
                                                     <VisualState Name="Selected">
                                                         <VisualState.Setters>
                                                             <Setter Property="BackgroundColor" Value="#cce5ff" />
                                                             <Setter Property="Stroke" Value="#0a5dc9" />
+                                                            <Setter TargetName="SelectedCheck" Property="IsVisible" Value="True" />
                                                         </VisualState.Setters>
                                                     </VisualState>
-                                                    <VisualState Name="Normal" />
                                                 </VisualStateGroup>
                                             </VisualStateManager.VisualStateGroups>
 
                                             <Grid ColumnDefinitions="*, Auto, Auto" ColumnSpacing="10">
                                                 <!-- Naam -->
                                                 <Label Text="{Binding Name}"
-                                                   VerticalOptions="Center"
-                                                   TextColor="Black"
-                                                   FontSize="16"/>
+                                                       VerticalOptions="Center"
+                                                       TextColor="Black"
+                                                       FontSize="16" />
 
                                                 <!-- Prijs -->
-                                                <Label Text="{Binding PrijsTekst}"
-                                                   Grid.Column="1"
-                                                   VerticalOptions="Center"
-                                                   TextColor="Gray"
-                                                   FontSize="14"/>
+                                                <Label Text="{Binding Prijs, StringFormat='€{0:F2},- per nacht'}"
+                                                       Grid.Column="1"
+                                                       VerticalOptions="Center"
+                                                       TextColor="Gray"
+                                                       FontSize="14" />
 
                                                 <!-- Vinkje als geselecteerd -->
-                                                <Label Text="✔"
-                                                   Grid.Column="2"
-                                                   TextColor="#0a5dc9"
-                                                   FontAttributes="Bold"
-                                                   IsVisible="False">
-                                                    <Label.Triggers>
-                                                        <DataTrigger TargetType="Label"
-                                                             Binding="{Binding Source={RelativeSource AncestorType={x:Type Grid}}, Path=Parent.Parent.IsSelected}"
-                                                             Value="True">
-                                                            <Setter Property="IsVisible" Value="True"/>
-                                                        </DataTrigger>
-                                                    </Label.Triggers>
-                                                </Label>
+                                                <Label x:Name="SelectedCheck"
+                                                       Text="✔"
+                                                       Grid.Column="2"
+                                                       TextColor="#0a5dc9"
+                                                       FontAttributes="Bold"
+                                                       IsVisible="False" />
                                             </Grid>
                                         </Border>
                                     </DataTemplate>
                                 </CollectionView.ItemTemplate>
                             </CollectionView>
 
-                            <BoxView HeightRequest="1" Color="LightGray" Margin="0,5"/>
+                            <BoxView HeightRequest="1" Color="LightGray" Margin="0,5" />
 
                             <!-- VOORZIENINGEN SECTIE -->
                             <Label FontSize="20" FontAttributes="Bold" Margin="0,0,0,5">
                                 <Label.FormattedText>
                                     <FormattedString>
-                                        <Span Text="Voorzieningen " TextColor="Black"/>
+                                        <Span Text="Voorzieningen " TextColor="Black" />
                                     </FormattedString>
                                 </Label.FormattedText>
                             </Label>
 
                             <!-- Stroom -->
                             <Border Stroke="Gray"
-                                StrokeThickness="1"
-                                Padding="10"
-                                BackgroundColor="White"
-                                StrokeShape="RoundRectangle 5"
-                                IsVisible="{Binding IsStroomMogelijk}">
+                                    StrokeThickness="1"
+                                    Padding="10"
+                                    BackgroundColor="White"
+                                    StrokeShape="RoundRectangle 5"
+                                    IsVisible="{Binding IsStroomMogelijk}">
 
                                 <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
 
                                     <!-- Checkbox -->
                                     <CheckBox Grid.Column="0"
-                                      IsChecked="{Binding KiestStroom}"
-                                      Color="#0a5dc9"
-                                      VerticalOptions="Center"/>
+                                              IsChecked="{Binding KiestStroom}"
+                                              Color="#0a5dc9"
+                                              VerticalOptions="Center" />
 
                                     <!-- Naam -->
                                     <Label Grid.Column="1"
-                                       Text="⚡ Stroom"
-                                       VerticalOptions="Center"
-                                       TextColor="Black"
-                                       FontSize="16"/>
+                                           Text="⚡ Stroom"
+                                           VerticalOptions="Center"
+                                           TextColor="Black"
+                                           FontSize="16" />
 
                                     <!-- Prijs -->
                                     <Label Grid.Column="2"
-                                       Text="{Binding StroomPrijsTekst}"
-                                       VerticalOptions="Center"
-                                       TextColor="Gray"
-                                       FontSize="14"/>
+                                           Text="{Binding StroomPrijsPerNacht, StringFormat='€{0:F2},- per nacht'}"
+                                           VerticalOptions="Center"
+                                           TextColor="Gray"
+                                           FontSize="14" />
                                 </Grid>
                             </Border>
 
                             <!-- Water -->
                             <Border Stroke="Gray"
-                                StrokeThickness="1"
-                                Padding="10"
-                                BackgroundColor="White"
-                                StrokeShape="RoundRectangle 5"
-                                IsVisible="{Binding IsWaterMogelijk}">
+                                    StrokeThickness="1"
+                                    Padding="10"
+                                    BackgroundColor="White"
+                                    StrokeShape="RoundRectangle 5"
+                                    IsVisible="{Binding IsWaterMogelijk}">
 
                                 <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
 
                                     <!-- Checkbox -->
                                     <CheckBox Grid.Column="0"
-                                      IsChecked="{Binding KiestWater}"
-                                      Color="#0a5dc9"
-                                      VerticalOptions="Center"/>
+                                              IsChecked="{Binding KiestWater}"
+                                              Color="#0a5dc9"
+                                              VerticalOptions="Center" />
 
                                     <!-- Naam -->
                                     <Label Grid.Column="1"
-                                       Text="💧 Water"
-                                       VerticalOptions="Center"
-                                       TextColor="Black"
-                                       FontSize="16"/>
+                                           Text="💧 Water"
+                                           VerticalOptions="Center"
+                                           TextColor="Black"
+                                           FontSize="16" />
 
                                     <!-- Prijs -->
                                     <Label Grid.Column="2"
-                                       Text="{Binding WaterPrijsTekst}"
-                                       VerticalOptions="Center"
-                                       TextColor="Gray"
-                                       FontSize="14"/>
+                                           Text="{Binding WaterPrijsPerNacht, StringFormat='€{0:F2},- per nacht'}"
+                                           VerticalOptions="Center"
+                                           TextColor="Gray"
+                                           FontSize="14" />
                                 </Grid>
                             </Border>
-
 
                         </VerticalStackLayout>
                     </Frame>
 
                 </Grid>
 
-                <!-- Totaalprijs label (dynamisch) -->
-                <Frame Grid.Column="1" BorderColor="LightGray" BackgroundColor="#fafafa" Padding="15" CornerRadius="10" VerticalOptions="Start">
-                    <Label Text="{Binding TotaalPrijsTekst}" 
-                       FontSize="24" 
-                       FontAttributes="Bold" 
-                       TextColor="Black"
-                       Margin="5,10,0,0"/>
+                <!-- Totaalprijs info -->
+                <Frame BorderColor="LightGray" BackgroundColor="#fafafa" Padding="15" CornerRadius="10" VerticalOptions="Start">
+                    <VerticalStackLayout Spacing="10">
+
+                        <Label Text="Info totaalprijs:"
+                               FontSize="18"
+                               FontAttributes="Bold"
+                               TextColor="Black" />
+
+                        <CollectionView ItemsSource="{Binding PrijsInfo}"
+                                        SelectionMode="None"
+                                        HeightRequest="160">
+                            <CollectionView.ItemsLayout>
+                                <LinearItemsLayout Orientation="Vertical" ItemSpacing="6" />
+                            </CollectionView.ItemsLayout>
+
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <Label Text="{Binding Omschrijving}"
+                                               TextColor="Black"
+                                               FontSize="14" />
+
+                                        <Label Text="{Binding Bedrag, StringFormat='€{0:F2}'}"
+                                               Grid.Column="1"
+                                               TextColor="Gray"
+                                               FontAttributes="Bold"
+                                               FontSize="14" />
+                                    </Grid>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+
+                        <BoxView HeightRequest="1" Color="LightGray" Margin="0,5" />
+
+                        <Label Text="{Binding TotaalPrijs, StringFormat='Totaalprijs: €{0:F2}'}"
+                               FontSize="24"
+                               FontAttributes="Bold"
+                               TextColor="Black"
+                               Margin="5,0,0,0" />
+
+                    </VerticalStackLayout>
                 </Frame>
 
                 <!-- Knoppenbalk -->
                 <Grid ColumnDefinitions="Auto, *" Margin="0,10,0,0">
-                    <Button Grid.Column="0" 
-                            Text="Terug" 
-                            Command="{Binding GoBackCommand}" 
-                            BackgroundColor="Gray" 
+                    <Button Grid.Column="0"
+                            Text="Terug"
+                            Command="{Binding GoBackCommand}"
+                            BackgroundColor="Gray"
                             TextColor="White"
-                            WidthRequest="100"/>
+                            WidthRequest="100" />
 
                     <Button Grid.Column="1"
                             Text="Voltooi reservering"
-                            Command="{Binding BevestigAccommodatieCommand}"
+                            Command="{Binding VoltooiReserveringCommand}"
                             BackgroundColor="#0a5dc9"
                             TextColor="White"
                             FontAttributes="Bold"
                             HorizontalOptions="End"
-                            WidthRequest="200"/>
+                            WidthRequest="200" />
                 </Grid>
 
             </VerticalStackLayout>
