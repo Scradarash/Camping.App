@@ -7,33 +7,38 @@ namespace Camping.Core.Data.Repositories
 {
     public class ReserveringRepository : IReserveringRepository
     {
-        private readonly MySqlDbExecutor _db;
+        private readonly DbConnection _db;
 
-        public ReserveringRepository(MySqlDbExecutor db)
+        public ReserveringRepository(DbConnection db)
         {
             _db = db;
         }
 
         public async Task AddAsync(Reservering reservering, int reserveringhouderId)
         {
-            const string sql = @"
+            // Connectie object aanmaken
+            using var connection = _db.CreateConnection();
+            await connection.OpenAsync();
+
+            using var command = connection.CreateCommand();
+
+            // Prijs voor nu nog niet meegenomen, gasten en totaalprijs worden later toegevoegd.
+            command.CommandText = @"
                 INSERT INTO reserveringen
-                    (aankomstdatum, vertrekdatum, staanplaats_id, accommodatie_type_id, reserveringhouder_id, totaal_prijs, is_betaald)
+                    (aankomstdatum, vertrekdatum, staanplaats_id, accommodatie_type_id, reserveringhouder_id, totaal_prijs)
                 VALUES
-                    (@start, @end, @staanplaatsId, @accommodatieId, @houderId, @totaal, 0);
-                SELECT LAST_INSERT_ID();";
+                    (@start, @end, @staanplaatsId, @accommodatieId, @houderId, 0.00);";
 
-            long id = await _db.ExecuteScalarAsync<long>(sql, cmd =>
-            {
-                cmd.Parameters.Add("@start", MySqlDbType.Date).Value = reservering.StartDatum.Date;
-                cmd.Parameters.Add("@end", MySqlDbType.Date).Value = reservering.EindDatum.Date;
-                cmd.Parameters.Add("@staanplaatsId", MySqlDbType.Int32).Value = reservering.StaanplaatsId;
-                cmd.Parameters.Add("@accommodatieId", MySqlDbType.Int32).Value = reservering.AccommodatieId;
-                cmd.Parameters.Add("@houderId", MySqlDbType.Int32).Value = reserveringhouderId;
-                cmd.Parameters.Add("@totaal", MySqlDbType.Decimal).Value = reservering.TotaalPrijs;
-            });
+            command.Parameters.Add("@start", MySqlDbType.Date).Value = reservering.StartDatum;
+            command.Parameters.Add("@end", MySqlDbType.Date).Value = reservering.EindDatum;
+            command.Parameters.Add("@staanplaatsId", MySqlDbType.Int32).Value = reservering.StaanplaatsId;
+            command.Parameters.Add("@accommodatieId", MySqlDbType.Int32).Value = reservering.AccommodatieId;
+            command.Parameters.Add("@houderId", MySqlDbType.Int32).Value = reserveringhouderId;
 
-            reservering.Id = (int)id;
+            await command.ExecuteNonQueryAsync();    
+
+            // Applicatie houd bij welke Id de DB heeft toegekend en slaat het op in het object.
+            reservering.Id = (int)command.LastInsertedId;
         }
     }
 }

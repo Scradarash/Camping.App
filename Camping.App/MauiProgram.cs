@@ -27,6 +27,7 @@ namespace Camping.App
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
+            builder.Services.AddSingleton<DbConnection>();
 
             //Repositories
             builder.Services.AddSingleton<IVeldRepository, VeldRepository>();
@@ -35,7 +36,6 @@ namespace Camping.App
             builder.Services.AddSingleton<IReserveringRepository, ReserveringRepository>();
             builder.Services.AddSingleton<IGastRepository, MySqlGastRepository>();
             builder.Services.AddSingleton<IFaciliteitRepository, FaciliteitRepository>();
-            builder.Services.AddSingleton<IVoorzieningRepository, VoorzieningRepository>();
 
             //Services
             builder.Services.AddSingleton<IVeldService, VeldService>();
@@ -44,9 +44,6 @@ namespace Camping.App
             builder.Services.AddSingleton<IReserveringService, ReserveringService>();
             builder.Services.AddSingleton<ReserveringshouderValidatieService>();
             builder.Services.AddSingleton<IFaciliteitService, FaciliteitService>();
-            builder.Services.AddSingleton<MySqlDbExecutor>();
-            builder.Services.AddSingleton<DbConnection>();
-            builder.Services.AddSingleton<PrijsBerekenService>();
             builder.Services.AddSingleton<ToevoegenGastService>();
 
             //ViewModels

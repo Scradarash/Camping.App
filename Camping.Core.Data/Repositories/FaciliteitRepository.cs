@@ -7,32 +7,62 @@ namespace Camping.Core.Data.Repositories
 {
     public class FaciliteitRepository : IFaciliteitRepository
     {
-        private readonly MySqlDbExecutor _db;
+        private readonly DbConnection _dbConnection;
 
-        public FaciliteitRepository(MySqlDbExecutor db)
+        public FaciliteitRepository(DbConnection dbConnection)
         {
-            _db = db;
+            _dbConnection = dbConnection;
         }
 
+        // Query om alle faciliteiten op te halen
         public IEnumerable<Faciliteit> GetFaciliteiten()
         {
-            const string sql = @"SELECT id, naam, omschrijving, image_name, x_position, y_position, width, height FROM faciliteiten;";
-            return _db.Query(sql, null, Map);
+            try
+            {
+                using MySqlConnection connection = _dbConnection.CreateConnection();
+                connection.Open();
+
+                string query = "SELECT * FROM faciliteiten";
+
+                using MySqlCommand command = new MySqlCommand(query, connection);
+                using MySqlDataReader reader = command.ExecuteReader();
+
+                return MapToFaciliteiten(reader);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error fetching faciliteiten: {ex.Message}");
+                return new List<Faciliteit>();
+            }
         }
 
-        private static Faciliteit Map(MySqlDataReader reader)
+        // Functie om ze te mappen van database rijen naar Faciliteit objecten
+        private List<Faciliteit> MapToFaciliteiten(MySqlDataReader reader)
         {
-            return new Faciliteit
+            List<Faciliteit> faciliteiten = new List<Faciliteit>();
+
+            while (reader.Read())
             {
-                Id = reader.GetInt32("id"),
-                Name = reader.GetString("naam"),
-                Description = reader.IsDBNull(reader.GetOrdinal("omschrijving")) ? string.Empty : reader.GetString("omschrijving"),
-                ImageName = reader.GetString("image_name"),
-                XPosition = reader.GetFloat("x_position"),
-                YPosition = reader.GetFloat("y_position"),
-                Width = reader.GetFloat("width"),
-                Height = reader.GetFloat("height")
-            };
+                Faciliteit faciliteit = new Faciliteit
+                {
+                    Id = reader.GetInt32("id"),
+                    Name = reader.GetString("naam"),
+                    // Als er geen omschrijving is, zet dan het woord "omschrijving" als de omschrijving, zal crashes voorkomen als er null is
+                    Description = reader.IsDBNull(reader.GetOrdinal("omschrijving"))
+                        ? string.Empty
+                        : reader.GetString("omschrijving"),
+
+                    ImageName = reader.GetString("image_name"),
+                    XPosition = reader.GetFloat("x_position"),
+                    YPosition = reader.GetFloat("y_position"),
+                    Width = reader.GetFloat("width"),
+                    Height = reader.GetFloat("height")
+                };
+
+                faciliteiten.Add(faciliteit);
+            }
+
+            return faciliteiten;
         }
     }
 }

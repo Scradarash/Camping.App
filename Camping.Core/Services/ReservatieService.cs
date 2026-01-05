@@ -29,8 +29,8 @@ namespace Camping.Core.Services
             Veld veld,
             Staanplaats staanplaats,
             Accommodatie accommodatie,
-            bool kiestStroom,
-            bool kiestWater,
+            bool kiestStroom,  
+            bool kiestWater,    
             decimal totaalPrijs)
         {
             if (string.IsNullOrWhiteSpace(_data.Emailadres) || string.IsNullOrWhiteSpace(_data.Naam) ||
@@ -61,16 +61,14 @@ namespace Camping.Core.Services
                 reserveringhouderId = await _gastRepository.AddAsync(nieuweGast);
             }
 
+
             var nieuweReservering = new Reservering
             {
                 StartDatum = startDatum,
                 EindDatum = eindDatum,
                 VeldId = veld.id,
                 StaanplaatsId = staanplaats.id,
-                AccommodatieId = accommodatie.Id,
-                KiestStroom = kiestStroom,
-                KiestWater = kiestWater,
-                TotaalPrijs = totaalPrijs
+                AccommodatieId = accommodatie.Id
             };
 
             // Reservering met bijhorende gast toevoegen aan reserveringRepository

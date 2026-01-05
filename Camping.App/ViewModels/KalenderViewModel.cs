@@ -15,9 +15,9 @@ namespace Camping.App.ViewModels
         {
             _reservatieService = reservatieService;
 
-            // Minimum datum ingesteld op vandaag dus er kan niet in het verleden geboekt worden (door binding in view met kalender)
+            // Minimum datum ingesteld op vandaag, dus er kan niet in het verleden geboekt worden (door binding in view)
             MinDate = DateTime.Now.Date;
-            // En de maximum datum instellen op het einde van het volgende jaar
+            // En de maximum datum stellen we in op het einde van het huidige jaar
             MaxDate = new DateTime(DateTime.Now.Year + 1, 12, 31);
         }
 
@@ -34,7 +34,7 @@ namespace Camping.App.ViewModels
             _endDate = range?.EndDate;
         }
 
-        //Return veranderd van bool naar string voor betere foutmeldingen (error opslaan in string, tonen in xaml.cs)
+        // Veranderd van bool naar string voor betere foutmeldingen (error opslaan in string, tonen in view.xaml.cs)
         public string ValidateAndSaveDates()
         {
             // Datums naar service sturen voor validatie

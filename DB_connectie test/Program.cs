@@ -1,6 +1,8 @@
 ﻿using Camping.Core.Data.Helpers;
 using Camping.Core.Data.Repositories;
 using Camping.Core.Interfaces.Repositories;
+using System.Runtime.CompilerServices;
+using System.Security.Cryptography.X509Certificates;
 
 namespace DB_connectie_test
 {
@@ -8,23 +10,27 @@ namespace DB_connectie_test
     {
         static async Task Main(string[] args)
         {
-            var dbConnection = new DbConnection();
+            // Maak een DbConnection object
+            var db = new DbConnection();
 
-            var db = new MySqlDbExecutor(dbConnection);
-
+            // Injecteer DB repo
             IGastRepository repo = new MySqlGastRepository(db);
 
             var gasten = await repo.GetAllAsync();
+
             foreach (var gast in gasten)
             {
                 Console.WriteLine($"{gast.Id}, {gast.Naam}");
             }
 
-            await using var conn = dbConnection.CreateConnection();
+            // Maak een connection
+            await using var conn = db.CreateConnection();
+
             try
             {
                 await conn.OpenAsync();
                 Console.WriteLine("Database connectie succesvol!");
+
             }
             catch (Exception ex)
             {
