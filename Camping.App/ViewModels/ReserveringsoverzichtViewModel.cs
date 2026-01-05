@@ -4,6 +4,7 @@ using Camping.Core.Models;
 using Camping.Core.Services; 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Maui.Layouts;
 using System.Collections.ObjectModel;
 using System.Text.RegularExpressions;
 
@@ -88,6 +89,9 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
     [NotifyPropertyChangedFor(nameof(TotaalPrijsTekst))]
     private bool kiestWater;
 
+    [ObservableProperty]
+    private bool _gastToevoegenEnabled;
+
     public string StroomPrijsTekst => $"€{PRIJS_STROOM},- per nacht";
     public string WaterPrijsTekst => $"€{PRIJS_WATER},- per nacht";
 
@@ -108,6 +112,8 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
         _validatieService = validatieService;
 
         LoadData();
+        //Deze lijn code wordt wellicht nog aangepast, afhankelijk van of de pagina deze waardes opnieuw initialiseert bij het laden van de pagina bij terugkomst. 
+        ValidateMaxGuests();
     }
 
     private void LoadData()
@@ -366,4 +372,23 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
     {
         await Shell.Current.GoToAsync(nameof(ToevoegenGastView));
     }
+
+    private bool ValidateMaxGuests()
+    {
+        //Eerst moet er een push gemaakt worden naar de database met de gasten. Deze info moet verwerkt worden, hierna kan deze functie gebouwd worden.
+        int maxGasten = _reservatieDataService.SelectedStaanplaats.AantalGasten;
+        int huidigeHoeveelheidGasten = 1; //Dit is dummydata, dit moet nog uit de database gehaald worden. Is puur gedaan om functionaliteit af te testen.
+        if(huidigeHoeveelheidGasten < maxGasten)
+        {
+            _gastToevoegenEnabled = true;
+            return true;
+        }
+        else
+        {
+            _gastToevoegenEnabled = false;
+            return false;
+        }
+    }
+
+
 }

@@ -46,14 +46,14 @@ namespace Camping.Core.Data.Repositories
             // Accommodatie types worden samengevoegd in 1 kolom per staanplaats via GROUP_CONCAT, om deze te tonen
             // We selecteren ook de bezetCheck subquery die telt hoeveel boekingen er zijn in de gekozen periode
             command.CommandText = $@"
-                SELECT s.id, s.veld_id, 
+                SELECT s.id, s.veld_id, s.aantal_gasten,
                        GROUP_CONCAT(a.naam SEPARATOR ', ') as types,
                        {bezetCheck} as aantal_boekingen
                 FROM staanplaatsen s
                 LEFT JOIN staanplaats_accommodatietypes sa ON s.id = sa.staanplaats_id
                 LEFT JOIN accommodatie_types a ON sa.accommodatie_type_id = a.id
                 WHERE s.veld_id = @veldId
-                GROUP BY s.id, s.veld_id";
+                GROUP BY s.id, s.veld_id, s.aantal_gasten";
 
             command.Parameters.AddWithValue("@veldId", veldId);
 
@@ -86,7 +86,9 @@ namespace Camping.Core.Data.Repositories
                     // Deze kolommen zijn uit de DB gehaald, dus zetten we ze voor nu op true
                     // Zodat de icoontjes in de UI zichtbaar blijven
                     HeeftStroom = true,
-                    HeeftWater = true
+                    HeeftWater = true,
+                    AantalGasten = reader.GetInt32("aantal_gasten")
+
                 });
             }
 
@@ -103,13 +105,13 @@ namespace Camping.Core.Data.Repositories
 
             // Dezelfde query als hierboven, maar dan specifiek voor 1 ID
             command.CommandText = @"
-                SELECT s.id, s.veld_id, 
+                SELECT s.id, s.veld_id, s.aantal_gasten, 
                        GROUP_CONCAT(a.naam SEPARATOR ', ') as types
                 FROM staanplaatsen s
                 LEFT JOIN staanplaats_accommodatietypes sa ON s.id = sa.staanplaats_id
                 LEFT JOIN accommodatie_types a ON sa.accommodatie_type_id = a.id
                 WHERE s.id = @id
-                GROUP BY s.id, s.veld_id";
+                GROUP BY s.id, s.veld_id, s.aantal_gasten";
 
             command.Parameters.AddWithValue("@id", id);
 
@@ -124,6 +126,7 @@ namespace Camping.Core.Data.Repositories
                                        ? "Onbekend"
                                        : reader.GetString("types"),
                     Status = "Beschikbaar",
+                    AantalGasten = reader.GetInt32("aantal_gasten"),
                     HeeftStroom = true,
                     HeeftWater = true
                 };
