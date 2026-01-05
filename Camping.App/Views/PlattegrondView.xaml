@@ -1,6 +1,7 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="Camping.App.Views.PlattegrondView">
+             x:Class="Camping.App.Views.PlattegrondView"
+             x:Name="PlattegrondPage">
 
     <ContentPage.Resources>
         <!-- Styling voor de faciliteiten knoppen -->
@@ -58,7 +59,7 @@
         <!-- Bordertje zodat de overgang van de kaart naar de achtergrond niet zo lelijk is -->
         <Border x:Name="MapFrame"
                 Stroke="#8B4513"
-                StrokeThickness="10"
+                StrokeThickness="{Binding Source={x:Reference PlattegrondPage}, Path=BorderThickness}"
                 StrokeShape="RoundRectangle 15"
                 HorizontalOptions="Center"
                 VerticalOptions="Center">

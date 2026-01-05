@@ -24,6 +24,13 @@ namespace Camping.App.ViewModels
         [ObservableProperty]
         private string _selectedStaanplaatsText = "Kies een plaats op de kaart";
 
+        [ObservableProperty]
+        private string _reserveButtonText = "Reserveer";
+
+        // Deze wordt gebruikt door view om reserveer knop te disablen bij groepsveld
+        [ObservableProperty]
+        private bool _isReserveEnabled = true;
+
         public ObservableCollection<Staanplaats> Staanplaatsen { get; } = new();
 
         [ObservableProperty]
@@ -53,6 +60,22 @@ namespace Camping.App.ViewModels
             if (_reservatieDataService.StartDate.HasValue && _reservatieDataService.EndDate.HasValue)
             {
                 PeriodText = $"{_reservatieDataService.StartDate:dd-MM-yyyy} - {_reservatieDataService.EndDate:dd-MM-yyyy}";
+            }
+
+            // Als het groepsveld geselecteerd is, dan passen we de teksten en button aan
+            if (Veld.Name.Contains("Groepsveld", StringComparison.OrdinalIgnoreCase))
+            {
+                ReserveButtonText = "Neem contact op met de camping!";
+                // Geselecteerde staanplaats tekst leeg maken want is irrelevant, je kan niet reserveren via de app
+                SelectedStaanplaatsText = "";
+                // Zelfde geldt dus voor de periode tekst
+                PeriodText = "";
+                IsReserveEnabled = false;
+            }
+            else
+            {
+                ReserveButtonText = "Reserveer";
+                IsReserveEnabled = true;
             }
 
             LoadStaanplaatsen();
