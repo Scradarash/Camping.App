@@ -15,8 +15,8 @@ public partial class PlattegrondView : ContentPage
     private const double OriginalMapWidth = 1920;
     private const double OriginalMapHeight = 1080;
 
-    // De dikte van de rand. Deze moet gelijk staan aan die in de XAML (StrokeThickness)
-    private const double BorderThickness = 10;
+    // De dikte van de rand
+    public double BorderThickness { get; } = 10;
 
     public PlattegrondView(PlattegrondViewModel viewModel)
     {
@@ -123,7 +123,6 @@ public partial class PlattegrondView : ContentPage
             double w = veld.Width * innerWidth;
             double h = veld.Height * innerHeight;
 
-            AbsoluteLayout.SetLayoutFlags(btn, AbsoluteLayoutFlags.None);
             AbsoluteLayout.SetLayoutBounds(btn, new Rect(x, y, w, h));
 
             ButtonOverlayLayout.Children.Add(btn);
@@ -146,7 +145,6 @@ public partial class PlattegrondView : ContentPage
             double width = faciliteit.Width * innerWidth;
             double height = faciliteit.Height * innerHeight;
 
-            AbsoluteLayout.SetLayoutFlags(btn, AbsoluteLayoutFlags.None);
             AbsoluteLayout.SetLayoutBounds(btn, new Rect(xposition, yposition, width, height));
 
             ButtonOverlayLayout.Children.Add(btn);
@@ -169,7 +167,6 @@ public partial class PlattegrondView : ContentPage
         double kalenderW = 0.098 * innerWidth;
         double kalenderH = 0.08 * innerHeight;
 
-        AbsoluteLayout.SetLayoutFlags(kalenderBtn, AbsoluteLayoutFlags.None);
         AbsoluteLayout.SetLayoutBounds(kalenderBtn, new Rect(kalenderX, kalenderY, kalenderW, kalenderH));
 
         ButtonOverlayLayout.Children.Add(kalenderBtn);

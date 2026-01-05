@@ -1,8 +1,6 @@
 ﻿using Camping.Core.Data.Helpers;
 using Camping.Core.Interfaces.Repositories;
 using Camping.Core.Models;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Camping.Core.Data.Repositories
 {
@@ -28,71 +26,85 @@ namespace Camping.Core.Data.Repositories
             // Nieuwe logica voor beschikbaarheid:
             // We bouwen een subquery die telt hoeveel reserveringen er zijn die overlappen met de gekozen periode.
             // Als er geen datums zijn geselecteerd, gaan we uit van 0 (alles beschikbaar).
-            string bezetCheck = "0";
-
-            if (start != null && end != null)
-            {
-                // De logica voor overlap: Een boeking overlapt als (BestaandStart < NieuwEind) EN (BestaandEind > NieuwStart).
-                bezetCheck = @"(SELECT COUNT(*) FROM reserveringen r 
-                                WHERE r.staanplaats_id = s.id 
-                                AND r.aankomstdatum < @end 
-                                AND r.vertrekdatum > @start)";
-            }
+            string bezetCheckSql = BuildBezetCheckSql(start, end);
 
             // SQL Query uitleg:
-            // Selecteer de staanplaatsen (s) en hun bijbehorende accommodatie types (a) via de koppeltabel (sa)
-            // We joinen staanplaatsen aan de koppeltabel en vervolgens de koppeltabel aan de accommodatie types
-            // Die bij een bepaald veld horen (WHERE s.veld_id = @veldId) (het geselecteerde veld)
+            // Selecteer staanplaatsen (s) en hun bijbehorende accommodatie types (a) via de koppeltabel (sa)
             // Accommodatie types worden samengevoegd in 1 kolom per staanplaats via GROUP_CONCAT, om deze te tonen
             // We selecteren ook de bezetCheck subquery die telt hoeveel boekingen er zijn in de gekozen periode
             command.CommandText = $@"
-                SELECT s.id, s.veld_id, s.aantal_gasten,
-                       GROUP_CONCAT(a.naam SEPARATOR ', ') as types,
-                       {bezetCheck} as aantal_boekingen
+                SELECT 
+                    s.id, 
+                    s.veld_id,
+                    s.prijs,
+                    s.aantal_gasten,
+                    GROUP_CONCAT(DISTINCT a.naam ORDER BY a.naam SEPARATOR ', ') as types,
+                    {bezetCheckSql} as aantal_boekingen
                 FROM staanplaatsen s
                 LEFT JOIN staanplaats_accommodatietypes sa ON s.id = sa.staanplaats_id
                 LEFT JOIN accommodatie_types a ON sa.accommodatie_type_id = a.id
                 WHERE s.veld_id = @veldId
-                GROUP BY s.id, s.veld_id, s.aantal_gasten";
+                GROUP BY s.id, s.veld_id, s.prijs, s.aantal_gasten
+                ORDER BY s.id;";
 
             command.Parameters.AddWithValue("@veldId", veldId);
 
             // Voeg datum parameters alleen toe als ze zijn meegegeven
-            if (start != null && end != null)
-            {
-                command.Parameters.AddWithValue("@start", start.Value);
-                command.Parameters.AddWithValue("@end", end.Value);
-            }
+            AddDateParametersIfNeeded(command, start, end);
 
             using var reader = command.ExecuteReader();
             while (reader.Read())
             {
-                // Check of er boekingen zijn gevonden in de subquery
                 bool isBezet = reader.GetInt64("aantal_boekingen") > 0;
-
-                staanplaatsen.Add(new Staanplaats
-                {
-                    id = reader.GetInt32("id"),
-                    VeldId = reader.GetInt32("veld_id"),
-
-                    // Als er geen types gekoppeld zijn, toon 'Onbekend', anders de lijst met types
-                    AccommodatieType = reader.IsDBNull(reader.GetOrdinal("types"))
-                                       ? "Onbekend"
-                                       : reader.GetString("types"),
-
-                    // Status wordt nu bepaald door de database check
-                    Status = isBezet ? "Bezet" : "Beschikbaar",
-
-                    // Deze kolommen zijn uit de DB gehaald, dus zetten we ze voor nu op true
-                    // Zodat de icoontjes in de UI zichtbaar blijven
-                    HeeftStroom = true,
-                    HeeftWater = true,
-                    AantalGasten = reader.GetInt32("aantal_gasten")
-
-                });
+                staanplaatsen.Add(MapStaanplaats(reader, isBezet));
             }
 
             return staanplaatsen;
+        }
+
+        private static string BuildBezetCheckSql(DateTime? start, DateTime? end)
+        {
+            if (start == null || end == null)
+                return "0";
+
+            // Overlap: (BestaandStart < NieuwEind) EN (BestaandEind > NieuwStart)
+            return @"(SELECT COUNT(*) 
+                      FROM reserveringen r 
+                      WHERE r.staanplaats_id = s.id 
+                        AND r.aankomstdatum < @end 
+                        AND r.vertrekdatum > @start)";
+        }
+
+        private static void AddDateParametersIfNeeded(dynamic command, DateTime? start, DateTime? end)
+        {
+            if (start == null || end == null)
+                return;
+
+            command.Parameters.AddWithValue("@start", start.Value.Date);
+            command.Parameters.AddWithValue("@end", end.Value.Date);
+        }
+
+        private static Staanplaats MapStaanplaats(dynamic reader, bool isBezet)
+        {
+            return new Staanplaats
+            {
+                id = reader.GetInt32("id"),
+                VeldId = reader.GetInt32("veld_id"),
+                Prijs = reader.GetDecimal("prijs"),
+                AantalGasten = reader.GetInt32("aantal_gasten"),
+
+                // Als er geen types gekoppeld zijn, toon 'Onbekend', anders de lijst met types
+                AccommodatieType = reader.IsDBNull(reader.GetOrdinal("types"))
+                    ? "Onbekend"
+                    : reader.GetString("types"),
+
+                // Status wordt nu bepaald door de database check
+                Status = isBezet ? "Bezet" : "Beschikbaar",
+
+                // Hier kun je later echte DB kolommen of een aparte tabel voor gebruiken.
+                HeeftStroom = true,
+                HeeftWater = true
+            };
         }
 
         // Haal 1 specifieke staanplaats op
@@ -105,13 +117,18 @@ namespace Camping.Core.Data.Repositories
 
             // Dezelfde query als hierboven, maar dan specifiek voor 1 ID
             command.CommandText = @"
-                SELECT s.id, s.veld_id, s.aantal_gasten, 
-                       GROUP_CONCAT(a.naam SEPARATOR ', ') as types
+                SELECT 
+                    s.id, 
+                    s.veld_id,
+                    s.prijs,
+                    s.aantal_gasten,
+                    GROUP_CONCAT(DISTINCT a.naam ORDER BY a.naam SEPARATOR ', ') as types
                 FROM staanplaatsen s
                 LEFT JOIN staanplaats_accommodatietypes sa ON s.id = sa.staanplaats_id
                 LEFT JOIN accommodatie_types a ON sa.accommodatie_type_id = a.id
                 WHERE s.id = @id
-                GROUP BY s.id, s.veld_id, s.aantal_gasten";
+                GROUP BY s.id, s.veld_id, s.prijs, s.aantal_gasten
+                ORDER BY s.id;";
 
             command.Parameters.AddWithValue("@id", id);
 
@@ -122,15 +139,18 @@ namespace Camping.Core.Data.Repositories
                 {
                     id = reader.GetInt32("id"),
                     VeldId = reader.GetInt32("veld_id"),
+                    Prijs = reader.GetDecimal("prijs"),
+                    AantalGasten = reader.GetInt32("aantal_gasten"),
                     AccommodatieType = reader.IsDBNull(reader.GetOrdinal("types"))
-                                       ? "Onbekend"
-                                       : reader.GetString("types"),
+                        ? "Onbekend"
+                        : reader.GetString("types"),
                     Status = "Beschikbaar",
                     AantalGasten = reader.GetInt32("aantal_gasten"),
                     HeeftStroom = true,
                     HeeftWater = true
                 };
             }
+
             return null;
         }
 

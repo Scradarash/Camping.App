@@ -24,6 +24,13 @@ namespace Camping.App.ViewModels
         [ObservableProperty]
         private string _selectedStaanplaatsText = "Kies een plaats op de kaart";
 
+        [ObservableProperty]
+        private string _reserveButtonText = "Reserveer";
+
+        // Deze wordt gebruikt door view om reserveer knop te disablen bij groepsveld
+        [ObservableProperty]
+        private bool _isReserveEnabled = true;
+
         public ObservableCollection<Staanplaats> Staanplaatsen { get; } = new();
 
         [ObservableProperty]
@@ -55,6 +62,22 @@ namespace Camping.App.ViewModels
                 PeriodText = $"{_reservatieDataService.StartDate:dd-MM-yyyy} - {_reservatieDataService.EndDate:dd-MM-yyyy}";
             }
 
+            // Als het groepsveld geselecteerd is, dan passen we de teksten en button aan
+            if (Veld.Name.Contains("Groepsveld", StringComparison.OrdinalIgnoreCase))
+            {
+                ReserveButtonText = "Neem contact op met de camping!";
+                // Geselecteerde staanplaats tekst leeg maken want is irrelevant, je kan niet reserveren via de app
+                SelectedStaanplaatsText = "";
+                // Zelfde geldt dus voor de periode tekst
+                PeriodText = "";
+                IsReserveEnabled = false;
+            }
+            else
+            {
+                ReserveButtonText = "Reserveer";
+                IsReserveEnabled = true;
+            }
+
             LoadStaanplaatsen();
         }
 
@@ -62,25 +85,25 @@ namespace Camping.App.ViewModels
         {
             Staanplaatsen.Clear();
             // Haal alle staanplaatsen op voor dit veld
-            IEnumerable<Staanplaats> plekken = _staanplaatsRepository.GetByVeldId(
+            IEnumerable<Staanplaats> staanplaatsen = _staanplaatsRepository.GetByVeldId(
                 Veld.id,
                 _reservatieDataService.StartDate,
                 _reservatieDataService.EndDate
             );
 
-            foreach (Staanplaats plek in plekken)
+            foreach (Staanplaats staanplaats in staanplaatsen)
             {
-                Staanplaatsen.Add(plek);
+                Staanplaatsen.Add(staanplaats);
             }
         }
 
         [RelayCommand]
         //Klikken op een staanplaats
-        private void SelectStaanplaats(Staanplaats plek)
+        private void SelectStaanplaats(Staanplaats staanplaats)
         {
-            SelectedStaanplaats = plek;
-            _reservatieDataService.SelectedStaanplaats = plek;
-            SelectedStaanplaatsText = $"Geselecteerde plaats: {plek.id}";
+            SelectedStaanplaats = staanplaats;
+            _reservatieDataService.SelectedStaanplaats = staanplaats;
+            SelectedStaanplaatsText = $"Geselecteerde plaats: {staanplaats.id}";
         }
 
         [RelayCommand]
