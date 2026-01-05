@@ -145,6 +145,7 @@ namespace Camping.Core.Data.Repositories
                         ? "Onbekend"
                         : reader.GetString("types"),
                     Status = "Beschikbaar",
+                    AantalGasten = reader.GetInt32("aantal_gasten"),
                     HeeftStroom = true,
                     HeeftWater = true
                 };
