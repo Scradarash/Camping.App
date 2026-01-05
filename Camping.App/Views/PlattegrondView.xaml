@@ -1,50 +1,88 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="Camping.App.Views.PlattegrondView">
+             x:Class="Camping.App.Views.PlattegrondView"
+             x:Name="PlattegrondPage">
 
     <ContentPage.Resources>
-        <!-- Stijl voor de kalenderknop -->
-        <Style x:Key="KalenderButtonStyle" TargetType="Button">
-            <Setter Property="TextColor" Value="White"/>
-            <Setter Property="FontAttributes" Value="Bold"/>
-            <Setter Property="FontSize" Value="22"/>
-            <Setter Property="BorderColor" Value="Black"/>
-            <Setter Property="BorderWidth" Value="3"/>
-            <Setter Property="CornerRadius" Value="10"/>
-            <Setter Property="BackgroundColor" Value="#0a5dc9"/>
+        <!-- Styling voor de faciliteiten knoppen -->
+        <Style x:Key="FaciliteitButtonStyle" TargetType="Button">
+            <Setter Property="BackgroundColor" Value="Transparent" />
+            <Setter Property="BorderColor" Value="Transparent" />
+            <Setter Property="BorderWidth" Value="0" />
+            <Setter Property="Padding" Value="0" />
+
             <Setter Property="VisualStateManager.VisualStateGroups">
                 <VisualStateGroupList>
                     <VisualStateGroup x:Name="CommonStates">
+                        <!-- Standaard -->
                         <VisualState x:Name="Normal">
                             <VisualState.Setters>
-                                <Setter Property="BackgroundColor" Value="#0a5dc9" />
+                                <Setter Property="BackgroundColor" Value="Transparent" />
                             </VisualState.Setters>
                         </VisualState>
+                        <!-- Uitgeschakeld (Nog niet echt van toepassing) -->
+                        <VisualState x:Name="Disabled">
+                            <VisualState.Setters>
+                                <Setter Property="BackgroundColor" Value="Transparent" />
+                                <Setter Property="BorderColor" Value="Transparent" />
+                            </VisualState.Setters>
+                        </VisualState>
+                        <!-- CLick -->
+                        <VisualState x:Name="Pressed">
+                            <VisualState.Setters>
+                                <Setter Property="BackgroundColor" Value="Transparent" />
+                                <Setter Property="Scale" Value="1.15" />
+                            </VisualState.Setters>
+                        </VisualState>
+                        <!-- Hover -->
                         <VisualState x:Name="PointerOver">
                             <VisualState.Setters>
-                                <Setter Property="BackgroundColor" Value="#3c7fd6" />
+                                <Setter Property="BackgroundColor" Value="Transparent" />
+                                <Setter Property="Scale" Value="1.15" />
                             </VisualState.Setters>
                         </VisualState>
                     </VisualStateGroup>
                 </VisualStateGroupList>
             </Setter>
         </Style>
-
-        <!-- Hier stijl invoegen voor andere knoppen die uitsluitend op de plattefrond komen: -->
     </ContentPage.Resources>
 
-    <Grid HorizontalOptions="Center" VerticalOptions="Center">
-        <!-- Plattegrond -->
-        <Image x:Name="CampingPlattegrond"
-               Source="camping_plattegrond.png"
-               Aspect="AspectFit"
-               InputTransparent="True" />
+    <!-- Grid maken waarin alle images geplaatst worden -->
+    <Grid HorizontalOptions="Fill" VerticalOptions="Fill">
 
-        <!-- De Container voor ALLE knoppen, hier staat dus de kalenderknop, afsluitknop en staandplaatsknoppen -->
-        <!-- In de toekomst komen hier ook knoppen voor faciliteiten enzo -->
-        <!-- Het is van groot belang dat deze onder de plattegrond komt te staan in de code, anders is de achtergrond wit (I tried) -->
-        <AbsoluteLayout x:Name="ButtonOverlayLayout"
-                        HorizontalOptions="Center"
-                        VerticalOptions="Center"/>
+        <!-- Achtergrond afbeelding zodat de achtergrond niet lelijk wit is -->
+        <Image Source="background.png" 
+               Aspect="AspectFill"
+               HorizontalOptions="Fill"
+               VerticalOptions="Fill"/>
+
+        <!-- Bordertje zodat de overgang van de kaart naar de achtergrond niet zo lelijk is -->
+        <Border x:Name="MapFrame"
+                Stroke="#8B4513"
+                StrokeThickness="{Binding Source={x:Reference PlattegrondPage}, Path=BorderThickness}"
+                StrokeShape="RoundRectangle 15"
+                HorizontalOptions="Center"
+                VerticalOptions="Center">
+
+            <Border.Shadow>
+                <Shadow Brush="Black" Offset="10,10" Radius="20" Opacity="0.6"/>
+            </Border.Shadow>
+
+            <!-- Grid waarin de afbeelding staat en waar de knoppen overheen komen -->
+            <Grid>
+                <!-- Plattegrond -->
+                <!-- In de code behind wordt de border precies de grootte van de image, waardoor de image altijd past. Daarom nu AspectFill -->
+                <Image x:Name="CampingPlattegrond"
+                       Source="camping_plattegrond.png"
+                       Aspect="AspectFill"/>
+
+                <!-- De Container voor ALLE knoppen, hier staat dus de kalenderknop, afsluitknop en staandplaatsknoppen -->
+                <!-- In de toekomst komen hier ook knoppen voor faciliteiten enzo -->
+                <!-- Het is van groot belang dat deze onder de plattegrond komt te staan in de code, anders is de achtergrond wit (I tried) -->
+                <AbsoluteLayout x:Name="ButtonOverlayLayout"
+                                HorizontalOptions="Fill"
+                                VerticalOptions="Fill"/>
+            </Grid>
+        </Border>
     </Grid>
 </ContentPage>

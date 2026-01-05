@@ -65,7 +65,7 @@
             </Style>
         </ResourceDictionary>
     </ContentPage.Resources>
-    
+
     <Border Stroke="Gray" 
             StrokeThickness="1" 
             BackgroundColor="White"
@@ -93,13 +93,13 @@
             <VerticalStackLayout Grid.Row="1" Spacing="5" HorizontalOptions="Center">
 
                 <!-- De Datum -->
-                <Label Text="{Binding PeriodeTekst}" 
+                <Label Text="{Binding PeriodText}" 
                        TextColor="#416722" 
                        FontSize="16" 
                        HorizontalOptions="Center"/>
 
                 <!-- De Geselecteerde Staanplaats -->
-                <Label Text="{Binding GeselecteerdeStaanplaatsTekst}"
+                <Label Text="{Binding SelectedStaanplaatsText}"
                        TextColor="Black"
                        FontSize="14"
                        FontAttributes="Bold"
@@ -114,10 +114,11 @@
 
                 <!-- Linker kolom nu de afbeelding van het veld. -->
                 <Grid Grid.Column="0" RowDefinitions="Auto, *">
-                    <Label Text="Kies een plaats op de kaart:" 
+                  <Label Text="Kies een plaats op de kaart:" 
                            FontAttributes="Bold" 
                            Margin="0,0,0,5" 
-                           TextColor="Gray"/>
+                           TextColor="Gray"
+                           IsVisible="{Binding IsReserveEnabled}"/>
 
                     <!-- Afbeelding van veld, met knoppen voor staanplaatsen -->
                     <Border Grid.Row="1" Stroke="Black" StrokeThickness="1">
@@ -190,17 +191,30 @@
             <Grid Grid.Row="4" ColumnDefinitions="*,*" ColumnSpacing="15" Margin="0,10,0,0">
                 <Button Grid.Column="0" 
                         Text="Annuleer" 
-                        Command="{Binding AnnuleerCommand}" 
-                        BackgroundColor="Gray" 
-                        TextColor="White" 
-                        CornerRadius="10"/>
+                        Command="{Binding CancelCommand}" 
+                        Style="{StaticResource ExitButtonStyle}"/>
 
                 <Button Grid.Column="1" 
-                        Text="Reserveer" 
-                        Command="{Binding ReserveerCommand}" 
-                        BackgroundColor="#0a5dc9" 
-                        TextColor="White" 
-                        CornerRadius="10"/>
+                        Text="{Binding ReserveButtonText}" 
+                        Command="{Binding ReserveCommand}" 
+                        IsEnabled="{Binding IsReserveEnabled}"
+                        Style="{StaticResource ConfirmButtonStyle}">
+
+                    <Button.Triggers>
+                        <!-- Check binding IsReserveEnabled, als die false is (wat bij het groepsveld t geval is), dan wordt de knop grijs -->
+                        <DataTrigger TargetType="Button" Binding="{Binding IsReserveEnabled}" Value="False">
+                            <Setter Property="Style" Value="{x:Null}" />
+                            <Setter Property="BackgroundColor" Value="#E0E0E0" />
+                            <Setter Property="TextColor" Value="#555555" />
+                            <Setter Property="BorderColor" Value="#BDBDBD" />
+                            <Setter Property="BorderWidth" Value="2" />
+                            <Setter Property="CornerRadius" Value="10" />
+                            <Setter Property="FontAttributes" Value="Bold" />
+                            <Setter Property="FontSize" Value="21" />
+                            <Setter Property="Opacity" Value="1.0" />
+                        </DataTrigger>
+                    </Button.Triggers>
+                </Button>
             </Grid>
         </Grid>
     </Border>

@@ -10,13 +10,21 @@ namespace Camping.App.ViewModels;
 public partial class PlattegrondViewModel : ObservableObject
 {
     private readonly IVeldService _veldService;
+    private readonly IFaciliteitService _faciliteitService;
     private readonly IReservatieDataService _reservatieDataService;
     private readonly IServiceProvider _serviceProvider;
-    public ObservableCollection<Veld> Velden { get; } = new();
 
-    public PlattegrondViewModel(IVeldService veldService, IReservatieDataService reservatieService, IServiceProvider serviceProvider)
+    public ObservableCollection<Veld> Velden { get; } = new();
+    public ObservableCollection<Faciliteit> Faciliteiten { get; } = new();
+
+    public PlattegrondViewModel(
+        IVeldService veldService,
+        IFaciliteitService faciliteitService,
+        IReservatieDataService reservatieService,
+        IServiceProvider serviceProvider)
     {
         _veldService = veldService;
+        _faciliteitService = faciliteitService;
         _reservatieDataService = reservatieService;
         _serviceProvider = serviceProvider;
         LoadAreas();
@@ -25,10 +33,17 @@ public partial class PlattegrondViewModel : ObservableObject
     private void LoadAreas()
     {
         Velden.Clear();
-        var velden = _veldService.GetAll();
-        foreach (var v in velden)
+        IEnumerable<Veld> velden = _veldService.GetAll();
+        foreach (Veld veld in velden)
         {
-            Velden.Add(v);
+            Velden.Add(veld);
+        }
+
+        Faciliteiten.Clear();
+        IEnumerable<Faciliteit> faciliteiten = _faciliteitService.GetFaciliteiten();
+        foreach (Faciliteit faciliteit in faciliteiten)
+        {
+            Faciliteiten.Add(faciliteit);
         }
     }
 
@@ -37,16 +52,16 @@ public partial class PlattegrondViewModel : ObservableObject
     {
         try
         {
-            // 2. Haal de nieuwe Detail View op via Dependency Injection
-            var detailView = _serviceProvider.GetRequiredService<VeldDetailView>();
+            //Haal de nieuwe Detail View op
+            VeldDetailView detailView = _serviceProvider.GetRequiredService<VeldDetailView>();
 
-            // 3. Initialiseer de ViewModel met het geklikte veld
+            //Initialiseer de ViewModel met het geklikte veld
             if (detailView.BindingContext is VeldDetailViewModel vm)
             {
                 vm.Initialize(veld);
             }
 
-            // 4. Open als Modal (Popup)
+            //Open als Modal (Popup)
             await Application.Current.MainPage.Navigation.PushModalAsync(detailView);
         }
         catch (Exception ex)
@@ -58,15 +73,17 @@ public partial class PlattegrondViewModel : ObservableObject
     [RelayCommand]
     private async Task OpenKalender()
     {
-        var kalenderView = _serviceProvider.GetRequiredService <Views.KalenderView>();
-
-
+        KalenderView kalenderView = _serviceProvider.GetRequiredService <Views.KalenderView>();
         await Application.Current.MainPage.Navigation.PushModalAsync(kalenderView);
     }
 
     [RelayCommand]
-    private void ExitApp()
+    private async Task ShowFaciliteitInfo(Faciliteit faciliteit)
     {
-        System.Environment.Exit(0);
+        // Simpele popup met info
+        await Application.Current.MainPage.DisplayAlert(
+            faciliteit.Name,
+            faciliteit.Description,
+            "Sluiten");
     }
 }
