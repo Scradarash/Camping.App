@@ -77,14 +77,10 @@ public partial class ToevoegenGastViewModel : ObservableObject
 
         if (!result.IsValid)
         {
-            FoutMeldingNaam = result.Error;
-            ZichtbaarheidMeldingNaam = true;
             SetNameValidNegative(result);
             CheckValidityInputs();
             return false;
         }
-        ZichtbaarheidMeldingNaam = false;
-        FoutMeldingNaam = string.Empty;
         SetNameValidPositive();
         CheckValidityInputs();
         return true;
@@ -118,12 +114,14 @@ public partial class ToevoegenGastViewModel : ObservableObject
         CheckValidityInputs();
         return true;
     }
+
     private void SetValidLeeftijdPositive()
     {
         ZichtbaarheidMeldingLeeftijd = false;
         FoutMeldingLeeftijd = string.Empty;
         _leeftijdAkkoord = true;
     }
+
     private void SetValidLeeftijdNegative((bool IsValid, string Error) result)
     {
         FoutMeldingLeeftijd = result.Error;
@@ -143,5 +141,4 @@ public partial class ToevoegenGastViewModel : ObservableObject
             return false;
         }
     }
-
 }

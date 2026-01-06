@@ -18,9 +18,8 @@
 
                 <!-- GRID MET 2 KOLOMMEN EN 2 RIJEN-->
                 <Grid ColumnDefinitions="*,*" ColumnSpacing="20" RowDefinitions="*,*">
-
-                    <!-- KOLOM 1: Gegevens Reserveringshouder -->
-                    <Frame Grid.Column="0" BorderColor="LightGray" BackgroundColor="#fafafa" Padding="15" CornerRadius="10" VerticalOptions="Start">
+                    <!-- KOLOM 1, RIJ 1: Gegevens Reserveringshouder -->
+                    <Frame Grid.Column="0" BorderColor="LightGray" BackgroundColor="#fafafa" Padding="15" CornerRadius="10" VerticalOptions="Start" Grid.Row="0">
                         <VerticalStackLayout Spacing="10">
                             <Label FontSize="20" FontAttributes="Bold" Margin="0,0,0,5">
                                 <Label.FormattedText>
@@ -83,32 +82,13 @@
                                 <Label Text="{Binding TelefoonnummerFoutmelding}" TextColor="Red" FontSize="12" IsVisible="{Binding IsTelefoonnummerFoutZichtbaar}" />
                             </VerticalStackLayout>
                         </VerticalStackLayout>
+                        <!-- KOLOM 1, RIJ 2: Gasten toevoegen-->
                     </Frame>
-                    <!-- RIJ 2: Gasten toevoegen-->
-                    <Frame Grid.Column="0" Grid.Row="1" BorderColor="LightGray" BackgroundColor="#fafafa" Padding="15" CornerRadius="10" VerticalOptions="Start">
-                        <Grid ColumnDefinitions="*,*">
-                            <VerticalStackLayout Grid.Column="0" Spacing="0">
-                                <Label FontSize="16" Text="Gasten toevoegen" Margin="5"/>
-                                <Label FontSize="16" Text="Toegevoegde gasten" BackgroundColor="#f0f0f0"/>
-                                <Label Text="{Binding GastenLijst}" FontSize="Medium" BackgroundColor="#f0f0f0"/>
-                            </VerticalStackLayout>
-                            <Button Grid.Column="1"
-                            Text="+"
-                            Command="{Binding ToevoegenGastCommand}"
-                            BackgroundColor="#0a5dc9"
-                            TextColor="White"
-                            FontAttributes="Bold"
-                            HorizontalOptions="End"
-                            WidthRequest="200"
-                            Margin="10"
-                            IsEnabled="{Binding GastToevoegenEnabled}"/>
-                        </Grid>
-                    </Frame>
+                </Grid>
 
                     <!-- KOLOM 2: Gegevens Reservering -->
                     <Frame Grid.Column="1" BorderColor="LightGray" BackgroundColor="#fafafa" Padding="15" CornerRadius="10" VerticalOptions="Start">
                         <VerticalStackLayout Spacing="10">
-
                             <Label FontSize="20" FontAttributes="Bold" Margin="0,0,0,5">
                                 <Label.FormattedText>
                                     <FormattedString>
