@@ -1,4 +1,5 @@
-﻿using Camping.App.Views;
+﻿using Camping.Core.Interfaces.Services;
+using Camping.Core.Models;
 using Camping.Core.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -9,8 +10,8 @@ namespace Camping.App.ViewModels;
 
 public partial class ToevoegenGastViewModel : ObservableObject
 {
-    private readonly ReserveringshouderValidatieService _validatieService;
-    private readonly ToevoegenGastService _toevoegenGastService;
+    private readonly IReserveringshouderValidatieService _validatieService;
+    private readonly IToevoegenGastService _toevoegenGastService;
 
     [ObservableProperty]
     private string _invoerNaam;
@@ -35,7 +36,7 @@ public partial class ToevoegenGastViewModel : ObservableObject
 
     [ObservableProperty]
     private DateTime _invoerLeeftijd = DateTime.Today;
-    public ToevoegenGastViewModel(ReserveringshouderValidatieService validatieService, ToevoegenGastService toevoegenGastService)
+    public ToevoegenGastViewModel(IReserveringshouderValidatieService validatieService, IToevoegenGastService toevoegenGastService)
     {
         _validatieService = validatieService;
         _toevoegenGastService = toevoegenGastService;
@@ -53,7 +54,8 @@ public partial class ToevoegenGastViewModel : ObservableObject
     [RelayCommand]
     private async Task ToevoegenGast()
     {
-        //Hier komt de functie om de query aan te roepen
+        //Doorvoeren van gast in systeem
+        
         await Shell.Current.GoToAsync("..");
     }
 

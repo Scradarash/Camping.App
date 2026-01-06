@@ -1,9 +1,10 @@
 ﻿using Camping.Core.Interfaces.Repositories;
+using Camping.Core.Interfaces.Services;
 using Camping.Core.Models;
 
 namespace Camping.Core.Services
 {
-    public class PrijsBerekenService
+    public class PrijsBerekenService : IPrijsBerekenService
     {
         private readonly IVoorzieningRepository _voorzieningRepository;
 

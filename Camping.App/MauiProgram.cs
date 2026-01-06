@@ -42,12 +42,12 @@ namespace Camping.App
             builder.Services.AddSingleton<IReservatieDataService, ReservatieDataService>();
             builder.Services.AddSingleton<IAccommodatieService, AccommodatieService>();
             builder.Services.AddSingleton<IReserveringService, ReserveringService>();
-            builder.Services.AddSingleton<ReserveringshouderValidatieService>();
+            builder.Services.AddSingleton<IReserveringshouderValidatieService, ReserveringshouderValidatieService>();
             builder.Services.AddSingleton<IFaciliteitService, FaciliteitService>();
             builder.Services.AddSingleton<MySqlDbExecutor>();
             builder.Services.AddSingleton<DbConnection>();
-            builder.Services.AddSingleton<PrijsBerekenService>();
-            builder.Services.AddSingleton<ToevoegenGastService>();
+            builder.Services.AddSingleton<IPrijsBerekenService, PrijsBerekenService>();
+            builder.Services.AddSingleton<IToevoegenGastService, ToevoegenGastService>();
 
             //ViewModels
             builder.Services.AddTransient<PlattegrondViewModel>();

@@ -17,8 +17,8 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
     private readonly IReserveringService _reserveringService;
 
     //Services voor validatie gegevens en prijsberekening
-    private readonly ReserveringshouderValidatieService _validatieService;
-    private readonly PrijsBerekenService _prijsBerekenService;
+    private readonly IReserveringshouderValidatieService _validatieService;
+    private readonly IPrijsBerekenService _prijsBerekenService;
 
     //Voor header met periode tekst en veldnaam
     [ObservableProperty]
@@ -113,8 +113,8 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
         IReservatieDataService reservatieDataService,
         IAccommodatieService accommodatieService,
         IReserveringService reserveringService,
-        ReserveringshouderValidatieService validatieService,
-        PrijsBerekenService prijsBerekenService)
+        IReserveringshouderValidatieService validatieService,
+        IPrijsBerekenService prijsBerekenService)
     {
         _reservatieDataService = reservatieDataService;
         _accommodatieService = accommodatieService;
@@ -435,7 +435,7 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
     {
         var gekozenStaanplaats = _reservatieDataService.SelectedStaanplaats!;
         int maxGasten = gekozenStaanplaats.AantalGasten;
-        int huidigeHoeveelheidGasten =  1; //Dit is dummydata, dit moet nog uit de database gehaald worden. Is puur gedaan om functionaliteit af te testen.
+        int huidigeHoeveelheidGasten = 1; //Dit is dummydata, dit moet nog uit de database gehaald worden. Is puur gedaan om functionaliteit af te testen.
         if (huidigeHoeveelheidGasten < maxGasten)
         {
             _gastToevoegenEnabled = true;
