@@ -14,7 +14,7 @@
         </VerticalStackLayout>
         <VerticalStackLayout Grid.Column="1" Padding="20" Spacing="20">
             <Button Text="X" Command="{Binding GoBackCommand}"/>
-            <Button Text="Toevoegen Gast" Command="{Binding ToevoegenGastCommand}"/>
+            <Button Text="Toevoegen Gast" Command="{Binding ToevoegenGastCommand}" IsEnabled="{Binding ToevoegenGastKnopEnabled}"/>
         </VerticalStackLayout>
     </Grid>
 </ContentPage>

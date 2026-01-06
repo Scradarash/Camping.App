@@ -6,7 +6,7 @@ namespace Camping.Core.Services
 {
     public class ReserveringshouderValidatieService
     {
-        // UC5.1 – Validatie naam
+        // UC5.1 – Validatie naam || UC6.2 Valideren naam gast
         public (bool IsValid, string Error) ValidateNaam(string naam)
         {
             if (string.IsNullOrWhiteSpace(naam))

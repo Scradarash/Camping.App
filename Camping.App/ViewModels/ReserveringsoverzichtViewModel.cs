@@ -89,6 +89,9 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
     [ObservableProperty]
     private bool kiestWater;
 
+    [ObservableProperty]
+    private bool _gastToevoegenEnabled;
+
     //Totaalprijs wordt herberekend bij keuzes doordat NotifyPropertyChangedFor de prijs tekst ook verandert
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(TotaalPrijsTekst))]
@@ -120,6 +123,8 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
         _prijsBerekenService = prijsBerekenService;
 
         LoadData();
+        //Deze lijn code wordt wellicht nog aangepast, afhankelijk van of de pagina deze waardes opnieuw initialiseert bij het laden van de pagina bij terugkomst. 
+        ValidateMaxGuests();
     }
 
     private void LoadData()
@@ -424,5 +429,22 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
     private async Task ToevoegenGast()
     {
         await Shell.Current.GoToAsync(nameof(ToevoegenGastView));
+    }
+
+    private bool ValidateMaxGuests()
+    {
+        //Eerst moet er een push gemaakt worden naar de database met de gasten. Deze info moet verwerkt worden, hierna kan deze functie gebouwd worden.
+        int maxGasten = _reservatieDataService.SelectedStaanplaats.AantalGasten;
+        int huidigeHoeveelheidGasten = 1; //Dit is dummydata, dit moet nog uit de database gehaald worden. Is puur gedaan om functionaliteit af te testen.
+        if (huidigeHoeveelheidGasten < maxGasten)
+        {
+            _gastToevoegenEnabled = true;
+            return true;
+        }
+        else
+        {
+            _gastToevoegenEnabled = false;
+            return false;
+        }
     }
 }

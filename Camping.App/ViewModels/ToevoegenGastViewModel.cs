@@ -30,11 +30,20 @@ public partial class ToevoegenGastViewModel : ObservableObject
     [ObservableProperty]
     private bool _zichtbaarheidMeldingLeeftijd;
 
+    private bool _naamAkkoord;
+    private bool _leeftijdAkkoord;
+
+    [ObservableProperty]
+    private bool _toevoegenGastKnopEnabled;
+
 
     public ToevoegenGastViewModel(ReserveringshouderValidatieService validatieService, ToevoegenGastService toevoegenGastService)
     {
         _validatieService = validatieService;
         _toevoegenGastService = toevoegenGastService;
+        _toevoegenGastKnopEnabled = false;
+        _naamAkkoord = false;
+        _leeftijdAkkoord = false;
     }
 
     [RelayCommand]
@@ -46,8 +55,7 @@ public partial class ToevoegenGastViewModel : ObservableObject
     [RelayCommand]
     private async Task ToevoegenGast()
     {
-
-        //Hier komen functies voor het checken van de status van de inputvelden
+        //Hier komt de functie om de query aan te roepen
         await Shell.Current.GoToAsync("..");
     }
 
@@ -56,14 +64,10 @@ public partial class ToevoegenGastViewModel : ObservableObject
     // Deze methode wordt automatisch aangeroepen bij elke verandering
     partial void OnInvoerNaamChanged(string value)
     {
-        // Jouw 'onchange' logica hier
-        System.Diagnostics.Debug.WriteLine($"Nieuwe waarde naam: {value}");
         HasValidNaam(value);
     }
     partial void OnInvoerLeeftijdChanged(string value)
     {
-        // Jouw 'onchange' logica hier
-        System.Diagnostics.Debug.WriteLine($"Nieuwe waarde leeftijd: {value}");
         HasValidLeeftijd(value);
     }
 
@@ -75,12 +79,29 @@ public partial class ToevoegenGastViewModel : ObservableObject
         {
             FoutMeldingNaam = result.Error;
             ZichtbaarheidMeldingNaam = true;
-            //Hier functie om knop inactief te maken
+            SetNameValidNegative(result);
+            CheckValidityInputs();
             return false;
         }
         ZichtbaarheidMeldingNaam = false;
         FoutMeldingNaam = string.Empty;
+        SetNameValidPositive();
+        CheckValidityInputs();
         return true;
+    }
+
+    private void SetNameValidPositive()
+    {
+        ZichtbaarheidMeldingNaam = false;
+        FoutMeldingNaam = string.Empty;
+        _naamAkkoord = true;
+    }
+
+    private void SetNameValidNegative((bool IsValid, string Error) result)
+    {
+        FoutMeldingNaam = result.Error;
+        ZichtbaarheidMeldingNaam = true;
+        _naamAkkoord = false;
     }
 
     private bool HasValidLeeftijd(String leeftijd)
@@ -89,14 +110,38 @@ public partial class ToevoegenGastViewModel : ObservableObject
 
         if (!result.IsValid)
         {
-            FoutMeldingLeeftijd = result.Error;
-            ZichtbaarheidMeldingLeeftijd = true;
-            //Hier functie om knop inactief te maken
+            SetValidLeeftijdNegative(result);
+            CheckValidityInputs();
             return false;
         }
+        SetValidLeeftijdPositive();
+        CheckValidityInputs();
+        return true;
+    }
+    private void SetValidLeeftijdPositive()
+    {
         ZichtbaarheidMeldingLeeftijd = false;
         FoutMeldingLeeftijd = string.Empty;
-        return true;
+        _leeftijdAkkoord = true;
+    }
+    private void SetValidLeeftijdNegative((bool IsValid, string Error) result)
+    {
+        FoutMeldingLeeftijd = result.Error;
+        ZichtbaarheidMeldingLeeftijd = true;
+        _leeftijdAkkoord = false;
+    }
+
+    private bool CheckValidityInputs()
+    {
+        ToevoegenGastKnopEnabled = _leeftijdAkkoord && _naamAkkoord;
+        if (ToevoegenGastKnopEnabled)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
 }

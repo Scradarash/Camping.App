@@ -99,7 +99,9 @@
                             TextColor="White"
                             FontAttributes="Bold"
                             HorizontalOptions="End"
-                            WidthRequest="200"/>
+                            WidthRequest="200"
+                            Margin="10"
+                            IsEnabled="{Binding GastToevoegenEnabled}"/>
                         </Grid>
                     </Frame>
 
