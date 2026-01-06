@@ -1,5 +1,6 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:sys="clr-namespace:System;assembly=netstandard"
              x:Class="Camping.App.Views.ToevoegenGastView"
              Title="Gast toevoegen">
 
@@ -9,8 +10,18 @@
             <Label Text="{Binding FoutMeldingNaam}" TextColor="Red" FontSize="12" IsVisible="{Binding ZichtbaarheidMeldingNaam}"/>
             <Entry Text="{Binding InvoerNaam}" Placeholder="Kees van der Speck" TextColor="Black" BackgroundColor="#f0f0f0"/>
             <Label Text="Leeftijd" FontSize="24" FontAttributes="Bold" />
-            <Label Text="{Binding FoutMeldingLeeftijd}" TextColor="Red" FontSize="12" IsVisible="{Binding ZichtbaarheidMeldingLeeftijd}"/>
-            <Entry Text="{Binding InvoerLeeftijd}" Placeholder="25" TextColor="Black" BackgroundColor="#f0f0f0"/>
+            <!-- Geboortedatum -->
+            <VerticalStackLayout Spacing="2">
+                <Label FontSize="16">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="Geboortedatum " TextColor="Black"/>
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+                <DatePicker Date="{Binding InvoerLeeftijd}" TextColor="Black" BackgroundColor="#f0f0f0" MaximumDate="{x:Static sys:DateTime.Today}"/>
+                <Label Text="{Binding FoutMeldingLeeftijd}" TextColor="Red" FontSize="12" IsVisible="{Binding ZichtbaarheidMeldingLeeftijd}"/>
+            </VerticalStackLayout>
         </VerticalStackLayout>
         <VerticalStackLayout Grid.Column="1" Padding="20" Spacing="20">
             <Button Text="X" Command="{Binding GoBackCommand}"/>

@@ -433,9 +433,9 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
 
     private bool ValidateMaxGuests()
     {
-        //Eerst moet er een push gemaakt worden naar de database met de gasten. Deze info moet verwerkt worden, hierna kan deze functie gebouwd worden.
-        int maxGasten = _reservatieDataService.SelectedStaanplaats.AantalGasten;
-        int huidigeHoeveelheidGasten = 1; //Dit is dummydata, dit moet nog uit de database gehaald worden. Is puur gedaan om functionaliteit af te testen.
+        var gekozenStaanplaats = _reservatieDataService.SelectedStaanplaats!;
+        int maxGasten = gekozenStaanplaats.AantalGasten;
+        int huidigeHoeveelheidGasten =  1; //Dit is dummydata, dit moet nog uit de database gehaald worden. Is puur gedaan om functionaliteit af te testen.
         if (huidigeHoeveelheidGasten < maxGasten)
         {
             _gastToevoegenEnabled = true;

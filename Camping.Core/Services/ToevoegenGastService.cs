@@ -27,5 +27,23 @@ namespace Camping.Core.Services
 
             return (true, string.Empty);
         }
+
+        public (bool IsValid, string Error) ValidateGeboortedatum(DateTime? geboortedatum)
+        {
+            if (geboortedatum == null)
+                return (false, "Geboortedatum is verplicht.");
+
+            var vandaag = DateTime.Today;
+            var leeftijd = vandaag.Year - geboortedatum.Value.Year;
+            if (geboortedatum.Value.Date > vandaag.AddYears(-leeftijd)) leeftijd--;
+
+            if (leeftijd < 0)
+                return (false, "De gast kan niet onder de 0 zijn.");
+
+            if (leeftijd > 120)
+                return (false, "Het is erg onwaarschijnlijk dat de gast zo oud is.");
+
+            return (true, string.Empty);
+        }
     }
 }

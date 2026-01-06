@@ -16,9 +16,6 @@ public partial class ToevoegenGastViewModel : ObservableObject
     private string _invoerNaam;
 
     [ObservableProperty]
-    private string _invoerLeeftijd;
-
-    [ObservableProperty]
     private string _foutMeldingNaam;
 
     [ObservableProperty]
@@ -36,7 +33,8 @@ public partial class ToevoegenGastViewModel : ObservableObject
     [ObservableProperty]
     private bool _toevoegenGastKnopEnabled;
 
-
+    [ObservableProperty]
+    private DateTime _invoerLeeftijd = DateTime.Today;
     public ToevoegenGastViewModel(ReserveringshouderValidatieService validatieService, ToevoegenGastService toevoegenGastService)
     {
         _validatieService = validatieService;
@@ -66,7 +64,7 @@ public partial class ToevoegenGastViewModel : ObservableObject
     {
         HasValidNaam(value);
     }
-    partial void OnInvoerLeeftijdChanged(string value)
+    partial void OnInvoerLeeftijdChanged(DateTime value)
     {
         HasValidLeeftijd(value);
     }
@@ -100,9 +98,9 @@ public partial class ToevoegenGastViewModel : ObservableObject
         _naamAkkoord = false;
     }
 
-    private bool HasValidLeeftijd(String leeftijd)
+    private bool HasValidLeeftijd(DateTime leeftijd)
     {
-        var result = _toevoegenGastService.ValidateLeeftijd(leeftijd);
+        var result = _toevoegenGastService.ValidateGeboortedatum(leeftijd);
 
         if (!result.IsValid)
         {
