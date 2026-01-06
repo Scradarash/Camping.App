@@ -9,5 +9,6 @@ public partial class AppShell : Shell
         InitializeComponent();
 
         Routing.RegisterRoute(nameof(ReserveringsoverzichtView), typeof(ReserveringsoverzichtView));
+        Routing.RegisterRoute(nameof(ToevoegenGastView), typeof(ToevoegenGastView));
     }
 }

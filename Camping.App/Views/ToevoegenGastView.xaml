@@ -1,0 +1,20 @@
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Camping.App.Views.ToevoegenGastView"
+             Title="Gast toevoegen">
+
+    <Grid ColumnDefinitions="*,*">
+        <VerticalStackLayout Grid.Column="0" Padding="20" Spacing="20">
+            <Label Text="Volledige naam" FontSize="24" FontAttributes="Bold" />
+            <Label Text="{Binding FoutMeldingNaam}" TextColor="Red" FontSize="12" IsVisible="{Binding ZichtbaarheidMeldingNaam}"/>
+            <Entry Text="{Binding InvoerNaam}" Placeholder="Kees van der Speck" TextColor="Black" BackgroundColor="#f0f0f0"/>
+            <Label Text="Leeftijd" FontSize="24" FontAttributes="Bold" />
+            <Label Text="{Binding FoutMeldingLeeftijd}" TextColor="Red" FontSize="12" IsVisible="{Binding ZichtbaarheidMeldingLeeftijd}"/>
+            <Entry Text="{Binding InvoerLeeftijd}" Placeholder="25" TextColor="Black" BackgroundColor="#f0f0f0"/>
+        </VerticalStackLayout>
+        <VerticalStackLayout Grid.Column="1" Padding="20" Spacing="20">
+            <Button Text="X" Command="{Binding GoBackCommand}"/>
+            <Button Text="Toevoegen Gast" Command="{Binding ToevoegenGastCommand}"/>
+        </VerticalStackLayout>
+    </Grid>
+</ContentPage>

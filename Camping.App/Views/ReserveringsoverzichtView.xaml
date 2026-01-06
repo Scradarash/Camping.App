@@ -16,8 +16,8 @@
         <ScrollView>
             <VerticalStackLayout Padding="20" Spacing="20">
 
-                <!-- GRID MET 2 KOLOMMEN -->
-                <Grid ColumnDefinitions="*,*" ColumnSpacing="20" RowDefinitions="Auto">
+                <!-- GRID MET 2 KOLOMMEN EN 2 RIJEN-->
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="20" RowDefinitions="*,*">
 
                     <!-- KOLOM 1: Gegevens Reserveringshouder -->
                     <Frame Grid.Column="0" BorderColor="LightGray" BackgroundColor="#fafafa" Padding="15" CornerRadius="10" VerticalOptions="Start">
@@ -83,6 +83,24 @@
                                 <Label Text="{Binding TelefoonnummerFoutmelding}" TextColor="Red" FontSize="12" IsVisible="{Binding IsTelefoonnummerFoutZichtbaar}" />
                             </VerticalStackLayout>
                         </VerticalStackLayout>
+                    </Frame>
+                    <!-- RIJ 2: Gasten toevoegen-->
+                    <Frame Grid.Column="0" Grid.Row="1" BorderColor="LightGray" BackgroundColor="#fafafa" Padding="15" CornerRadius="10" VerticalOptions="Start">
+                        <Grid ColumnDefinitions="*,*">
+                            <VerticalStackLayout Grid.Column="0" Spacing="0">
+                                <Label FontSize="16" Text="Gasten toevoegen" Margin="5"/>
+                                <Label FontSize="16" Text="Toegevoegde gasten" BackgroundColor="#f0f0f0"/>
+                                <Label Text="{Binding GastenLijst}" FontSize="Medium" BackgroundColor="#f0f0f0"/>
+                            </VerticalStackLayout>
+                            <Button Grid.Column="1"
+                            Text="+"
+                            Command="{Binding ToevoegenGastCommand}"
+                            BackgroundColor="#0a5dc9"
+                            TextColor="White"
+                            FontAttributes="Bold"
+                            HorizontalOptions="End"
+                            WidthRequest="200"/>
+                        </Grid>
                     </Frame>
 
                     <!-- KOLOM 2: Gegevens Reservering -->

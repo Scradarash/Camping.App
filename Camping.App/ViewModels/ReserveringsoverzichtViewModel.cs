@@ -1,4 +1,5 @@
-﻿using Camping.Core.Interfaces.Services;
+﻿using Camping.App.Views;
+using Camping.Core.Interfaces.Services;
 using Camping.Core.Models;
 using Camping.Core.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -417,5 +418,11 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
         TelefoonnummerFoutmelding = string.Empty;
         IsTelefoonnummerFoutZichtbaar = false;
         return true;
+    }
+
+    [RelayCommand]
+    private async Task ToevoegenGast()
+    {
+        await Shell.Current.GoToAsync(nameof(ToevoegenGastView));
     }
 }
