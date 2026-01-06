@@ -16,76 +16,96 @@
         <ScrollView>
             <VerticalStackLayout Padding="20" Spacing="20">
 
-                <!-- GRID MET 2 KOLOMMEN EN 2 RIJEN-->
+                <!-- GRID MET 2 KOLOMMEN EN 2 RIJEN -->
                 <Grid ColumnDefinitions="*,*" ColumnSpacing="20" RowDefinitions="*,*">
-                    <!-- KOLOM 1, RIJ 1: Gegevens Reserveringshouder -->
-                    <Frame Grid.Column="0" BorderColor="LightGray" BackgroundColor="#fafafa" Padding="15" CornerRadius="10" VerticalOptions="Start" Grid.Row="0">
-                        <VerticalStackLayout Spacing="10">
-                            <Label FontSize="20" FontAttributes="Bold" Margin="0,0,0,5">
-                                <Label.FormattedText>
-                                    <FormattedString>
-                                        <Span Text="Gegevens reserveringshouder " TextColor="Black" />
-                                        <Span Text="(vereist)" TextColor="Red" />
-                                    </FormattedString>
-                                </Label.FormattedText>
-                            </Label>
 
-                            <!-- Naam -->
-                            <VerticalStackLayout Spacing="2">
-                                <Label FontSize="16">
+                    <!-- KOLOM 1: Gegevens Reserveringshouder -->
+                    <Grid ColumnDefinitions="*" ColumnSpacing="20" RowSpacing="20" RowDefinitions="*,*">
+                        <Frame Grid.Column="0" Grid.Row="0" BorderColor="LightGray" BackgroundColor="#fafafa" Padding="15" CornerRadius="10" VerticalOptions="Start">
+                            <VerticalStackLayout Spacing="10">
+                                <Label FontSize="20" FontAttributes="Bold" Margin="0,0,0,5">
                                     <Label.FormattedText>
                                         <FormattedString>
-                                            <Span Text="Volledige naam " TextColor="Black" />
+                                            <Span Text="Gegevens reserveringshouder " TextColor="Black"/>
+                                            <Span Text="(vereist)" TextColor="Red"/>
                                         </FormattedString>
                                     </Label.FormattedText>
                                 </Label>
-                                <Entry Text="{Binding Naam}" Placeholder="Bijvoorbeeld: Jacob Arie Romkes" TextColor="Black" BackgroundColor="#f0f0f0" />
-                                <Label Text="{Binding NaamFoutmelding}" TextColor="Red" FontSize="12" IsVisible="{Binding IsNaamFoutZichtbaar}" />
-                            </VerticalStackLayout>
 
-                            <!-- Geboortedatum -->
-                            <VerticalStackLayout Spacing="2">
-                                <Label FontSize="16">
-                                    <Label.FormattedText>
-                                        <FormattedString>
-                                            <Span Text="Geboortedatum " TextColor="Black" />
-                                        </FormattedString>
-                                    </Label.FormattedText>
-                                </Label>
-                                <DatePicker Date="{Binding Geboortedatum}" TextColor="Black" BackgroundColor="#f0f0f0" MaximumDate="{x:Static sys:DateTime.Today}" />
-                                <Label Text="{Binding GeboortedatumFoutmelding}" TextColor="Red" FontSize="12" IsVisible="{Binding IsGeboortedatumFoutZichtbaar}" />
-                            </VerticalStackLayout>
+                                <!-- Naam -->
+                                <VerticalStackLayout Spacing="2">
+                                    <Label FontSize="16">
+                                        <Label.FormattedText>
+                                            <FormattedString>
+                                                <Span Text="Volledige naam " TextColor="Black"/>
+                                            </FormattedString>
+                                        </Label.FormattedText>
+                                    </Label>
+                                    <Entry Text="{Binding Naam}" Placeholder="Bijvoorbeeld: Jacob Arie Romkes" TextColor="Black" BackgroundColor="#f0f0f0"/>
+                                    <Label Text="{Binding NaamFoutmelding}" TextColor="Red" FontSize="12" IsVisible="{Binding IsNaamFoutZichtbaar}"/>
+                                </VerticalStackLayout>
 
-                            <!-- Email -->
-                            <VerticalStackLayout Spacing="2">
-                                <Label FontSize="16">
-                                    <Label.FormattedText>
-                                        <FormattedString>
-                                            <Span Text="E-mailadres " TextColor="Black" />
-                                        </FormattedString>
-                                    </Label.FormattedText>
-                                </Label>
-                                <Entry Text="{Binding Emailadres}" Keyboard="Email" Placeholder="bijvoorbeeld: jacobarieromkes@coolmail.com" TextColor="Black" BackgroundColor="#f0f0f0" />
-                                <Label Text="{Binding EmailadresFoutmelding}" TextColor="Red" FontSize="12" IsVisible="{Binding IsEmailadresFoutZichtbaar}" />
-                            </VerticalStackLayout>
+                                <!-- Geboortedatum -->
+                                <VerticalStackLayout Spacing="2">
+                                    <Label FontSize="16">
+                                        <Label.FormattedText>
+                                            <FormattedString>
+                                                <Span Text="Geboortedatum " TextColor="Black"/>
+                                            </FormattedString>
+                                        </Label.FormattedText>
+                                    </Label>
+                                    <DatePicker Date="{Binding Geboortedatum}" TextColor="Black" BackgroundColor="#f0f0f0" MaximumDate="{x:Static sys:DateTime.Today}"/>
+                                    <Label Text="{Binding GeboortedatumFoutmelding}" TextColor="Red" FontSize="12" IsVisible="{Binding IsGeboortedatumFoutZichtbaar}"/>
+                                </VerticalStackLayout>
 
-                            <!-- Telefoon -->
-                            <VerticalStackLayout Spacing="2">
-                                <Label FontSize="16">
-                                    <Label.FormattedText>
-                                        <FormattedString>
-                                            <Span Text="Telefoonnummer " TextColor="Black" />
-                                        </FormattedString>
-                                    </Label.FormattedText>
-                                </Label>
-                                <Entry Text="{Binding Telefoonnummer}" Keyboard="Telephone" Placeholder="0612345678" TextColor="Black" BackgroundColor="#f0f0f0" />
-                                <Label Text="{Binding TelefoonnummerFoutmelding}" TextColor="Red" FontSize="12" IsVisible="{Binding IsTelefoonnummerFoutZichtbaar}" />
-                            </VerticalStackLayout>
-                        </VerticalStackLayout>
-                        <!-- KOLOM 1, RIJ 2: Gasten toevoegen-->
-                    </Frame>
-                </Grid>
+                                <!-- Email -->
+                                <VerticalStackLayout Spacing="2">
+                                    <Label FontSize="16">
+                                        <Label.FormattedText>
+                                            <FormattedString>
+                                                <Span Text="E-mailadres " TextColor="Black"/>
+                                            </FormattedString>
+                                        </Label.FormattedText>
+                                    </Label>
+                                    <Entry Text="{Binding Emailadres}" Keyboard="Email" Placeholder="bijvoorbeeld: jacobarieromkes@coolmail.com" TextColor="Black" BackgroundColor="#f0f0f0"/>
+                                    <Label Text="{Binding EmailadresFoutmelding}" TextColor="Red" FontSize="12" IsVisible="{Binding IsEmailadresFoutZichtbaar}"/>
+                                </VerticalStackLayout>
 
+                                <!-- Telefoon -->
+                                <VerticalStackLayout Spacing="2">
+                                    <Label FontSize="16">
+                                        <Label.FormattedText>
+                                            <FormattedString>
+                                                <Span Text="Telefoonnummer " TextColor="Black"/>
+                                            </FormattedString>
+                                        </Label.FormattedText>
+                                    </Label>
+                                    <Entry Text="{Binding Telefoonnummer}" Keyboard="Telephone" Placeholder="0612345678" TextColor="Black" BackgroundColor="#f0f0f0"/>
+                                    <Label Text="{Binding TelefoonnummerFoutmelding}" TextColor="Red" FontSize="12" IsVisible="{Binding IsTelefoonnummerFoutZichtbaar}"/>
+                                </VerticalStackLayout>
+                            </VerticalStackLayout>
+                        </Frame>
+                        <Frame Grid.Column="0" Grid.Row="1" BorderColor="LightGray" BackgroundColor="#fafafa" Padding="15" CornerRadius="10" VerticalOptions="Start">
+                            <VerticalStackLayout>
+                                <VerticalStackLayout Grid.Column="0" Spacing="0">
+                                    <Label FontSize="16" Text="Gasten toevoegen" Margin="5"/>
+                                    <Label FontSize="16" Padding="10" Text="Toegevoegde gasten" BackgroundColor="#f0f0f0"/>
+                                    <Label Text="{Binding GastenLijst}" Padding="10" FontSize="Medium" BackgroundColor="#f0f0f0"/>
+                                </VerticalStackLayout>
+                                <Button Grid.Column="0"
+                                        Text="+"
+                                        Command="{Binding ToevoegenGastCommand}"
+                                        BackgroundColor="#0a5dc9"
+                                        TextColor="White"
+                                        FontAttributes="Bold"
+                                        HorizontalOptions="End"
+                                        WidthRequest="200"
+                                        Margin="10"
+                                        IsEnabled="{Binding GastToevoegenEnabled}"/>
+                            </VerticalStackLayout>
+                        </Frame>
+                    </Grid>
+                    
                     <!-- KOLOM 2: Gegevens Reservering -->
                     <Frame Grid.Column="1" BorderColor="LightGray" BackgroundColor="#fafafa" Padding="15" CornerRadius="10" VerticalOptions="Start">
                         <VerticalStackLayout Spacing="10">
