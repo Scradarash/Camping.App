@@ -9,7 +9,6 @@ namespace Camping.Core.Services
         private readonly IGastRepository _gastRepository;
         private readonly IReserveringRepository _reserveringRepository;
         private readonly IReservatieDataService _data;
-
         public ReserveringService(
             IGastRepository gastRepository,
             IReserveringRepository reserveringRepository,

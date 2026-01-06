@@ -8,8 +8,6 @@
         public int VeldId { get; set; }
         public int StaanplaatsId { get; set; }
         public int AccommodatieId { get; set; }
-
-        public List<Gast> Gasten { get; set; }
         public bool KiestStroom { get; set; }
         public bool KiestWater { get; set; }
         public decimal TotaalPrijs { get; set; }

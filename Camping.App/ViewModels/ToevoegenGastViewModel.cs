@@ -3,6 +3,7 @@ using Camping.Core.Models;
 using Camping.Core.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Maui.ApplicationModel.Communication;
 
 namespace Camping.App.ViewModels;
 
@@ -12,6 +13,7 @@ public partial class ToevoegenGastViewModel : ObservableObject
 {
     private readonly IReserveringshouderValidatieService _validatieService;
     private readonly IToevoegenGastService _toevoegenGastService;
+    private readonly IReservatieDataService _reservatieDataService;
 
     [ObservableProperty]
     private string _invoerNaam;
@@ -36,13 +38,14 @@ public partial class ToevoegenGastViewModel : ObservableObject
 
     [ObservableProperty]
     private DateTime _invoerLeeftijd = DateTime.Today;
-    public ToevoegenGastViewModel(IReserveringshouderValidatieService validatieService, IToevoegenGastService toevoegenGastService)
+    public ToevoegenGastViewModel(IReserveringshouderValidatieService validatieService, IToevoegenGastService toevoegenGastService, IReservatieDataService reservatieDataService)
     {
         _validatieService = validatieService;
         _toevoegenGastService = toevoegenGastService;
         _toevoegenGastKnopEnabled = false;
         _naamAkkoord = false;
         _leeftijdAkkoord = false;
+        _reservatieDataService = reservatieDataService;
     }
 
     [RelayCommand]
@@ -54,12 +57,26 @@ public partial class ToevoegenGastViewModel : ObservableObject
     [RelayCommand]
     private async Task ToevoegenGast()
     {
-        //Doorvoeren van gast in systeem
-        
+        gastOpGastenlijst(maakGast());
         await Shell.Current.GoToAsync("..");
     }
 
+    [RelayCommand]
+    public void gastOpGastenlijst(Gast gast)
+    {
+        _reservatieDataService.GastenLijst.Add(gast);     
+    }
 
+    private Gast maakGast()
+    {
+        var nieuweGast = new Gast
+        {
+            Naam = _invoerNaam,
+            Geboortedatum = DateOnly.FromDateTime(_invoerLeeftijd)
+        };
+        return nieuweGast;
+    }
+    
 
     // Deze methode wordt automatisch aangeroepen bij elke verandering
     partial void OnInvoerNaamChanged(string value)

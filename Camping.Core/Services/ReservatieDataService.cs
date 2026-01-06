@@ -1,5 +1,6 @@
 ﻿using Camping.Core.Models;
 using Camping.Core.Interfaces.Services;
+using System.Collections.ObjectModel;
 
 namespace Camping.Core.Services
 {
@@ -16,6 +17,13 @@ namespace Camping.Core.Services
         public string? Telefoonnummer { get; set; }
         public bool KiestStroom { get; set; }
         public bool KiestWater { get; set; }
+
+        public ObservableCollection<Gast> GastenLijst { get; set; }
+
+        public ReservatieDataService()
+        {
+            GastenLijst = new ObservableCollection<Gast>();
+        }
 
         //Nodig voor later controleren op correctheid datum
         public bool IsValidPeriod()

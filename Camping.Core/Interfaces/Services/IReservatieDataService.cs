@@ -1,4 +1,5 @@
 ﻿using Camping.Core.Models;
+using System.Collections.ObjectModel;
 
 namespace Camping.Core.Interfaces.Services
 {
@@ -19,5 +20,7 @@ namespace Camping.Core.Interfaces.Services
         //Tijdelijke opslag van keuzes in de Wizard
         bool KiestStroom { get; set; }
         bool KiestWater { get; set; }
+        ObservableCollection<Gast> GastenLijst { get; set;}
+
     }
 }

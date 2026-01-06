@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:Camping.App.ViewModels"
              xmlns:sys="clr-namespace:System;assembly=netstandard"
+             xmlns:models="clr-namespace:Camping.Core.Models;assembly=Camping.Core"
              x:Class="Camping.App.Views.ReserveringsoverzichtView"
              Title="Nieuwe Reservering">
 
@@ -90,7 +91,16 @@
                                 <VerticalStackLayout Grid.Column="0" Spacing="0">
                                     <Label FontSize="16" Text="Gasten toevoegen" Margin="5" TextColor="Black"/>
                                     <Label FontSize="16" Padding="10" Text="Toegevoegde gasten" BackgroundColor="#f0f0f0" TextColor="Black"/>
-                                    <Label Text="{Binding GastenLijst}" Padding="10" FontSize="Medium" BackgroundColor="#f0f0f0" TextColor="Black"/>
+                                    <CollectionView ItemsSource="{Binding GastenLijst}" Margin="10" SelectionMode="None">
+                                        <CollectionView.ItemTemplate>
+                                            <DataTemplate x:DataType="models:Gast">
+                                                <Grid ColumnDefinitions="*, Auto" Padding="5">
+                                                    <Label Text="{Binding Naam}" Grid.Column="0" FontSize="16" TextColor="Black"/>
+                                                    <Label Text="{Binding Geboortedatum, StringFormat='{0:dd-MM-yyyy}'}" Grid.Column="1" FontSize="16" TextColor="Gray"/>
+                                                </Grid>
+                                            </DataTemplate>
+                                        </CollectionView.ItemTemplate>
+                                    </CollectionView>
                                 </VerticalStackLayout>
                                 <Button Grid.Column="0"
                                         Text="+"

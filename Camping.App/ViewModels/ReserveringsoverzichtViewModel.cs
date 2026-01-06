@@ -109,6 +109,9 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
     //Lijst van de prijsregels (staanplaats, accommodatie,a voorzieningen)
     public ObservableCollection<PrijsInfo> PrijsInfo { get; } = new();
 
+    public ObservableCollection<Gast> GastenLijst => _reservatieDataService.GastenLijst;
+
+
     public ReserveringsoverzichtViewModel(
         IReservatieDataService reservatieDataService,
         IAccommodatieService accommodatieService,
@@ -121,9 +124,12 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
         _reserveringService = reserveringService;
         _validatieService = validatieService;
         _prijsBerekenService = prijsBerekenService;
-
         LoadData();
-        //Deze lijn code wordt wellicht nog aangepast, afhankelijk van of de pagina deze waardes opnieuw initialiseert bij het laden van de pagina bij terugkomst. 
+
+        GastenLijst.CollectionChanged += (s, e) =>
+        {
+            ValidateMaxGuests();
+        };
         ValidateMaxGuests();
     }
 
@@ -435,7 +441,7 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
     {
         var gekozenStaanplaats = _reservatieDataService.SelectedStaanplaats!;
         int maxGasten = gekozenStaanplaats.AantalGasten;
-        int huidigeHoeveelheidGasten = 1; //Dit is dummydata, dit moet nog uit de database gehaald worden. Is puur gedaan om functionaliteit af te testen.
+        int huidigeHoeveelheidGasten = (_reservatieDataService.GastenLijst.Count)+1;
         if (huidigeHoeveelheidGasten < maxGasten)
         {
             _gastToevoegenEnabled = true;
