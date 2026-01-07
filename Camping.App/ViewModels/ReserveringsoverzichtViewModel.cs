@@ -260,7 +260,6 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
         foreach (var regel in regels)
             PrijsInfo.Add(regel);
 
-        //Totaalprijs bijwerken
         TotaalPrijs = totaal;
     }
 
@@ -315,7 +314,7 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
         RecalculatePrijs();
     }
 
-    private async Task SaveReserveringAndFinishAsync() //TODO Kan nog gesplitst worden in reservering maken en navigatie + foutmelding methodes apart (hoeft niet want is al best clean)
+    private async Task SaveReserveringAndFinishAsync() 
     {
         //Reservering maken
         await _reserveringService.MaakReserveringAsync(

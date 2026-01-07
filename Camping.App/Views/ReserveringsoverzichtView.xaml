@@ -9,24 +9,21 @@
     
     <!-- Titel met knoppen om terug te gaan -->
     <Shell.TitleView>
-        <Grid ColumnDefinitions="*,*,*"
-              VerticalOptions="Center">
-            <Grid ColumnDefinitions="Auto"
-                  VerticalOptions="Center"
-                  Grid.Column="0">
-                <Button Text="Terug"
-                        Command="{Binding GoBackCommand}" 
-                        Grid.Column="0"/>
-            </Grid>
-            <Grid ColumnDefinitions="*"
-                  VerticalOptions="Center"
-                  Grid.Column="1">
-                <Label Text="Reserveringsoverzicht"
-                       FontSize="18"
-                       FontAttributes="Bold"
-                       VerticalOptions="Center"
-                       Grid.Column="3"/>
-            </Grid>
+        <Grid HorizontalOptions="Fill" VerticalOptions="Center">
+            <Label Text="Reserveringsoverzicht"
+               FontSize="18"
+               FontAttributes="Bold"
+               TextColor="Black"
+               HorizontalOptions="Center"
+               VerticalOptions="Center"
+               HorizontalTextAlignment="Center"/>
+
+            <!-- De Knop: staat links uitgelijnd bovenop de grid -->
+            <Button Text="Terug"
+                Command="{Binding GoBackCommand}" 
+                HorizontalOptions="Start"
+                VerticalOptions="Center"
+                Margin="5,0,0,0" />
         </Grid>
     </Shell.TitleView>
 
