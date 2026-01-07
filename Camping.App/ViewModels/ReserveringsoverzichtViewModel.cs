@@ -109,10 +109,8 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
     //Lijst van de prijsregels (staanplaats, accommodatie,a voorzieningen)
     public ObservableCollection<PrijsInfo> PrijsInfo { get; } = new();
 
-
     //Staat hier om te zorgen dat UI automatisch update.
     public ObservableCollection<Gast> GastenLijst => _reservatieDataService.GastenLijst;
-
 
     public ReserveringsoverzichtViewModel(
         IReservatieDataService reservatieDataService,
@@ -183,7 +181,6 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
         KiestWater = _reservatieDataService.KiestWater && IsWaterMogelijk;
     }
 
-
     private void LoadAccommodaties()
     {
         var staanplaatsId = GetSelectedStaanplaatsId();
@@ -219,7 +216,6 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
             ? Accommodaties.FirstOrDefault(a => a.Id == eerdereKeuze.Id)
             : null;
     }
-
 
     private void LoadReserveringshouderDefaults()
     {
@@ -342,7 +338,6 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
             "OK");
     }
 
-
     private Task ShowSaveErrorAsync(Exception ex)
     {
         return Application.Current.MainPage.DisplayAlert(
@@ -350,7 +345,6 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
             $"Er ging iets mis bij het opslaan van de reservering:\n{ex.Message}",
             "OK");
     }
-
 
     private void SaveWizardData()
     {
@@ -455,6 +449,15 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
         {
             _gastToevoegenEnabled = false;
             return false;
+        }
+    }
+
+    [RelayCommand]
+    private void VerwijderGast(Gast gast)
+    {
+        if (gast != null && GastenLijst.Contains(gast))
+        {
+            GastenLijst.Remove(gast);
         }
     }
 
