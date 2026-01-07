@@ -109,6 +109,8 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
     //Lijst van de prijsregels (staanplaats, accommodatie,a voorzieningen)
     public ObservableCollection<PrijsInfo> PrijsInfo { get; } = new();
 
+
+    //Staat hier om te zorgen dat UI automatisch update.
     public ObservableCollection<Gast> GastenLijst => _reservatieDataService.GastenLijst;
 
 
@@ -364,6 +366,7 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
     [RelayCommand]
     private async Task GoBack()
     {
+        ResetStateVM();
         await Shell.Current.GoToAsync("..");
     }
 
@@ -452,5 +455,10 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
             _gastToevoegenEnabled = false;
             return false;
         }
+    }
+
+    public void ResetStateVM()
+    {
+        _reservatieDataService.ResetState();
     }
 }

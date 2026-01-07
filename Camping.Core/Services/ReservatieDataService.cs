@@ -56,5 +56,12 @@ namespace Camping.Core.Services
             // Als alle checks slagen, empty string, dus geen foutmelding
             return string.Empty;
         }
+
+        public void ResetState()
+        {
+            GastenLijst.Clear();
+        }
+
     }
+
 }

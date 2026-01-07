@@ -5,7 +5,28 @@
              xmlns:sys="clr-namespace:System;assembly=netstandard"
              xmlns:models="clr-namespace:Camping.Core.Models;assembly=Camping.Core"
              x:Class="Camping.App.Views.ReserveringsoverzichtView"
-             Title="Nieuwe Reservering">
+             xmlns:Shell="http://schemas.microsoft.com/dotnet/2021/maui/shell">
+    
+    <!-- Titel met knoppen om terug te gaan -->
+    <Shell.TitleView>
+        <Grid ColumnDefinitions="*,*,*"
+              VerticalOptions="Center">
+            <Grid ColumnDefinitions="Auto"
+                  VerticalOptions="Center"
+                  Grid.Column="0">
+                <Button Text="Terug"
+                        Command="{Binding GoBackCommand}" 
+                        Grid.Column="0"/>
+            </Grid>S
+            Grid.Column="1">
+                <Label Text="Reserveringsoverzicht"
+                       FontSize="18"
+                       FontAttributes="Bold"
+                       VerticalOptions="Center"
+                       Grid.Column="3"/>
+            </Grid>
+        </Grid>
+    </Shell.TitleView>
 
     <Grid HorizontalOptions="Fill" VerticalOptions="Fill">
         <!-- Achtergrond afbeelding -->

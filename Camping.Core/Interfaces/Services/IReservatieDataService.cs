@@ -21,6 +21,8 @@ namespace Camping.Core.Interfaces.Services
         bool KiestStroom { get; set; }
         bool KiestWater { get; set; }
         ObservableCollection<Gast> GastenLijst { get; set;}
+        public void ResetState();
+
 
     }
 }
