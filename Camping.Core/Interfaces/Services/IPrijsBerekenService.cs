@@ -17,6 +17,7 @@ namespace Camping.Core.Interfaces.Services
             bool kiestStroom,
             bool stroomMogelijk,
             bool kiestWater,
-            bool waterMogelijk);
+            bool waterMogelijk,
+            int hoeveelheidGasten);
     }
 }

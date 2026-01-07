@@ -17,8 +17,10 @@
                 <Button Text="Terug"
                         Command="{Binding GoBackCommand}" 
                         Grid.Column="0"/>
-            </Grid>S
-            Grid.Column="1">
+            </Grid>
+            <Grid ColumnDefinitions="*"
+                  VerticalOptions="Center"
+                  Grid.Column="1">
                 <Label Text="Reserveringsoverzicht"
                        FontSize="18"
                        FontAttributes="Bold"

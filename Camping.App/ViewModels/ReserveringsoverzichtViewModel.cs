@@ -131,6 +131,7 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
         GastenLijst.CollectionChanged += (s, e) =>
         {
             ValidateMaxGuests();
+            RecalculatePrijs();
         };
         ValidateMaxGuests();
     }
@@ -141,7 +142,6 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
         LoadStaanplaatsInfo();
         LoadAccommodaties();
         LoadReserveringshouderDefaults();
-
         RecalculatePrijs();
     }
 
@@ -251,7 +251,9 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
             KiestStroom,
             IsStroomMogelijk,
             KiestWater,
-            IsWaterMogelijk);
+            IsWaterMogelijk,
+            GastenLijst.Count());
+
 
         //Prijs lijst per regel bijwerken
         PrijsInfo.Clear();
