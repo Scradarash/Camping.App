@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - develop
+      - devHerkansing
       - release
       - feature/*
       - hotfix/*
@@ -13,6 +14,7 @@ on:
       - main
       - release
       - develop
+      - devHerkansing
       - feature/*
       - hotfix/*
 
