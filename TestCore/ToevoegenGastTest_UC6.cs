@@ -1,10 +1,11 @@
-﻿using Camping.Core.Services;
-using Camping.Core.Interfaces.Repositories;
-using Camping.Core.Models;
+﻿using System;
+using NUnit.Framework;
+using Camping.Core.Services;
 
 namespace TestCore
 {
-    //Unit tests voor UC6 – Toevoegen gasten aan reservering
+    // Unit tests voor UC6 – Toevoegen gasten aan reservering
+    [TestFixture]
     public class ToevoegenGastTest_UC6
     {
         private ToevoegenGastService _service;
@@ -19,13 +20,10 @@ namespace TestCore
         [Test]
         public void ValidateGeboortedatum_ReturnsError_WhenAgeAbove120()
         {
-            // Arrange
             var geboortedatum = DateTime.Today.AddYears(-121);
 
-            // Act
             var result = _service.ValidateGeboortedatum(geboortedatum);
 
-            // Assert
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(
                 "Het is erg onwaarschijnlijk dat de gast zo oud is.",
@@ -37,13 +35,10 @@ namespace TestCore
         [Test]
         public void ValidateGeboortedatum_ReturnsError_WhenDateIsInFuture()
         {
-            // Arrange
             var geboortedatum = DateTime.Today.AddDays(1);
 
-            // Act
             var result = _service.ValidateGeboortedatum(geboortedatum);
 
-            // Assert
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(
                 "De gast kan niet onder de 0 zijn.",
@@ -54,48 +49,35 @@ namespace TestCore
         [Test]
         public void ValidateGeboortedatum_ValidAge_ReturnsValid()
         {
-            // Arrange
             var geboortedatum = DateTime.Today.AddYears(-30);
 
-            // Act
             var result = _service.ValidateGeboortedatum(geboortedatum);
 
-            // Assert
             Assert.IsTrue(result.IsValid);
             Assert.AreEqual(string.Empty, result.Error);
         }
-
 
         // TC6-02 – Max aantal gasten bereikt
         [Test]
         public void ValidateMaxGuests_ReturnsFalse_WhenMaxReached()
         {
-            // Arrange
             int maxGasten = 4;
             int huidigeGasten = 4;
 
-            // Act
             var result = _service.ValidateMaxGuests(maxGasten, huidigeGasten);
 
-            // Assert
             Assert.IsFalse(result);
         }
 
         [Test]
         public void ValidateMaxGuests_ReturnsTrue_WhenBelowMax()
         {
-            // Arrange
             int maxGasten = 4;
             int huidigeGasten = 3;
 
-            // Act
             var result = _service.ValidateMaxGuests(maxGasten, huidigeGasten);
 
-            // Assert
             Assert.IsTrue(result);
         }
-    }
-}
-
     }
 }
