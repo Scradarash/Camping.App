@@ -43,10 +43,8 @@ public partial class VeldDetailView : ContentPage
         PlekkenOverlay.WidthRequest = imageWidth;
         PlekkenOverlay.HeightRequest = imageHeight;
 
-        // Aantal plekken tellen
         int count = staanplaatsen.Count;
 
-        // Dimensies berekenen
         (int columns, int rows) = CalculateGridDimensions(count);
 
         // Hoe groot 1 cel (dus 1 staanplaats knop) is

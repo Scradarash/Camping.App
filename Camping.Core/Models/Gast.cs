@@ -6,8 +6,10 @@
         public int Id {get; set;}   
         public required string Naam { get; set; }
         public required DateOnly Geboortedatum { get; set; }
-        public required string Email { get; set; }
-        public required string Telefoon { get; set; }
+
+        //Niet required zodat Gast ook gebruikt kan worden voor een gast die geen reserveringshouder is.
+        public string Email { get; set; }
+        public string Telefoon { get; set; }
 
     }
 }

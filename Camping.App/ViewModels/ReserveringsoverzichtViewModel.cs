@@ -1,4 +1,5 @@
-﻿using Camping.Core.Interfaces.Services;
+﻿using Camping.App.Views;
+using Camping.Core.Interfaces.Services;
 using Camping.Core.Models;
 using Camping.Core.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -16,8 +17,9 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
     private readonly IReserveringService _reserveringService;
 
     //Services voor validatie gegevens en prijsberekening
-    private readonly ReserveringshouderValidatieService _validatieService;
-    private readonly PrijsBerekenService _prijsBerekenService;
+    private readonly IReserveringshouderValidatieService _validatieService;
+    private readonly IPrijsBerekenService _prijsBerekenService;
+    private readonly IToevoegenGastService _toevoegenGastService;
 
     //Voor header met periode tekst en veldnaam
     [ObservableProperty]
@@ -88,6 +90,9 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
     [ObservableProperty]
     private bool kiestWater;
 
+    [ObservableProperty]
+    private bool _gastToevoegenEnabled;
+
     //Totaalprijs wordt herberekend bij keuzes doordat NotifyPropertyChangedFor de prijs tekst ook verandert
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(TotaalPrijsTekst))]
@@ -105,20 +110,32 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
     //Lijst van de prijsregels (staanplaats, accommodatie,a voorzieningen)
     public ObservableCollection<PrijsInfo> PrijsInfo { get; } = new();
 
+    //Staat hier om te zorgen dat UI automatisch update.
+    public ObservableCollection<Gast> GastenLijst => _reservatieDataService.GastenLijst;
+
     public ReserveringsoverzichtViewModel(
         IReservatieDataService reservatieDataService,
         IAccommodatieService accommodatieService,
         IReserveringService reserveringService,
-        ReserveringshouderValidatieService validatieService,
-        PrijsBerekenService prijsBerekenService)
+        IReserveringshouderValidatieService validatieService,
+        IPrijsBerekenService prijsBerekenService,
+        IToevoegenGastService toevoegenGastService)
     {
         _reservatieDataService = reservatieDataService;
         _accommodatieService = accommodatieService;
         _reserveringService = reserveringService;
         _validatieService = validatieService;
         _prijsBerekenService = prijsBerekenService;
-
+        _toevoegenGastService = toevoegenGastService;
         LoadData();
+
+        GastenLijst.CollectionChanged += (s, e) =>
+        {
+            ValidateMaxGuests();
+            RecalculatePrijs();
+        };
+        ValidateMaxGuests();
+        _toevoegenGastService = toevoegenGastService;
     }
 
     private void LoadData()
@@ -127,7 +144,6 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
         LoadStaanplaatsInfo();
         LoadAccommodaties();
         LoadReserveringshouderDefaults();
-
         RecalculatePrijs();
     }
 
@@ -169,7 +185,6 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
         KiestWater = _reservatieDataService.KiestWater && IsWaterMogelijk;
     }
 
-
     private void LoadAccommodaties()
     {
         var staanplaatsId = GetSelectedStaanplaatsId();
@@ -206,7 +221,6 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
             : null;
     }
 
-
     private void LoadReserveringshouderDefaults()
     {
         //Gegevens bewaren in de velden (als gebruiker terug/vooruit navigeert tijdens reserveren of foutmelding ziet)
@@ -237,14 +251,15 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
             KiestStroom,
             IsStroomMogelijk,
             KiestWater,
-            IsWaterMogelijk);
+            IsWaterMogelijk,
+            GastenLijst.Count());
+
 
         //Prijs lijst per regel bijwerken
         PrijsInfo.Clear();
         foreach (var regel in regels)
             PrijsInfo.Add(regel);
 
-        //Totaalprijs bijwerken
         TotaalPrijs = totaal;
     }
 
@@ -299,7 +314,7 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
         RecalculatePrijs();
     }
 
-    private async Task SaveReserveringAndFinishAsync() //TODO Kan nog gesplitst worden in reservering maken en navigatie + foutmelding methodes apart (hoeft niet want is al best clean)
+    private async Task SaveReserveringAndFinishAsync()
     {
         //Reservering maken
         await _reserveringService.MaakReserveringAsync(
@@ -310,7 +325,8 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
             SelectedAccommodatie!,
             KiestStroom,
             KiestWater,
-            TotaalPrijs);
+            TotaalPrijs,
+            GastenLijst);
 
         //Feedback naar gebruiker
         await SuccessMessageReservatie();
@@ -327,7 +343,6 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
             "OK");
     }
 
-
     private Task ShowSaveErrorAsync(Exception ex)
     {
         return Application.Current.MainPage.DisplayAlert(
@@ -335,7 +350,6 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
             $"Er ging iets mis bij het opslaan van de reservering:\n{ex.Message}",
             "OK");
     }
-
 
     private void SaveWizardData()
     {
@@ -352,6 +366,7 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
     [RelayCommand]
     private async Task GoBack()
     {
+        ResetStateVM();
         await Shell.Current.GoToAsync("..");
     }
 
@@ -417,5 +432,39 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
         TelefoonnummerFoutmelding = string.Empty;
         IsTelefoonnummerFoutZichtbaar = false;
         return true;
+    }
+
+    [RelayCommand]
+    private async Task ToevoegenGast()
+    {
+        await Shell.Current.GoToAsync(nameof(ToevoegenGastView));
+    }
+
+    private void ValidateMaxGuests()
+    {
+        int maxGasten = _reservatieDataService.SelectedStaanplaats.AantalGasten;
+        int huidigeHoeveelheidGasten = (_reservatieDataService.GastenLijst.Count) + 1;
+        if (_toevoegenGastService.ValidateMaxGuests(maxGasten, huidigeHoeveelheidGasten)){
+            GastToevoegenEnabled = true;
+        }
+        else
+        {
+            GastToevoegenEnabled = false;
+        }
+    }
+
+    [RelayCommand]
+    private void VerwijderGast(Gast gast)
+    {
+        if (gast != null && GastenLijst.Contains(gast))
+        {
+            GastenLijst.Remove(gast);
+            ValidateMaxGuests();
+        }
+    }
+
+    public void ResetStateVM()
+    {
+        _reservatieDataService.ResetState();
     }
 }
