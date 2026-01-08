@@ -1,12 +1,13 @@
-﻿using System;
+﻿using Camping.Core.Interfaces.Services;
+using System;
 using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace Camping.Core.Services
 {
-    public class ReserveringshouderValidatieService
+    public class ReserveringshouderValidatieService : IReserveringshouderValidatieService
     {
-        // UC5.1 – Validatie naam
+        // UC5.1 – Validatie naam || UC6.2 Valideren naam gast
         public (bool IsValid, string Error) ValidateNaam(string naam)
         {
             if (string.IsNullOrWhiteSpace(naam))

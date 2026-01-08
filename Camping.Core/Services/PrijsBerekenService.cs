@@ -1,9 +1,10 @@
 ﻿using Camping.Core.Interfaces.Repositories;
+using Camping.Core.Interfaces.Services;
 using Camping.Core.Models;
 
 namespace Camping.Core.Services
 {
-    public class PrijsBerekenService
+    public class PrijsBerekenService : IPrijsBerekenService
     {
         private readonly IVoorzieningRepository _voorzieningRepository;
 
@@ -18,6 +19,7 @@ namespace Camping.Core.Services
 
         public decimal StroomPrijsPerNacht => _stroomPrijsCache ??= GetVoorzieningPrijsOfDefault("Stroom");
         public decimal WaterPrijsPerNacht => _waterPrijsCache ??= GetVoorzieningPrijsOfDefault("Water");
+        public int GastPrijsPerNacht = 25;
 
         private decimal GetVoorzieningPrijsOfDefault(string naam)
         {
@@ -35,7 +37,6 @@ namespace Camping.Core.Services
             if (nachten < 1) nachten = 1;
             return nachten;
         }
-
         public (decimal Totaal, List<PrijsInfo> Regels) Bereken(
             DateTime start,
             DateTime end,
@@ -44,7 +45,8 @@ namespace Camping.Core.Services
             bool kiestStroom,
             bool stroomMogelijk,
             bool kiestWater,
-            bool waterMogelijk)
+            bool waterMogelijk,
+            int hoeveelheidGasten)
         {
             int nachten = BerekenNachten(start, end);
 
@@ -84,6 +86,16 @@ namespace Camping.Core.Services
                     Omschrijving = $"Voorziening: Water (€ {WaterPrijsPerNacht:F2}) x {nachten} nacht(en)",
                     Bedrag = waterTotaal
                 });
+            }
+
+            if (hoeveelheidGasten > 0)
+            {
+                regels.Add(new PrijsInfo
+                {
+                    Omschrijving = $"Kosten per gast: (€ {GastPrijsPerNacht:F2}) x {hoeveelheidGasten} gast(en)",
+                    Bedrag = hoeveelheidGasten * GastPrijsPerNacht
+                });
+
             }
 
             //Totaalprijs berekenen

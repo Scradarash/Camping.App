@@ -38,6 +38,7 @@ namespace TestCore
             bool stroomMogelijk = true;
             bool kiestWater = true;
             bool waterMogelijk = true;
+            int totaalGasten = 0;
 
             //Act
             var (totaal, regels) = _service.Bereken(
@@ -48,7 +49,8 @@ namespace TestCore
                 kiestStroom,
                 stroomMogelijk,
                 kiestWater,
-                waterMogelijk);
+                waterMogelijk,
+                totaalGasten);
 
             //Assert
             //3 * (10 + 5 + 1.50 + 2.00) = 55.50
@@ -81,6 +83,8 @@ namespace TestCore
 
             decimal staanplaatsPrijsPerNacht = 12.34m;
             decimal accommodatiePrijsPerNacht = 0.00m;
+            int totaalGasten = 0;
+
 
             //Act
             var (_, regels) = _service.Bereken(
@@ -91,7 +95,8 @@ namespace TestCore
                 kiestStroom: false,
                 stroomMogelijk: true,
                 kiestWater: false,
-                waterMogelijk: true);
+                waterMogelijk: true,
+                totaalGasten);
 
             // Assert: minimaal 2 regels (staanplaats + accommodatie)
             Assert.AreEqual(2, regels.Count);
@@ -120,6 +125,8 @@ namespace TestCore
 
             decimal staanplaatsPrijsPerNacht = 20.00m;
             decimal accommodatiePrijsPerNacht = 10.00m;
+            int totaalGasten = 0;
+
 
             // Act (stroom gekozen maar niet mogelijk)
             var (totaal, regels) = _service.Bereken(
@@ -130,7 +137,8 @@ namespace TestCore
                 kiestStroom: true,
                 stroomMogelijk: false,
                 kiestWater: false,
-                waterMogelijk: true);
+                waterMogelijk: true,
+                totaalGasten);
 
             //Assert
             //Alleen staanplaats + accommodatie: 2*(20 + 10) = 60
@@ -154,6 +162,8 @@ namespace TestCore
 
             decimal staanplaatsPrijsPerNacht = 10.00m;
             decimal accommodatiePrijsPerNacht = 0.00m;
+            int totaalGasten = 0;
+
 
             //Act (stroom gekozen + mogelijk, maar prijs ontbreekt)
             var (totaal, regels) = _service.Bereken(
@@ -164,7 +174,8 @@ namespace TestCore
                 kiestStroom: true,
                 stroomMogelijk: true,
                 kiestWater: false,
-                waterMogelijk: true);
+                waterMogelijk: true,
+                totaalGasten);
 
             //Assert
             //totaal = 2 * 10 + 2 * 0 + 2 * 0 = 20
