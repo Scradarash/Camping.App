@@ -46,6 +46,9 @@ public partial class ToevoegenGastViewModel : ObservableObject
         _naamAkkoord = false;
         _leeftijdAkkoord = false;
         _reservatieDataService = reservatieDataService;
+        HasValidNaam("");
+        HasValidLeeftijd(null);
+
     }
 
     [RelayCommand]
@@ -57,7 +60,7 @@ public partial class ToevoegenGastViewModel : ObservableObject
     [RelayCommand]
     private async Task ToevoegenGast()
     {
-        gastOpGastenlijst(maakGast());
+        gastOpGastenlijst(_toevoegenGastService.maakGast(_invoerNaam, _invoerLeeftijd));
         await Shell.Current.GoToAsync("..");
     }
 
@@ -67,16 +70,6 @@ public partial class ToevoegenGastViewModel : ObservableObject
         _reservatieDataService.GastenLijst.Add(gast);     
     }
 
-    private Gast maakGast()
-    {
-        var nieuweGast = new Gast
-        {
-            Naam = _invoerNaam,
-            Geboortedatum = DateOnly.FromDateTime(_invoerLeeftijd)
-        };
-        return nieuweGast;
-    }
-    
 
     // Deze methode wordt automatisch aangeroepen bij elke verandering
     partial void OnInvoerNaamChanged(string value)
@@ -117,7 +110,7 @@ public partial class ToevoegenGastViewModel : ObservableObject
         _naamAkkoord = false;
     }
 
-    private bool HasValidLeeftijd(DateTime leeftijd)
+    private bool HasValidLeeftijd(DateTime? leeftijd)
     {
         var result = _toevoegenGastService.ValidateGeboortedatum(leeftijd);
 

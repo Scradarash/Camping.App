@@ -19,6 +19,7 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
     //Services voor validatie gegevens en prijsberekening
     private readonly IReserveringshouderValidatieService _validatieService;
     private readonly IPrijsBerekenService _prijsBerekenService;
+    private readonly IToevoegenGastService _toevoegenGastService;
 
     //Voor header met periode tekst en veldnaam
     [ObservableProperty]
@@ -117,13 +118,15 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
         IAccommodatieService accommodatieService,
         IReserveringService reserveringService,
         IReserveringshouderValidatieService validatieService,
-        IPrijsBerekenService prijsBerekenService)
+        IPrijsBerekenService prijsBerekenService,
+        IToevoegenGastService toevoegenGastService)
     {
         _reservatieDataService = reservatieDataService;
         _accommodatieService = accommodatieService;
         _reserveringService = reserveringService;
         _validatieService = validatieService;
         _prijsBerekenService = prijsBerekenService;
+        _toevoegenGastService = toevoegenGastService;
         LoadData();
 
         GastenLijst.CollectionChanged += (s, e) =>
@@ -132,6 +135,7 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
             RecalculatePrijs();
         };
         ValidateMaxGuests();
+        _toevoegenGastService = toevoegenGastService;
     }
 
     private void LoadData()
@@ -435,20 +439,16 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
         await Shell.Current.GoToAsync(nameof(ToevoegenGastView));
     }
 
-    private bool ValidateMaxGuests()
+    private void ValidateMaxGuests()
     {
-        var gekozenStaanplaats = _reservatieDataService.SelectedStaanplaats!;
-        int maxGasten = gekozenStaanplaats.AantalGasten;
-        int huidigeHoeveelheidGasten = (_reservatieDataService.GastenLijst.Count)+1;
-        if (huidigeHoeveelheidGasten < maxGasten)
-        {
+        int maxGasten = _reservatieDataService.SelectedStaanplaats.AantalGasten;
+        int huidigeHoeveelheidGasten = (_reservatieDataService.GastenLijst.Count) + 1;
+        if (_toevoegenGastService.ValidateMaxGuests(maxGasten, huidigeHoeveelheidGasten)){
             GastToevoegenEnabled = true;
-            return true;
         }
         else
         {
             GastToevoegenEnabled = false;
-            return false;
         }
     }
 

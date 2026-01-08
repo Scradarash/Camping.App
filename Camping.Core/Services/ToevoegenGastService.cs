@@ -1,4 +1,5 @@
 ﻿using Camping.Core.Interfaces.Services;
+using Camping.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,6 +45,28 @@ namespace Camping.Core.Services
                 return (false, "Het is erg onwaarschijnlijk dat de gast zo oud is.");
 
             return (true, string.Empty);
+        }
+
+        public Gast maakGast(string naam, DateTime invoerleeftijd)
+        {
+            var nieuweGast = new Gast
+            {
+                Naam = naam,
+                Geboortedatum = DateOnly.FromDateTime(invoerleeftijd)
+            };
+            return nieuweGast;
+        }
+
+        public bool ValidateMaxGuests(int maxGasten, int hoeveelheidGasten)
+        {
+            if (hoeveelheidGasten < maxGasten)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }

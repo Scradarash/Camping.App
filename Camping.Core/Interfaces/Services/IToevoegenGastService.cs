@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Camping.Core.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,5 +11,7 @@ namespace Camping.Core.Interfaces.Services
     {
         public (bool IsValid, string Error) ValidateLeeftijd(string leeftijd);
         public (bool IsValid, string Error) ValidateGeboortedatum(DateTime? geboortedatum);
+        public Gast maakGast(string naam, DateTime invoerleeftijd);
+        public bool ValidateMaxGuests(int maxGasten, int hoeveelheidGasten);
     }
 }
