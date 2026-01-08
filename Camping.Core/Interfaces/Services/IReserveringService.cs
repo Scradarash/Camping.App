@@ -1,4 +1,5 @@
 ﻿using Camping.Core.Models;
+using System.Collections.ObjectModel;
 
 namespace Camping.Core.Interfaces.Services
 {
@@ -12,6 +13,8 @@ namespace Camping.Core.Interfaces.Services
             Accommodatie accommodatie,
             bool kiestStroom,  
             bool kiestWater,    
-            decimal totaalPrijs);
+            decimal totaalPrijs,
+            ObservableCollection<Gast> Gastenlijst
+            );
     }
 }

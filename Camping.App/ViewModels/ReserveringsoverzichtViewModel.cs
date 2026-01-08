@@ -314,7 +314,7 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
         RecalculatePrijs();
     }
 
-    private async Task SaveReserveringAndFinishAsync() 
+    private async Task SaveReserveringAndFinishAsync()
     {
         //Reservering maken
         await _reserveringService.MaakReserveringAsync(
@@ -325,7 +325,8 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
             SelectedAccommodatie!,
             KiestStroom,
             KiestWater,
-            TotaalPrijs);
+            TotaalPrijs,
+            GastenLijst);
 
         //Feedback naar gebruiker
         await SuccessMessageReservatie();

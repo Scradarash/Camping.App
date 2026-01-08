@@ -1,6 +1,7 @@
 ﻿using Camping.Core.Interfaces.Repositories;
 using Camping.Core.Interfaces.Services;
 using Camping.Core.Models;
+using System.Collections.ObjectModel;
 
 namespace Camping.Core.Services
 {
@@ -30,7 +31,9 @@ namespace Camping.Core.Services
             Accommodatie accommodatie,
             bool kiestStroom,
             bool kiestWater,
-            decimal totaalPrijs)
+            decimal totaalPrijs,
+            ObservableCollection<Gast> Gastenlijst
+            )
         {
             if (string.IsNullOrWhiteSpace(_data.Emailadres) || string.IsNullOrWhiteSpace(_data.Naam) ||
                 !_data.Geboortedatum.HasValue || string.IsNullOrWhiteSpace(_data.Telefoonnummer))
@@ -69,7 +72,8 @@ namespace Camping.Core.Services
                 AccommodatieId = accommodatie.Id,
                 KiestStroom = kiestStroom,
                 KiestWater = kiestWater,
-                TotaalPrijs = totaalPrijs
+                TotaalPrijs = totaalPrijs,
+                Gastenlijst = Gastenlijst
             };
 
             // Reservering met bijhorende gast toevoegen aan reserveringRepository
