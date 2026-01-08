@@ -35,7 +35,7 @@ namespace Camping.Core.Data.Repositories
 
             reservering.Id = reserveringId;
 
-            // 2️⃣ Gasten opslaan
+            //Gasten opslaan UC6
             foreach (var gast in reservering.Gastenlijst)
             {
                 await AddGastAanReservering(gast, reserveringId);
