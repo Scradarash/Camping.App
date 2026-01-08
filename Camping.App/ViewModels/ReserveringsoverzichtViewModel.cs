@@ -442,12 +442,12 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
         int huidigeHoeveelheidGasten = (_reservatieDataService.GastenLijst.Count)+1;
         if (huidigeHoeveelheidGasten < maxGasten)
         {
-            _gastToevoegenEnabled = true;
+            GastToevoegenEnabled = true;
             return true;
         }
         else
         {
-            _gastToevoegenEnabled = false;
+            GastToevoegenEnabled = false;
             return false;
         }
     }
@@ -458,6 +458,7 @@ public partial class ReserveringsoverzichtViewModel : ObservableObject
         if (gast != null && GastenLijst.Contains(gast))
         {
             GastenLijst.Remove(gast);
+            ValidateMaxGuests();
         }
     }
 
